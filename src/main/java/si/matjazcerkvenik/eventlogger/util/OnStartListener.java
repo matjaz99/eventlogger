@@ -1,7 +1,20 @@
+/*
+   Copyright 2021 Matjaž Cerkvenik
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
 package si.matjazcerkvenik.eventlogger.util;
 
-
-import si.matjazcerkvenik.eventlogger.web.DelMetrics;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -18,23 +31,24 @@ public class OnStartListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        DelProps.START_UP_TIMESTAMP = System.currentTimeMillis();
+
+        DProps.START_UP_TIMESTAMP = System.currentTimeMillis();
 
         // read version file
         InputStream inputStream = servletContextEvent.getServletContext().getResourceAsStream("/WEB-INF/version.txt");
         try {
             DataInputStream dis = new DataInputStream(inputStream);
             BufferedReader br = new BufferedReader(new InputStreamReader(dis));
-            DelProps.VERSION = br.readLine().trim();
+            DProps.VERSION = br.readLine().trim();
             dis.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         try {
-            DelProps.LOCAL_IP = InetAddress.getLocalHost().getHostAddress();
+            DProps.LOCAL_IP = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
-            DelProps.LOCAL_IP = "UnknownHost";
+            DProps.LOCAL_IP = "UnknownHost";
         }
 
         LogFactory.getLogger().info("\n");
@@ -44,11 +58,11 @@ public class OnStartListener implements ServletContextListener {
         LogFactory.getLogger().info("*                                              *");
         LogFactory.getLogger().info("************************************************");
         LogFactory.getLogger().info("");
-        LogFactory.getLogger().info("VERSION=" + DelProps.VERSION);
-        LogFactory.getLogger().info("LOCAL_IP=" + DelProps.LOCAL_IP);
+        LogFactory.getLogger().info("VERSION=" + DProps.VERSION);
+        LogFactory.getLogger().info("LOCAL_IP=" + DProps.LOCAL_IP);
 
-        DelProps.RUNTIME_ID = UUID.randomUUID().toString();
-        LogFactory.getLogger().info("RUNTIME_ID=" + DelProps.RUNTIME_ID);
+        DProps.RUNTIME_ID = UUID.randomUUID().toString();
+        LogFactory.getLogger().info("RUNTIME_ID=" + DProps.RUNTIME_ID);
 
         // Don't call DAO before reading env vars!!!
 
@@ -75,13 +89,13 @@ public class OnStartListener implements ServletContextListener {
         try (Stream< String > stream =
                      Files.lines(Paths.get("/proc/1/cgroup"))) {
             LogFactory.getLogger().info("Running in container: " + stream.anyMatch(line -> line.contains("/docker")));
-            DelProps.IS_CONTAINERIZED = true;
+            DProps.IS_CONTAINERIZED = true;
         } catch (IOException e) {
             LogFactory.getLogger().info("Running in container: false");
-            DelProps.IS_CONTAINERIZED = false;
+            DProps.IS_CONTAINERIZED = false;
         }
 
-        DelMetrics.eventlogger_build_info.labels("EventLogger", DelProps.RUNTIME_ID, DelProps.VERSION, System.getProperty("os.name")).set(DelProps.START_UP_TIMESTAMP);
+        DMetrics.eventlogger_build_info.labels("EventLogger", DProps.RUNTIME_ID, DProps.VERSION, System.getProperty("os.name")).set(DProps.START_UP_TIMESTAMP);
 
     }
 

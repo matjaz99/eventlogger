@@ -8,13 +8,13 @@
 	<h:panelGrid columns="1" cellpadding="0" cellspacing="0" width="100%">
 
 		<p:notificationBar position="bottom" autoDisplay="true" effect="slide" styleClass="top" widgetVar="bar">
-			<h:outputText value="Version: %%%}" />
+			<h:outputText value="Version: #{backendBean.version}" />
 			<h:outputText value=" | " style="margin: 0 5px; font-weight: bold;" />
-			<h:outputText value="IP Address: %%%" />
+			<h:outputText value="IP Address: #{backendBean.localIpAddress}" />
 			<h:outputText value=" | " style="margin: 0 5px; font-weight: bold;" />
-			<h:outputText value="Containerized: %%%" />
+			<h:outputText value="Containerized: #{backendBean.containerized}" />
 			<h:outputText value=" | " style="margin: 0 5px; font-weight: bold;" />
-			<h:outputLabel value="Runtime ID: %%%" />
+			<h:outputLabel value="Runtime ID: #{backendBean.runtimeId}" />
 		</p:notificationBar>
 
 	</h:panelGrid>

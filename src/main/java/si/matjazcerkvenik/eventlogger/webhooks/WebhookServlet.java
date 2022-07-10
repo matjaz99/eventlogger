@@ -21,10 +21,9 @@ import com.google.gson.GsonBuilder;
 import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DMessage;
-import si.matjazcerkvenik.eventlogger.util.DelProps;
+import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
-import si.matjazcerkvenik.eventlogger.web.DelMetrics;
-import si.matjazcerkvenik.eventlogger.web.WebhookMessage;
+import si.matjazcerkvenik.eventlogger.util.DMetrics;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -60,9 +59,10 @@ public class WebhookServlet extends HttpServlet {
 			DMessage dm = gson.fromJson(msgArray[i], DMessage.class);
 			LogFactory.getLogger().info(dm.toString());
 
-			IDataManager iDataManager = DataManagerFactory.getDataManager();
+			IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
 			iDataManager.addEventMessage(dm);
-			DelMetrics.eventlogger_webhook_messages_received_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc();
+			DataManagerFactory.getInstance().returnClient(iDataManager);
+			DMetrics.eventlogger_webhook_messages_received_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc();
 		}
 
 
@@ -92,8 +92,8 @@ public class WebhookServlet extends HttpServlet {
 		LogFactory.getLogger().debug("WebhookServlet: instantiateWebhookMessage(): body: " + body);
 
 		WebhookMessage m = new WebhookMessage();
-		m.setId(DelProps.webhookMessagesReceivedCount);
-		m.setRuntimeId(DelProps.RUNTIME_ID);
+		m.setId(DProps.webhookMessagesReceivedCount);
+		m.setRuntimeId(DProps.RUNTIME_ID);
 		m.setTimestamp(System.currentTimeMillis());
 		m.setContentLength(req.getContentLength());
 		m.setContentType(req.getContentType());
@@ -106,10 +106,11 @@ public class WebhookServlet extends HttpServlet {
 		m.setHeaderMap(generateHeaderMap(req));
 		m.setParameterMap(generateParamMap(req));
 
-		IDataManager iDataManager = DataManagerFactory.getDataManager();
+		IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
 		iDataManager.addWebhookMessage(m);
-		DelProps.webhookMessagesReceivedCount++;
-		DelMetrics.eventlogger_webhook_messages_size_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc(m.getContentLength());
+		DataManagerFactory.getInstance().returnClient(iDataManager);
+		DProps.webhookMessagesReceivedCount++;
+		DMetrics.eventlogger_webhook_messages_size_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc(m.getContentLength());
 
 		return m;
 	}

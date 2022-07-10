@@ -1,8 +1,23 @@
+/*
+   Copyright 2021 Matjaž Cerkvenik
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
 package si.matjazcerkvenik.eventlogger.db;
 
 import si.matjazcerkvenik.eventlogger.model.DMessage;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
-import si.matjazcerkvenik.eventlogger.web.WebhookMessage;
+import si.matjazcerkvenik.eventlogger.webhooks.WebhookMessage;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
 
 import java.util.LinkedList;
@@ -12,11 +27,19 @@ public class MemoryDataManager implements IDataManager {
 
     private static SimpleLogger logger = LogFactory.getLogger();
 
+    private int clientId = 0;
+
     public static List<WebhookMessage> webhookMessages = new LinkedList<>();
     public static List<DMessage> eventMessages = new LinkedList<>();
 
-    public MemoryDataManager() {
-        logger.info("MemoryDataManager initialized");
+    public MemoryDataManager(int id) {
+        clientId = id;
+        logger.info("MemoryDataManager: Memory[" + clientId + "] initialized");
+    }
+
+    @Override
+    public String getClientName() {
+        return "Memory[" + clientId + "]";
     }
 
     @Override
@@ -34,14 +57,16 @@ public class MemoryDataManager implements IDataManager {
 
     @Override
     public void addEventMessage(DMessage message) {
-        eventMessages.add(message);
         if (eventMessages.size() > 1000) {
             eventMessages.remove(0);
         }
+        eventMessages.add(message);
+        logger.info("MemoryDataManager: Memory[" + clientId + "] new event message added");
     }
 
     @Override
     public List<DMessage> getEventMessages() {
+        logger.info("MemoryDataManager: Memory[" + clientId + "] get event message list");
         return eventMessages;
     }
 
@@ -54,4 +79,7 @@ public class MemoryDataManager implements IDataManager {
     public void close() {
         // not applicable
     }
+
+
+
 }

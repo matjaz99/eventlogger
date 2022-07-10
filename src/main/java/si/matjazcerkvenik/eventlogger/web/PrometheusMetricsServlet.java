@@ -16,6 +16,7 @@
 package si.matjazcerkvenik.eventlogger.web;
 
 import io.prometheus.client.exporter.common.TextFormat;
+import si.matjazcerkvenik.eventlogger.util.DMetrics;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +45,7 @@ public class PrometheusMetricsServlet extends HttpServlet {
 
         Writer writer = resp.getWriter();
         try {
-            TextFormat.write004(writer, DelMetrics.registry.filteredMetricFamilySamples(parse(req)));
+            TextFormat.write004(writer, DMetrics.registry.filteredMetricFamilySamples(parse(req)));
             writer.flush();
         } finally {
             writer.close();
