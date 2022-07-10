@@ -1,0 +1,29 @@
+<ui:composition template="/templates/pageTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div id="contentFrame">
+		<ui:define name="contentFrame">
+
+			<h:form id="msgForm">
+
+				<ui:repeat var="m" value="#{backendBean.eventMessages}">
+					<div class="card">
+						<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
+							<p:outputLabel value="#{m.host} - #{m.ident}[#{m.pid}]::  #{m.message}"/>
+						</p:outputPanel>
+					</div>
+				</ui:repeat>
+
+			</h:form>
+<!--			<p:poll interval="10" update="msgForm" />-->
+
+
+		</ui:define>
+	</div>
+
+</ui:composition>
+

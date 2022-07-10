@@ -1,0 +1,33 @@
+.card {
+    background: #F0F0F0;
+    padding: 0.5rem;
+    box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+    border: 1px solid #CECECE;
+    /*border-radius: 4px;*/
+    /*margin-bottom: 0.8rem;*/
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 9px;
+}
+
+
+/* footer */
+.ui-notificationbar {
+	position: fixed;
+	width: 100%;
+	height: 10px;
+	display: none;
+	padding: 2px;
+}
+.ui-notificationbar.ui-widget-content {
+	border-top: 1px solid #989898;
+	border-right: none;
+	border-bottom: none;
+	border-left: none;
+	background: #FFFFFF;
+	color: #222222;
+	font-size: 11px;
+}
+body .ui-panelgrid .ui-panelgrid-cell {
+    padding: 0.5rem;
+}
+

@@ -1,0 +1,28 @@
+version: '3.6'
+
+networks:
+  monitoring_network:
+    driver: overlay
+    attachable: true
+
+services:
+
+  djabeEventLogger:
+    image: matjaz99/eventlogger:0.1.0
+    ports:
+      - 7073:8080
+    networks:
+      - monitoring_network
+    environment:
+      - TZ=${TZ}
+      - SIMPLELOGGER_FILENAME=/opt/eventlogger/log/eventlogger.log
+    volumes:
+      - /var/log:/opt/eventlogger/log
+    deploy:
+      mode: replicated
+      replicas: 1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
