@@ -20,7 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
-import si.matjazcerkvenik.eventlogger.model.DMessage;
+import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
@@ -29,10 +29,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class WebhookServlet extends HttpServlet {
 
@@ -55,16 +52,19 @@ public class WebhookServlet extends HttpServlet {
 
 		GsonBuilder builder = new GsonBuilder();
 		Gson gson = builder.create();
+		List<DEvent> eventList = new ArrayList<>();
 		for (int i = 0; i < msgArray.length; i++) {
-			DMessage dm = gson.fromJson(msgArray[i], DMessage.class);
-			LogFactory.getLogger().info(dm.toString());
-
-			IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-			iDataManager.addEventMessage(dm);
-			DataManagerFactory.getInstance().returnClient(iDataManager);
-			DMetrics.eventlogger_webhook_messages_received_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc();
+			DEvent e = gson.fromJson(msgArray[i], DEvent.class);
+			eventList.add(e);
+			LogFactory.getLogger().info(e.toString());
+			DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc(eventList.size());
 		}
 
+		DMetrics.eventlogger_webhook_messages_received_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc();
+
+		IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
+		iDataManager.addEventMessage(eventList);
+		DataManagerFactory.getInstance().returnClient(iDataManager);
 
 	}
 

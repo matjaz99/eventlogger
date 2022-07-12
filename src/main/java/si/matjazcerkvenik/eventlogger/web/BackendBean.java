@@ -18,7 +18,7 @@ package si.matjazcerkvenik.eventlogger.web;
 
 import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
-import si.matjazcerkvenik.eventlogger.model.DMessage;
+import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.webhooks.WebhookMessage;
 
@@ -53,9 +53,9 @@ public class BackendBean {
         return list;
     }
 
-    public List<DMessage> getEventMessages() {
+    public List<DEvent> getEventMessages() {
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-        List<DMessage> list = iDataManager.getEventMessages();
+        List<DEvent> list = iDataManager.getEventMessages();
         DataManagerFactory.getInstance().returnClient(iDataManager);
         return list;
     }

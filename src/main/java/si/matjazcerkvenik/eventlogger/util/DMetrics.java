@@ -18,6 +18,7 @@ package si.matjazcerkvenik.eventlogger.util;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
+import io.prometheus.client.Histogram;
 
 public class DMetrics {
 
@@ -39,6 +40,19 @@ public class DMetrics {
             .name("eventlogger_webhook_messages_size_total")
             .help("Total size of received webhook messages.")
             .labelNames("remotehost", "method", "webhook")
+            .register();
+
+    public static final Counter eventlogger_events_total = Counter.build()
+            .name("eventlogger_events_total")
+            .help("Total size of received events.")
+            .labelNames("source", "host", "ident")
+            .register();
+
+    public static final Histogram eventlogger_db_duration_seconds = Histogram.build()
+            .buckets(0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1.0)
+            .name("eventlogger_db_duration_seconds")
+            .labelNames("database", "table", "action")
+            .help("DB response time")
             .register();
 
 }

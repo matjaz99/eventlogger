@@ -16,7 +16,7 @@
 package si.matjazcerkvenik.eventlogger.db;
 
 
-import si.matjazcerkvenik.eventlogger.model.DMessage;
+import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.webhooks.WebhookMessage;
 
 import java.util.List;
@@ -27,9 +27,9 @@ public interface IDataManager {
 
     public List<WebhookMessage> getWebhookMessages();
 
-    public void addEventMessage(DMessage message);
+    public void addEventMessage(List<DEvent> eventList);
 
-    public List<DMessage> getEventMessages();
+    public List<DEvent> getEventMessages();
 
     public void cleanDB();
 

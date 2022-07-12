@@ -7,7 +7,7 @@ networks:
 
 services:
 
-  djabeEventLogger:
+  eventlogger:
     image: matjaz99/eventlogger:0.1.0
     ports:
       - 7073:8080

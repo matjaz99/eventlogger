@@ -15,7 +15,7 @@
  */
 package si.matjazcerkvenik.eventlogger.db;
 
-import si.matjazcerkvenik.eventlogger.model.DMessage;
+import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.eventlogger.webhooks.WebhookMessage;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
@@ -30,11 +30,11 @@ public class MemoryDataManager implements IDataManager {
     private int clientId = 0;
 
     public static List<WebhookMessage> webhookMessages = new LinkedList<>();
-    public static List<DMessage> eventMessages = new LinkedList<>();
+    public static List<DEvent> eventMessages = new LinkedList<>();
 
     public MemoryDataManager(int id) {
         clientId = id;
-        logger.info("MemoryDataManager: Memory[" + clientId + "] initialized");
+        logger.info("MemoryDataManager: " + getClientName() + " initialized");
     }
 
     @Override
@@ -56,17 +56,19 @@ public class MemoryDataManager implements IDataManager {
     }
 
     @Override
-    public void addEventMessage(DMessage message) {
+    public void addEventMessage(List<DEvent> eventList) {
         if (eventMessages.size() > 1000) {
-            eventMessages.remove(0);
+            for (int i = 0; i < eventList.size(); i++) {
+                eventMessages.remove(0);
+            }
         }
-        eventMessages.add(message);
-        logger.info("MemoryDataManager: Memory[" + clientId + "] new event message added");
+        eventMessages.addAll(eventList);
+        logger.info("MemoryDataManager: " + getClientName() + " new events added");
     }
 
     @Override
-    public List<DMessage> getEventMessages() {
-        logger.info("MemoryDataManager: Memory[" + clientId + "] get event message list");
+    public List<DEvent> getEventMessages() {
+        logger.info("MemoryDataManager: " + getClientName() + " get event message list");
         return eventMessages;
     }
 
