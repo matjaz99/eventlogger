@@ -2,6 +2,13 @@
 # Build stage
 #
 FROM maven:3.6.0-jdk-11-slim AS build
+RUN wget http://matjazcerkvenik.si/download/simple-logger-1.7.0.jar
+RUN mvn install:install-file \
+    -Dfile=simple-logger-${SIMPLELOGGER_VERSION}.jar \
+    -DgroupId=si.matjazcerkvenik.simplelogger \
+    -DartifactId=simple-logger \
+    -Dversion=${SIMPLELOGGER_VERSION} \
+    -Dpackaging=jar
 COPY src /home/app/src
 COPY pom.xml /home/app
 RUN mvn -f /home/app/pom.xml clean package

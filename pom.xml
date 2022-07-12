@@ -74,12 +74,12 @@
             <artifactId>simpleclient_common</artifactId>
             <version>${prometheus.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>si.matjazcerkvenik.simplelogger</groupId>-->
-<!--            <artifactId>simple-logger</artifactId>-->
-<!--            <version>1.7.0</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>si.matjazcerkvenik.simplelogger</groupId>
+            <artifactId>simple-logger</artifactId>
+            <version>1.7.0</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
