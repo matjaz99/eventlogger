@@ -1,5 +1,15 @@
 # EventLogger changelog
 
+## 0.2.0 MongoDB storage
 
-## 0.1.0 Proof of concept
+* [DOCKER] docker pull matjaz99/eventlogger:0.2.0
+* [FEATURE] Store events in MongoDB
 
+## 0.1.0 Proof of concept / 2022-07-11
+
+* [DOCKER] docker pull matjaz99/eventlogger:0.1.0
+* [FEATURE] This is Java based web app running on Tomcat using JSF+Primefaces technology
+* [FEATURE] Receive messages from fluentd (using in_syslog and out_http plugin)
+* [FEATURE] Store last 1000 events in memory - this will remain default data storage
+* [FEATURE] Show list of events in web browser`
+* [FEATURE] Prepared Dockerfile, compose file and other stuff
