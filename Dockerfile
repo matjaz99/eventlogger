@@ -2,13 +2,12 @@
 # Build stage
 #
 FROM maven:3.6.0-jdk-11-slim AS build
-RUN apk add wget
 RUN curl http://matjazcerkvenik.si/download/simple-logger-1.7.0.jar -o simple-logger-1.7.0.jar
 RUN mvn install:install-file \
-    -Dfile=simple-logger-${SIMPLELOGGER_VERSION}.jar \
+    -Dfile=simple-logger-1.7.0.jar \
     -DgroupId=si.matjazcerkvenik.simplelogger \
     -DartifactId=simple-logger \
-    -Dversion=${SIMPLELOGGER_VERSION} \
+    -Dversion=1.7.0 \
     -Dpackaging=jar
 COPY src /home/app/src
 COPY pom.xml /home/app
