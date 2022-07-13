@@ -1,26 +1,17 @@
-#
-# Build stage
-#
-FROM maven:3.6.0-jdk-11-slim AS build
-RUN curl http://matjazcerkvenik.si/download/simple-logger-1.7.0.jar -o simple-logger-1.7.0.jar
+FROM maven:3.8.6-openjdk-11 AS build
+
+ARG SIMPLE_LOGGER_VERSION=1.7.0
+
+RUN wget http://matjazcerkvenik.si/download/simple-logger-${SIMPLE_LOGGER_VERSION}.jar
 RUN mvn install:install-file \
-    -Dfile=simple-logger-1.7.0.jar \
+    -Dfile=simple-logger-${SIMPLE_LOGGER_VERSION}.jar \
     -DgroupId=si.matjazcerkvenik.simplelogger \
     -DartifactId=simple-logger \
-    -Dversion=1.7.0 \
+    -Dversion=${SIMPLE_LOGGER_VERSION} \
     -Dpackaging=jar
 COPY src /home/app/src
 COPY pom.xml /home/app
 RUN mvn -f /home/app/pom.xml clean package
-#
-##
-## Package stage
-##
-#FROM openjdk:11-jre-slim
-#COPY --from=build /home/app/target/demo-0.0.1-SNAPSHOT.jar /usr/local/lib/demo.jar
-#EXPOSE 8080
-#ENTRYPOINT ["java","-jar","/usr/local/lib/demo.jar"]
-
 
 
 FROM tomcat:8.5-jre8-alpine
@@ -35,8 +26,8 @@ RUN mkdir -p /opt/eventlogger/log
 COPY LICENSE /opt/eventlogger
 COPY README.md /opt/eventlogger
 
-#HEALTHCHECK --interval=5m --timeout=3s \
-#  CMD curl -f http://localhost:8080/eventlogger || exit 1
+HEALTHCHECK --interval=5m --timeout=3s \
+  CMD curl -f http://localhost:8080/eventlogger || exit 1
 
 EXPOSE 8080
 
