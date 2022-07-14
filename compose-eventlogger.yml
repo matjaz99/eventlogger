@@ -17,8 +17,8 @@ services:
       - TZ=${TZ}
       - SIMPLELOGGER_FILENAME=/opt/eventlogger/log/eventlogger.log
       - EVENTLOGGER_DATA_RETENTION_DAYS=30
-      - EVENTLOGGER_STORAGE_TYPE="mongodb"
-      - EVENTLOGGER_MONGODB_CONNECTION_STRING="mongodb://admin:mongodbpassword@172.29.18.22:27017/?authSource=admin"
+      - EVENTLOGGER_STORAGE_TYPE=mongodb
+      - EVENTLOGGER_MONGODB_CONNECTION_STRING=mongodb://admin:mongodbpassword@172.29.18.22:27017/?authSource=admin
     volumes:
       - /var/log:/opt/eventlogger/log
     deploy:
