@@ -26,7 +26,9 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.InsertManyOptions;
 import com.mongodb.client.model.Sorts;
+import com.mongodb.client.result.DeleteResult;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
@@ -214,7 +216,7 @@ public class MongoDataManager implements IDataManager {
             MongoCollection<Document> collection = db.getCollection("events");
 
             List<Document> docsResultList = collection.find()
-                    //.sort(Sorts.descending("timestamp"))
+                    .sort(Sorts.descending("timestamp"))
                     .limit(1000)
                     .into(new ArrayList<>());
 
@@ -224,6 +226,7 @@ public class MongoDataManager implements IDataManager {
 
             for (Document doc : docsResultList) {
                 DEvent event = new DEvent();
+                event.setTimestamp(((Number) doc.get("timestamp")).longValue());
                 event.setHost(doc.getString("host"));
                 event.setIdent(doc.getString("ident"));
                 event.setPid(doc.getString("pid"));
@@ -244,6 +247,27 @@ public class MongoDataManager implements IDataManager {
 
     @Override
     public void cleanDB() {
+
+        logger.info("MongoDataManager: cleanDB: started");
+
+        try {
+
+            long daysInMillis = Integer.toUnsignedLong(DProps.EVENTLOGGER_DATA_RETENTION_DAYS) * 24 * 3600 * 1000;
+            long diff = (System.currentTimeMillis() - daysInMillis);
+            Bson filter = Filters.lte("timestamp", diff);
+
+            MongoDatabase db = mongoClient.getDatabase(dbName);
+            MongoCollection<Document> collection = db.getCollection("webhook");
+            DeleteResult resultDeleteMany = collection.deleteMany(filter);
+            logger.info("MongoDataManager: cleanDB [webhook]: result" + resultDeleteMany);
+
+            MongoCollection<Document> collection2 = db.getCollection("events");
+            DeleteResult resultDeleteMany2 = collection2.deleteMany(filter);
+            logger.info("MongoDataManager: cleanDB [events]: result" + resultDeleteMany2);
+
+        } catch (Exception e) {
+            logger.error("MongoDataManager: cleanDB: Exception: " + e.getMessage());
+        }
 
     }
 

@@ -55,6 +55,7 @@ public class WebhookServlet extends HttpServlet {
 		List<DEvent> eventList = new ArrayList<>();
 		for (int i = 0; i < msgArray.length; i++) {
 			DEvent e = gson.fromJson(msgArray[i], DEvent.class);
+			e.setTimestamp(System.currentTimeMillis());
 			eventList.add(e);
 			LogFactory.getLogger().info(e.toString());
 			DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc(eventList.size());

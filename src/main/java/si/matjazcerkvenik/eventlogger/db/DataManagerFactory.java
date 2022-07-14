@@ -18,6 +18,7 @@ package si.matjazcerkvenik.eventlogger.db;
 
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
+import si.matjazcerkvenik.eventlogger.util.TaskManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class DataManagerFactory {
     public static DataManagerFactory getInstance() {
         if (instance == null) {
             instance = new DataManagerFactory();
+            TaskManager.getInstance().startDbMaintenanceTimer();
         }
         return instance;
     }

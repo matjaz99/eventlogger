@@ -17,10 +17,19 @@ package si.matjazcerkvenik.eventlogger.model;
 
 public class DEvent {
 
+    private long timestamp;
     private String host;
     private String ident;
     private String pid;
     private String message;
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public String getHost() {
         return host;
