@@ -73,7 +73,9 @@ public class OnStartListener implements ServletContextListener {
             LogFactory.getLogger().info(entry.getKey() + "=" + entry.getValue());
         }
 
-        // TODO load config file
+        DProps.EVENTLOGGER_STORAGE_TYPE = System.getenv().getOrDefault("EVENTLOGGER_STORAGE_TYPE", "memory").trim();
+        DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = System.getenv().getOrDefault("EVENTLOGGER_MONGODB_CONNECTION_STRING", "mongodb://admin:mongodbpassword@promvm:27017/?authSource=admin").trim();
+        DProps.EVENTLOGGER_DATA_RETENTION_DAYS = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_DATA_RETENTION_DAYS", "30").trim());
 
         // runtime memory info
         int mb = 1024 * 1024;
