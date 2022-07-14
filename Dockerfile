@@ -15,7 +15,7 @@ RUN mvn -f /home/app/pom.xml clean package
 
 
 FROM tomcat:8.5-jre8-alpine
-#FROM tomcat:9.0-jre17
+#FROM tomcat:9.0.64-jre11-openjdk
 
 RUN apk --no-cache add curl
 RUN apk add tzdata
