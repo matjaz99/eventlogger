@@ -1,7 +1,7 @@
 version: '3.6'
 
 networks:
-  monitoring_network:
+  net:
     driver: overlay
     attachable: true
 
@@ -12,11 +12,12 @@ services:
     ports:
       - 7073:8080
     networks:
-      - monitoring_network
+      - net
     environment:
       - TZ=${TZ}
       - SIMPLELOGGER_FILENAME=/opt/eventlogger/log/eventlogger.log
       - EVENTLOGGER_DATA_RETENTION_DAYS=30
+      - EVENTLOGGER_DB_POOL_SIZE=10
       - EVENTLOGGER_STORAGE_TYPE=mongodb
       - EVENTLOGGER_MONGODB_CONNECTION_STRING=mongodb://admin:mongodbpassword@172.29.18.22:27017/?authSource=admin
     volumes:
@@ -24,8 +25,3 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080"]
-      interval: 15s
-      timeout: 5s
-      retries: 5

@@ -1,0 +1,36 @@
+<ui:composition template="/templates/pageTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:am="http://alertmonitor.io/facelets">
+
+	<div id="contentFrame">
+		<ui:define name="contentFrame">
+
+			<p:outputLabel value="Configuration" style="font-weight: bold; font-size: 24px;"/>
+			<p:outputLabel class="plaintext" value="(click on parameter to edit)" />
+
+			<br/>
+			<br/>
+
+			<h:form id="configForm">
+
+				<p:panelGrid columns="2">
+
+					<p:outputLabel value="Data retention (days): " class="boldtext"/>
+					<p:inplace editor="true">
+						<p:inputText value="#{configBean.dataRetention}" required="true" label="text"/>
+					</p:inplace>
+
+
+
+				</p:panelGrid>
+
+			</h:form>
+
+		</ui:define>
+	</div>
+
+</ui:composition>
+

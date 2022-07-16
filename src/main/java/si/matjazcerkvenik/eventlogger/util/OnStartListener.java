@@ -76,6 +76,7 @@ public class OnStartListener implements ServletContextListener {
         DProps.EVENTLOGGER_STORAGE_TYPE = System.getenv().getOrDefault("EVENTLOGGER_STORAGE_TYPE", "memory").trim();
         DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = System.getenv().getOrDefault("EVENTLOGGER_MONGODB_CONNECTION_STRING", "mongodb://admin:mongodbpassword@promvm:27017/?authSource=admin").trim();
         DProps.EVENTLOGGER_DATA_RETENTION_DAYS = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_DATA_RETENTION_DAYS", "30").trim());
+        DProps.EVENTLOGGER_DB_POOL_SIZE = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_DB_POOL_SIZE", "10").trim());
 
         // runtime memory info
         int mb = 1024 * 1024;
@@ -103,6 +104,6 @@ public class OnStartListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        System.out.println("STOPPED");
+        TaskManager.getInstance().stopDbMaintenanceTimer();
     }
 }

@@ -60,4 +60,17 @@ public class BackendBean {
         return list;
     }
 
+    public String getConcatenatedEvents() {
+        IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
+        List<DEvent> list = iDataManager.getEventMessages();
+        DataManagerFactory.getInstance().returnClient(iDataManager);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            sb.append(list.get(i).getHost()).append(" - ");
+            sb.append(list.get(i).getIdent()).append("[").append(list.get(i).getPid()).append("]:: ");
+            sb.append(list.get(i).getMessage()).append("\n");
+        }
+        return sb.toString();
+    }
+
 }

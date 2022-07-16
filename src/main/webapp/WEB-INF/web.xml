@@ -6,6 +6,8 @@
     <welcome-file-list>
         <welcome-file>socket.xhtml</welcome-file>
         <welcome-file>events.xhtml</welcome-file>
+        <welcome-file>events2.xhtml</welcome-file>
+        <welcome-file>config.xhtml</welcome-file>
     </welcome-file-list>
 
     <!-- Define the JSF servlet (manages the request processing life cycle for JavaServer Faces) -->

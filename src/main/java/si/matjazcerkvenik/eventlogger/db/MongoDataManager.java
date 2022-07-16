@@ -259,11 +259,11 @@ public class MongoDataManager implements IDataManager {
             MongoDatabase db = mongoClient.getDatabase(dbName);
             MongoCollection<Document> collection = db.getCollection("webhook");
             DeleteResult resultDeleteMany = collection.deleteMany(filter);
-            logger.info("MongoDataManager: cleanDB [webhook]: result" + resultDeleteMany);
+            logger.info("MongoDataManager: cleanDB [webhook]: size=" + resultDeleteMany.getDeletedCount());
 
             MongoCollection<Document> collection2 = db.getCollection("events");
             DeleteResult resultDeleteMany2 = collection2.deleteMany(filter);
-            logger.info("MongoDataManager: cleanDB [events]: result" + resultDeleteMany2);
+            logger.info("MongoDataManager: cleanDB [events]: size=" + resultDeleteMany2.getDeletedCount());
 
         } catch (Exception e) {
             logger.error("MongoDataManager: cleanDB: Exception: " + e.getMessage());
