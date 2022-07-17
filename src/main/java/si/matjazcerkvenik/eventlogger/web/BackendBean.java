@@ -16,14 +16,19 @@
 package si.matjazcerkvenik.eventlogger.web;
 
 
+import org.primefaces.event.UnselectEvent;
 import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.webhooks.WebhookMessage;
 
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+import java.util.ArrayList;
 import java.util.List;
 
 @ManagedBean
@@ -67,10 +72,51 @@ public class BackendBean {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < list.size(); i++) {
             sb.append(list.get(i).getHost()).append(" - ");
-            sb.append(list.get(i).getIdent()).append("[").append(list.get(i).getPid()).append("]:: ");
+            sb.append(list.get(i).getIdent()).append("[").append(list.get(i).getPid()).append("] - ");
             sb.append(list.get(i).getMessage()).append("\n");
         }
         return sb.toString();
+    }
+
+    private String[] selectedCities2;
+    private List<String> cities;
+
+    @PostConstruct
+    public void init() {
+        cities = new ArrayList<>();
+        cities.add("Miami");
+        cities.add("London");
+        cities.add("Paris");
+        cities.add("Istanbul");
+        cities.add("Berlin");
+        cities.add("Barcelona");
+        cities.add("Rome");
+        cities.add("Brasilia");
+        cities.add("Amsterdam");
+    }
+
+    public String[] getSelectedCities2() {
+        return selectedCities2;
+    }
+
+    public void setSelectedCities2(String[] selectedCities2) {
+        this.selectedCities2 = selectedCities2;
+    }
+
+    public List<String> getCities() {
+        return cities;
+    }
+
+    public void setCities(List<String> cities) {
+        this.cities = cities;
+    }
+
+    public void onItemUnselect(UnselectEvent event) {
+        FacesMessage msg = new FacesMessage();
+        msg.setSummary("Item unselected: " + event.getObject().toString());
+        msg.setSeverity(FacesMessage.SEVERITY_INFO);
+
+        FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
 }
