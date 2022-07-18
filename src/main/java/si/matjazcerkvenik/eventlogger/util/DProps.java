@@ -31,6 +31,6 @@ public class DProps {
     public static String EVENTLOGGER_STORAGE_TYPE = "mongodb";
     public static String EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@promvm:27017/test?authSource=admin";
     public static int EVENTLOGGER_DATA_RETENTION_DAYS = 30;
-    public static int EVENTLOGGER_DB_POOL_SIZE = 10;
+    public static int EVENTLOGGER_DB_POOL_SIZE = 3;
 
 }

@@ -3,7 +3,7 @@
 ## 0.2.0 MongoDB storage
 
 * [DOCKER] docker pull matjaz99/eventlogger:0.2.0
-* [FEATURE] Store events in MongoDB
+* [FEATURE] Store and load events in MongoDB
 
 ## 0.1.0 Proof of concept / 2022-07-11
 
