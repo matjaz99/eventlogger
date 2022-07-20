@@ -21,6 +21,7 @@ import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.util.DProps;
+import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.eventlogger.webhooks.WebhookMessage;
 
 import javax.annotation.PostConstruct;
@@ -28,6 +29,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,13 +42,10 @@ public class BackendBean {
     public String getVersion() {
         return DProps.VERSION;
     }
-
     public boolean isContainerized() { return DProps.IS_CONTAINERIZED; }
-
     public String getLocalIpAddress() {
         return DProps.LOCAL_IP;
     }
-
     public String getRuntimeId() {
         return DProps.RUNTIME_ID;
     }
@@ -58,16 +57,16 @@ public class BackendBean {
         return list;
     }
 
-    public List<DEvent> getEventMessages() {
+    public List<DEvent> getEvents() {
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-        List<DEvent> list = iDataManager.getEventMessages();
+        List<DEvent> list = iDataManager.getEvents(null);
         DataManagerFactory.getInstance().returnClient(iDataManager);
         return list;
     }
 
     public String getConcatenatedEvents() {
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-        List<DEvent> list = iDataManager.getEventMessages();
+        List<DEvent> list = iDataManager.getEvents(null);
         DataManagerFactory.getInstance().returnClient(iDataManager);
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < list.size(); i++) {
@@ -78,45 +77,47 @@ public class BackendBean {
         return sb.toString();
     }
 
-    private String[] selectedCities2;
-    private List<String> cities;
+    private String[] selectedHosts;
+    private List<String> availableHosts;
 
     @PostConstruct
     public void init() {
-        cities = new ArrayList<>();
-        cities.add("Miami");
-        cities.add("London");
-        cities.add("Paris");
-        cities.add("Istanbul");
-        cities.add("Berlin");
-        cities.add("Barcelona");
-        cities.add("Rome");
-        cities.add("Brasilia");
-        cities.add("Amsterdam");
+        LogFactory.getLogger().info("PostConstruct init");
+//        availableHosts = new ArrayList<>();
+//        availableHosts.add("Miami");
+//        availableHosts.add("London");
+//        availableHosts.add("Paris");
+//        availableHosts.add("Istanbul");
+//        availableHosts.add("Berlin");
+//        availableHosts.add("Barcelona");
+//        availableHosts.add("Rome");
+//        availableHosts.add("Brasilia");
+//        availableHosts.add("Amsterdam");
+
     }
 
-    public String[] getSelectedCities2() {
-        return selectedCities2;
+    public String[] getSelectedHosts() {
+        LogFactory.getLogger().info("getSelectedHosts: " + selectedHosts);
+        return selectedHosts;
     }
 
-    public void setSelectedCities2(String[] selectedCities2) {
-        this.selectedCities2 = selectedCities2;
+    public void setSelectedHosts(String[] selectedHosts) {
+        this.selectedHosts = selectedHosts;
     }
 
-    public List<String> getCities() {
-        return cities;
+    public List<String> getAvailableHosts() {
+        IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
+        availableHosts = iDataManager.getAvailableHosts();
+        DataManagerFactory.getInstance().returnClient(iDataManager);
+        return availableHosts;
     }
 
-    public void setCities(List<String> cities) {
-        this.cities = cities;
+    public void setAvailableHosts(List<String> availableHosts) {
+        this.availableHosts = availableHosts;
     }
 
-    public void onItemUnselect(UnselectEvent event) {
-        FacesMessage msg = new FacesMessage();
-        msg.setSummary("Item unselected: " + event.getObject().toString());
-        msg.setSeverity(FacesMessage.SEVERITY_INFO);
-
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+    public void selectedHostsChangeEvent(ValueChangeEvent event) {
+        LogFactory.getLogger().info("selectedHostsChangeEvent: " + event.getNewValue().toString());
     }
 
 }

@@ -30,7 +30,7 @@ import java.util.Set;
 
 public class PrometheusMetricsServlet extends HttpServlet {
 
-    private static final long serialVersionUID = -5776148450627134391L;
+    private static final long serialVersionUID = -5786248430627284392L;
 
 
     public PrometheusMetricsServlet() {

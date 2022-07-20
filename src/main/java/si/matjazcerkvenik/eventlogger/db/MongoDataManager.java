@@ -19,10 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.InsertManyOptions;
 import com.mongodb.client.model.Sorts;
@@ -31,6 +28,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
+import si.matjazcerkvenik.eventlogger.model.DataFilter;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
@@ -66,7 +64,7 @@ public class MongoDataManager implements IDataManager {
 
         mongoClient = MongoClients.create(settings);
 
-        logger.info("MongoDataManager: " + getClientName() + " initialized");
+        logger.info(getClientName() + " initialized");
     }
 
     @Override
@@ -77,7 +75,7 @@ public class MongoDataManager implements IDataManager {
     @Override
     public void addWebhookMessage(WebhookMessage webhookMessage) {
 
-        logger.info("MongoDataManager: " + getClientName() + " addWebhookMessage");
+        logger.info(getClientName() + " addWebhookMessage");
 
         long before = System.currentTimeMillis();
 
@@ -107,7 +105,7 @@ public class MongoDataManager implements IDataManager {
             collection.insertOne(doc);
 
         } catch (Exception e) {
-            logger.error("MongoDataManager: " + getClientName() + " addWebhookMessage: Exception: " + e.getMessage());
+            logger.error(getClientName() + " addWebhookMessage: Exception: " + e.getMessage());
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
             DMetrics.eventlogger_db_duration_seconds.labels(dbName, "webhook", "insert").observe(duration);
@@ -118,7 +116,7 @@ public class MongoDataManager implements IDataManager {
     @Override
     public List<WebhookMessage> getWebhookMessages() {
 
-        logger.info("MongoDataManager: " + getClientName() + " getWebhookMessages");
+        logger.info(getClientName() + " getWebhookMessages");
 
         long before = System.currentTimeMillis();
         try {
@@ -130,7 +128,7 @@ public class MongoDataManager implements IDataManager {
                     .limit(100)
                     .into(new ArrayList<>());
 
-            logger.info("MongoDataManager: " + getClientName() + " docsResultList size=" + docsResultList.size());
+            logger.info(getClientName() + " docsResultList size=" + docsResultList.size());
 
             List<WebhookMessage> webhookMessageList = new ArrayList<>();
 
@@ -165,7 +163,7 @@ public class MongoDataManager implements IDataManager {
             return webhookMessageList;
 
         } catch (Exception e) {
-            logger.error("MongoDataManager: " + getClientName() + " getWebhookMessages: Exception: ", e);
+            logger.error(getClientName() + " getWebhookMessages: Exception: ", e);
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
             DMetrics.eventlogger_db_duration_seconds.labels(dbName, "events", "query").observe(duration);
@@ -175,11 +173,11 @@ public class MongoDataManager implements IDataManager {
     }
 
     @Override
-    public void addEventMessage(List<DEvent> eventList) {
+    public void addEvents(List<DEvent> eventList) {
 
         if (eventList.isEmpty()) return;
 
-        logger.info("MongoDataManager: " + getClientName() + " addEventMessage: size=" + eventList.size());
+        logger.info(getClientName() + " addEvents: size=" + eventList.size());
 
         long before = System.currentTimeMillis();
 
@@ -197,7 +195,7 @@ public class MongoDataManager implements IDataManager {
             collection.insertMany(list, new InsertManyOptions().ordered(false));
 
         } catch (Exception e) {
-            logger.error("MongoDataManager: " + getClientName() + " addEventMessage: Exception: " + e.getMessage());
+            logger.error(getClientName() + " addEvents: Exception: " + e.getMessage());
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
             DMetrics.eventlogger_db_duration_seconds.labels(dbName, "webhook", "insert").observe(duration);
@@ -205,9 +203,9 @@ public class MongoDataManager implements IDataManager {
     }
 
     @Override
-    public List<DEvent> getEventMessages() {
+    public List<DEvent> getEvents(DataFilter filter) {
 
-        logger.info("MongoDataManager: " + getClientName() + " getJournal");
+        logger.info(getClientName() + " getEvents: " + filter);
 
         long before = System.currentTimeMillis();
 
@@ -215,12 +213,23 @@ public class MongoDataManager implements IDataManager {
             MongoDatabase db = mongoClient.getDatabase(dbName);
             MongoCollection<Document> collection = db.getCollection("events");
 
-            List<Document> docsResultList = collection.find()
-                    .sort(Sorts.descending("timestamp"))
-                    .limit(1000)
-                    .into(new ArrayList<>());
+            List<Document> docsResultList = null;
 
-            logger.info("MongoDataManager: " + getClientName() + " docsResultList size=" + docsResultList.size());
+            if (filter == null) {
+                docsResultList = collection.find()
+                        .sort(Sorts.descending("timestamp"))
+                        .limit(1000)
+                        .into(new ArrayList<>());
+            } else {
+                // TODO
+                docsResultList = collection.find(Filters.eq(filter.getHosts().get(0)))
+                        .sort(Sorts.descending("timestamp"))
+                        .limit(1000)
+                        .into(new ArrayList<>());
+            }
+
+
+            logger.info(getClientName() + " docsResultList size=" + docsResultList.size());
 
             List<DEvent> eventList = new ArrayList<>();
 
@@ -237,7 +246,41 @@ public class MongoDataManager implements IDataManager {
             return eventList;
 
         } catch (Exception e) {
-            logger.error("MongoDataManager: " + getClientName() + " getJournal: Exception: " + e.getMessage());
+            logger.error(getClientName() + " getEvents: Exception: " + e.getMessage());
+        } finally {
+            double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
+            DMetrics.eventlogger_db_duration_seconds.labels(dbName, "events", "query").observe(duration);
+        }
+        return null;
+    }
+
+    @Override
+    public List<String> getAvailableHosts() {
+        logger.info(getClientName() + " getAvailableHosts");
+
+        long before = System.currentTimeMillis();
+
+        try {
+            MongoDatabase db = mongoClient.getDatabase(dbName);
+            MongoCollection<Document> collection = db.getCollection("events");
+
+            DistinctIterable<String> docs = collection.distinct("host", String.class);
+
+            List<String> hostsList = new ArrayList<>();
+
+            MongoCursor<String> results = docs.iterator();
+            while(results.hasNext()) {
+                String s = results.next();
+                logger.info(getClientName() + " getAvailableHosts: found host=" + s);
+                hostsList.add(s);
+            }
+
+            logger.info(getClientName() + " getAvailableHosts: docsResultList size=" + hostsList.size());
+
+            return hostsList;
+
+        } catch (Exception e) {
+            logger.error(getClientName() + " getAvailableHosts: Exception: " + e.getMessage());
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
             DMetrics.eventlogger_db_duration_seconds.labels(dbName, "events", "query").observe(duration);
@@ -248,7 +291,7 @@ public class MongoDataManager implements IDataManager {
     @Override
     public void cleanDB() {
 
-        logger.info("MongoDataManager: cleanDB: started");
+        logger.info(getClientName() + " cleanDB: started");
 
         try {
 
@@ -259,14 +302,14 @@ public class MongoDataManager implements IDataManager {
             MongoDatabase db = mongoClient.getDatabase(dbName);
             MongoCollection<Document> collection = db.getCollection("webhook");
             DeleteResult resultDeleteMany = collection.deleteMany(filter);
-            logger.info("MongoDataManager: cleanDB [webhook]: size=" + resultDeleteMany.getDeletedCount());
+            logger.info( getClientName() + " cleanDB [webhook]: size=" + resultDeleteMany.getDeletedCount());
 
             MongoCollection<Document> collection2 = db.getCollection("events");
             DeleteResult resultDeleteMany2 = collection2.deleteMany(filter);
-            logger.info("MongoDataManager: cleanDB [events]: size=" + resultDeleteMany2.getDeletedCount());
+            logger.info( getClientName() + " cleanDB [events]: size=" + resultDeleteMany2.getDeletedCount());
 
         } catch (Exception e) {
-            logger.error("MongoDataManager: cleanDB: Exception: " + e.getMessage());
+            logger.error( getClientName() + " cleanDB: Exception: " + e.getMessage());
         }
 
     }

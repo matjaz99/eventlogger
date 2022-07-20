@@ -10,18 +10,29 @@
 
 			<h:form id="msgForm">
 
-				<p:selectCheckboxMenu id="multipleHosts"
-									  value="#{backendBean.selectedCities2}"
-									  label="Cities"
-									  style="min-width: 15rem"
-									  multiple="true"
-									  filter="true"
-									  filterMatchMode="startsWith"
-									  panelStyle="width: 30rem"
-									  scrollHeight="250">
-					<p:ajax event="itemUnselect" listener="#{backendBean.onItemUnselect}"/>
-					<f:selectItems value="#{backendBean.cities}"/>
-				</p:selectCheckboxMenu>
+				<p:panelGrid columns="2">
+
+					<p:outputLabel value="Host: " class="boldtext"/>
+					<p:selectCheckboxMenu id="multipleHosts"
+										  value="#{backendBean.selectedHosts}"
+										  valueChangeListener="#{backendBean.selectedHostsChangeEvent}"
+										  label="Hosts"
+										  style="min-width: 15rem"
+										  multiple="true"
+										  filter="true"
+										  filterMatchMode="startsWith"
+										  panelStyle="width: 30rem"
+										  scrollHeight="250">
+
+						<p:ajax update="msgForm"/>
+						<f:selectItems value="#{backendBean.availableHosts}"/>
+					</p:selectCheckboxMenu>
+
+
+
+				</p:panelGrid>
+
+
 
 				<div class="card">
 					<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">

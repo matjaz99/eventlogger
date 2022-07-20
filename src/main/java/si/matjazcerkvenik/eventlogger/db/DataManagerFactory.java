@@ -25,14 +25,13 @@ import java.util.List;
 
 public class DataManagerFactory {
 
-    private int poolSize = 10;
     private int count = 0;
     private List<IDataManager> pool = new ArrayList<>();
 
     private static DataManagerFactory instance;
 
     private DataManagerFactory() {
-        for (int i = 0; i < poolSize; i++) {
+        for (int i = 0; i < DProps.EVENTLOGGER_DB_POOL_SIZE; i++) {
             pool.add(createNewClient());
         }
     }

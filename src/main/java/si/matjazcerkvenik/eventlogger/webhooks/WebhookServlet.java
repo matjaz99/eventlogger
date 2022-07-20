@@ -33,7 +33,7 @@ import java.util.*;
 
 public class WebhookServlet extends HttpServlet {
 
-	private static final long serialVersionUID = 4274913262329715396L;
+	private static final long serialVersionUID = 4275913222328716391L;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -44,8 +44,14 @@ public class WebhookServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse response)
 			throws IOException {
 
-		WebhookMessage m = instantiateWebhookMessage(req);
+		WebhookMessage m = processIncomingRequest(req);
 
+		IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
+		iDataManager.addWebhookMessage(m);
+		DProps.webhookMessagesReceivedCount++;
+		DMetrics.eventlogger_webhook_messages_size_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc(m.getContentLength());
+
+		// process body
 		String body = m.getBody().replace("}{", "}\n{");
 		String[] msgArray = body.split("\n");
 		LogFactory.getLogger().info("WebhookServlet: found messages: " + msgArray.length);
@@ -54,22 +60,21 @@ public class WebhookServlet extends HttpServlet {
 		Gson gson = builder.create();
 		List<DEvent> eventList = new ArrayList<>();
 		for (int i = 0; i < msgArray.length; i++) {
-			DEvent e = gson.fromJson(msgArray[i], DEvent.class);
+			DEvent e = gson.fromJson(msgArray[i].trim(), DEvent.class);
 			e.setTimestamp(System.currentTimeMillis());
 			eventList.add(e);
-			LogFactory.getLogger().info(e.toString());
+			LogFactory.getLogger().trace(e.toString());
 			DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc(eventList.size());
 		}
 
 		DMetrics.eventlogger_webhook_messages_received_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc();
 
-		IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-		iDataManager.addEventMessage(eventList);
+		iDataManager.addEvents(eventList);
 		DataManagerFactory.getInstance().returnClient(iDataManager);
 
 	}
 
-	private WebhookMessage instantiateWebhookMessage(HttpServletRequest req) throws IOException {
+	private WebhookMessage processIncomingRequest(HttpServletRequest req) throws IOException {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
@@ -85,12 +90,12 @@ public class WebhookServlet extends HttpServlet {
 		sb.append("contentType=").append(req.getContentType());
 		sb.append("}");
 
-		LogFactory.getLogger().info("WebhookServlet: instantiateWebhookMessage(): " + sb.toString());
+		LogFactory.getLogger().info("WebhookServlet: processIncomingRequest(): " + sb.toString());
 
-		LogFactory.getLogger().debug("WebhookServlet: instantiateWebhookMessage(): parameterMap: " + getReqParamsAsString(req));
-		LogFactory.getLogger().debug("WebhookServlet: instantiateWebhookMessage(): headers: " + getReqHeadersAsString(req));
+		LogFactory.getLogger().debug("WebhookServlet: processIncomingRequest(): parameterMap: " + getReqParamsAsString(req));
+		LogFactory.getLogger().debug("WebhookServlet: processIncomingRequest(): headers: " + getReqHeadersAsString(req));
 		String body = getReqBody(req);
-		LogFactory.getLogger().debug("WebhookServlet: instantiateWebhookMessage(): body: " + body);
+		LogFactory.getLogger().debug("WebhookServlet: processIncomingRequest(): body: " + body);
 
 		WebhookMessage m = new WebhookMessage();
 		m.setId(DProps.webhookMessagesReceivedCount);
@@ -106,12 +111,6 @@ public class WebhookServlet extends HttpServlet {
 		m.setBody(body);
 		m.setHeaderMap(generateHeaderMap(req));
 		m.setParameterMap(generateParamMap(req));
-
-		IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-		iDataManager.addWebhookMessage(m);
-		DataManagerFactory.getInstance().returnClient(iDataManager);
-		DProps.webhookMessagesReceivedCount++;
-		DMetrics.eventlogger_webhook_messages_size_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc(m.getContentLength());
 
 		return m;
 	}

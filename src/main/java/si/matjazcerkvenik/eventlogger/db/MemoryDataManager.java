@@ -16,6 +16,7 @@
 package si.matjazcerkvenik.eventlogger.db;
 
 import si.matjazcerkvenik.eventlogger.model.DEvent;
+import si.matjazcerkvenik.eventlogger.model.DataFilter;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.eventlogger.webhooks.WebhookMessage;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
@@ -56,7 +57,7 @@ public class MemoryDataManager implements IDataManager {
     }
 
     @Override
-    public void addEventMessage(List<DEvent> eventList) {
+    public void addEvents(List<DEvent> eventList) {
         if (eventMessages.size() > 1000) {
             for (int i = 0; i < eventList.size(); i++) {
                 eventMessages.remove(0);
@@ -67,9 +68,16 @@ public class MemoryDataManager implements IDataManager {
     }
 
     @Override
-    public List<DEvent> getEventMessages() {
-        logger.info("MemoryDataManager: " + getClientName() + " get event message list");
+    public List<DEvent> getEvents(DataFilter filter) {
+        logger.info("MemoryDataManager: " + getClientName() + " get events list");
+        // TODO
         return eventMessages;
+    }
+
+    @Override
+    public List<String> getAvailableHosts() {
+        // TODO
+        return null;
     }
 
     @Override

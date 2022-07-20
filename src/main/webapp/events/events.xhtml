@@ -10,7 +10,7 @@
 
 			<h:form id="msgForm">
 
-				<ui:repeat var="m" value="#{backendBean.eventMessages}">
+				<ui:repeat var="m" value="#{backendBean.events}">
 					<div class="card">
 						<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
 							<p:outputLabel value="#{m.host} - #{m.ident}[#{m.pid}]::  #{m.message}"/>
