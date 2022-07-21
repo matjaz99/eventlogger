@@ -222,7 +222,8 @@ public class MongoDataManager implements IDataManager {
                         .into(new ArrayList<>());
             } else {
                 // TODO
-                docsResultList = collection.find(Filters.eq(filter.getHosts().get(0)))
+                Bson hostsFilter = Filters.eq("host", filter.getHosts().get(0));
+                docsResultList = collection.find(hostsFilter)
                         .sort(Sorts.descending("timestamp"))
                         .limit(1000)
                         .into(new ArrayList<>());
