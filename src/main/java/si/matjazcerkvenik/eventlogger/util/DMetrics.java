@@ -30,15 +30,15 @@ public class DMetrics {
             .labelNames("app", "runtimeId", "version", "os")
             .register();
 
-    public static final Counter eventlogger_webhook_messages_received_total = Counter.build()
-            .name("eventlogger_webhook_messages_received_total")
+    public static final Counter eventlogger_http_requests_total = Counter.build()
+            .name("eventlogger_http_requests_total")
             .help("Total number of received webhook messages.")
             .labelNames("remotehost", "method", "webhook")
             .register();
 
-    public static final Counter eventlogger_webhook_messages_size_total = Counter.build()
-            .name("eventlogger_webhook_messages_size_total")
-            .help("Total size of received webhook messages.")
+    public static final Counter eventlogger_http_requests_size_total = Counter.build()
+            .name("eventlogger_http_requests_size_total")
+            .help("Total size of received http requests; size in header")
             .labelNames("remotehost", "method", "webhook")
             .register();
 

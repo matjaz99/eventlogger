@@ -68,6 +68,7 @@ public class BackendBean {
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
         List<DEvent> list = iDataManager.getEvents(null);
         DataManagerFactory.getInstance().returnClient(iDataManager);
+        if (list == null) return "no data";
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < list.size(); i++) {
             sb.append(list.get(i).getHost()).append(" - ");

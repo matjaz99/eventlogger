@@ -192,7 +192,7 @@ public class MongoDataManager implements IDataManager {
                 list.add(doc);
             }
 
-            collection.insertMany(list, new InsertManyOptions().ordered(false));
+            collection.insertMany(list, new InsertManyOptions().ordered(true));
 
         } catch (Exception e) {
             logger.error(getClientName() + " addEvents: Exception: " + e.getMessage());
