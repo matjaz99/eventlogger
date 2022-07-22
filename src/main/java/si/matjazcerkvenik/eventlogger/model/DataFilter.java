@@ -6,8 +6,8 @@ public class DataFilter {
 
     private String sort;
     private int limit;
-    private List<String> hosts;
-    private List<String> ident;
+    private String[] hosts;
+    private String[] ident;
     private String regex;
     private long fromDate;
     private long toDate;
@@ -29,19 +29,19 @@ public class DataFilter {
         this.limit = limit;
     }
 
-    public List<String> getHosts() {
+    public String[] getHosts() {
         return hosts;
     }
 
-    public void setHosts(List<String> hosts) {
+    public void setHosts(String[] hosts) {
         this.hosts = hosts;
     }
 
-    public List<String> getIdent() {
+    public String[] getIdent() {
         return ident;
     }
 
-    public void setIdent(List<String> ident) {
+    public void setIdent(String[] ident) {
         this.ident = ident;
     }
 

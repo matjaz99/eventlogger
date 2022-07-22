@@ -106,6 +106,7 @@ public class MongoDataManager implements IDataManager {
 
         } catch (Exception e) {
             logger.error(getClientName() + " addWebhookMessage: Exception: " + e.getMessage());
+            DMetrics.eventlogger_db_errors_total.labels(dbName, "webhook", "insert").inc();
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
             DMetrics.eventlogger_db_duration_seconds.labels(dbName, "webhook", "insert").observe(duration);
@@ -164,6 +165,7 @@ public class MongoDataManager implements IDataManager {
 
         } catch (Exception e) {
             logger.error(getClientName() + " getWebhookMessages: Exception: ", e);
+            DMetrics.eventlogger_db_errors_total.labels(dbName, "webhook", "query").inc();
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
             DMetrics.eventlogger_db_duration_seconds.labels(dbName, "events", "query").observe(duration);
@@ -196,6 +198,7 @@ public class MongoDataManager implements IDataManager {
 
         } catch (Exception e) {
             logger.error(getClientName() + " addEvents: Exception: " + e.getMessage());
+            DMetrics.eventlogger_db_errors_total.labels(dbName, "events", "insert").inc();
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
             DMetrics.eventlogger_db_duration_seconds.labels(dbName, "webhook", "insert").observe(duration);
@@ -222,7 +225,12 @@ public class MongoDataManager implements IDataManager {
                         .into(new ArrayList<>());
             } else {
                 // TODO
-                Bson hostsFilter = Filters.eq("host", filter.getHosts().get(0));
+                Bson[] bArray = new Bson[filter.getHosts().length];
+                for (int i = 0; i < filter.getHosts().length; i++) {
+                    Bson b = Filters.eq("host", filter.getHosts()[i]);
+                    bArray[i] = b;
+                }
+                Bson hostsFilter = Filters.or(bArray);
                 docsResultList = collection.find(hostsFilter)
                         .sort(Sorts.descending("timestamp"))
                         .limit(1000)
@@ -235,8 +243,9 @@ public class MongoDataManager implements IDataManager {
             List<DEvent> eventList = new ArrayList<>();
 
             for (Document doc : docsResultList) {
+                logger.trace(getClientName() + " doc=" + doc.toJson());
                 DEvent event = new DEvent();
-                event.setTimestamp(((Number) doc.get("timestamp")).longValue());
+                event.setTimestamp(((Number) doc.get("timestamp", 0)).longValue());
                 event.setHost(doc.getString("host"));
                 event.setIdent(doc.getString("ident"));
                 event.setPid(doc.getString("pid"));
@@ -248,6 +257,8 @@ public class MongoDataManager implements IDataManager {
 
         } catch (Exception e) {
             logger.error(getClientName() + " getEvents: Exception: " + e.getMessage());
+            e.printStackTrace();
+            DMetrics.eventlogger_db_errors_total.labels(dbName, "events", "query").inc();
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
             DMetrics.eventlogger_db_duration_seconds.labels(dbName, "events", "query").observe(duration);
@@ -271,17 +282,16 @@ public class MongoDataManager implements IDataManager {
 
             MongoCursor<String> results = docs.iterator();
             while(results.hasNext()) {
-                String s = results.next();
-                logger.info(getClientName() + " getAvailableHosts: found host=" + s);
-                hostsList.add(s);
+                hostsList.add(results.next());
             }
 
-            logger.info(getClientName() + " getAvailableHosts: docsResultList size=" + hostsList.size());
+            logger.info(getClientName() + " getAvailableHosts: size=" + hostsList.size());
 
             return hostsList;
 
         } catch (Exception e) {
             logger.error(getClientName() + " getAvailableHosts: Exception: " + e.getMessage());
+            DMetrics.eventlogger_db_errors_total.labels(dbName, "events", "query").inc();
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
             DMetrics.eventlogger_db_duration_seconds.labels(dbName, "events", "query").observe(duration);
@@ -293,6 +303,7 @@ public class MongoDataManager implements IDataManager {
     public void cleanDB() {
 
         logger.info(getClientName() + " cleanDB: started");
+        long before = System.currentTimeMillis();
 
         try {
 
@@ -311,6 +322,10 @@ public class MongoDataManager implements IDataManager {
 
         } catch (Exception e) {
             logger.error( getClientName() + " cleanDB: Exception: " + e.getMessage());
+            DMetrics.eventlogger_db_errors_total.labels(dbName, "webhook/events", "delete").inc();
+        } finally {
+            double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
+            DMetrics.eventlogger_db_duration_seconds.labels(dbName, "events", "delete").observe(duration);
         }
 
     }

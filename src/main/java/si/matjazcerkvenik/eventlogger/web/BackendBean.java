@@ -20,6 +20,7 @@ import org.primefaces.event.UnselectEvent;
 import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
+import si.matjazcerkvenik.eventlogger.model.DataFilter;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.eventlogger.webhooks.WebhookMessage;
@@ -58,24 +59,59 @@ public class BackendBean {
     }
 
     public List<DEvent> getEvents() {
+
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-        List<DEvent> list = iDataManager.getEvents(null);
-        DataManagerFactory.getInstance().returnClient(iDataManager);
+        List<DEvent> list = null;
+
+        try {
+            if (selectedHosts == null || selectedHosts.length == 0) {
+                // no filter
+                LogFactory.getLogger().info("BackendBean: getEvents: no filter");
+                list = iDataManager.getEvents(null);
+            } else {
+                DataFilter filter = new DataFilter();
+                filter.setHosts(selectedHosts);
+                LogFactory.getLogger().info("BackendBean: getEvents: apply filter " + filter.toString());
+                list = iDataManager.getEvents(filter);
+            }
+        } finally {
+            DataManagerFactory.getInstance().returnClient(iDataManager);
+        }
         return list;
     }
 
     public String getConcatenatedEvents() {
+
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-        List<DEvent> list = iDataManager.getEvents(null);
-        DataManagerFactory.getInstance().returnClient(iDataManager);
-        if (list == null) return "no data";
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < list.size(); i++) {
-            sb.append(list.get(i).getHost()).append(" - ");
-            sb.append(list.get(i).getIdent()).append("[").append(list.get(i).getPid()).append("] - ");
-            sb.append(list.get(i).getMessage()).append("\n");
+        List<DEvent> list = null;
+
+        try {
+
+            if (selectedHosts == null || selectedHosts.length == 0) {
+                // no filter
+                LogFactory.getLogger().info("BackendBean: getConcatenatedEvents: no filter");
+                list = iDataManager.getEvents(null);
+            } else {
+                DataFilter filter = new DataFilter();
+                filter.setHosts(selectedHosts);
+                LogFactory.getLogger().info("BackendBean: getConcatenatedEvents: apply filter " + filter.toString());
+                list = iDataManager.getEvents(filter);
+            }
+
+            if (list == null) return "no data";
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < list.size(); i++) {
+                sb.append(list.get(i).getHost()).append(" - ");
+                sb.append(list.get(i).getIdent()).append("[").append(list.get(i).getPid()).append("] - ");
+                sb.append(list.get(i).getMessage()).append("\n");
+            }
+            return sb.toString();
+
+        } finally {
+            DataManagerFactory.getInstance().returnClient(iDataManager);
         }
-        return sb.toString();
+
     }
 
     private String[] selectedHosts;
@@ -98,7 +134,11 @@ public class BackendBean {
     }
 
     public String[] getSelectedHosts() {
-        LogFactory.getLogger().info("getSelectedHosts: " + selectedHosts);
+        if (selectedHosts != null && selectedHosts.length > 0) {
+            for (int i = 0; i < selectedHosts.length; i++) {
+                LogFactory.getLogger().info("getSelectedHosts[" + i + "]: " + selectedHosts[i]);
+            }
+        }
         return selectedHosts;
     }
 

@@ -55,4 +55,10 @@ public class DMetrics {
             .help("DB response time")
             .register();
 
+    public static final Counter eventlogger_db_errors_total = Counter.build()
+            .name("eventlogger_db_errors_total")
+            .help("Total number of errors (exceptions) of DB operations.")
+            .labelNames("database", "table", "action")
+            .register();
+
 }

@@ -54,7 +54,6 @@ public class WebhookServlet extends HttpServlet {
 		// process body
 		String body = m.getBody().replace("}{", "}\n{");
 		String[] msgArray = body.split("\n");
-		LogFactory.getLogger().info("WebhookServlet: found messages: " + msgArray.length);
 
 		GsonBuilder builder = new GsonBuilder();
 		Gson gson = builder.create();
