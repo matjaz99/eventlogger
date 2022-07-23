@@ -75,7 +75,7 @@ public class MemoryDataManager implements IDataManager {
     }
 
     @Override
-    public List<String> getAvailableHosts() {
+    public List<String> getDistinctKeys(String key) {
         // TODO
         return null;
     }

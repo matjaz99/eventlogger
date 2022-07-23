@@ -16,7 +16,6 @@
 package si.matjazcerkvenik.eventlogger.db;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.*;
@@ -36,6 +35,7 @@ import si.matjazcerkvenik.eventlogger.webhooks.WebhookMessage;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -224,14 +224,8 @@ public class MongoDataManager implements IDataManager {
                         .limit(1000)
                         .into(new ArrayList<>());
             } else {
-                // TODO
-                Bson[] bArray = new Bson[filter.getHosts().length];
-                for (int i = 0; i < filter.getHosts().length; i++) {
-                    Bson b = Filters.eq("host", filter.getHosts()[i]);
-                    bArray[i] = b;
-                }
-                Bson hostsFilter = Filters.or(bArray);
-                docsResultList = collection.find(hostsFilter)
+                Bson bsonFilter = prepareBsonFilter(filter);
+                docsResultList = collection.find(bsonFilter)
                         .sort(Sorts.descending("timestamp"))
                         .limit(1000)
                         .into(new ArrayList<>());
@@ -266,9 +260,41 @@ public class MongoDataManager implements IDataManager {
         return null;
     }
 
+    public Bson prepareBsonFilter(DataFilter filter) {
+        Bson bsonFilter = null;
+        List<Bson> tempList = new ArrayList<>();
+        if (filter.getHosts() != null) {
+            Bson[] bArray = new Bson[filter.getHosts().length];
+            for (int i = 0; i < filter.getHosts().length; i++) {
+                Bson b = Filters.eq("host", filter.getHosts()[i]);
+                bArray[i] = b;
+            }
+            Bson hostsFilter = Filters.or(bArray);
+            tempList.add(hostsFilter);
+        }
+        if (filter.getIdents() != null) {
+            Bson[] bArray = new Bson[filter.getIdents().length];
+            for (int i = 0; i < filter.getIdents().length; i++) {
+                Bson b = Filters.eq("ident", filter.getIdents()[i]);
+                bArray[i] = b;
+            }
+            Bson identsFilter = Filters.or(bArray);
+            tempList.add(identsFilter);
+        }
+
+        if (!tempList.isEmpty()) {
+
+        }
+        Bson[] barr = new Bson[tempList.size()];
+        tempList.toArray(barr);
+
+        bsonFilter = Filters.and(barr);
+        return bsonFilter;
+    }
+
     @Override
-    public List<String> getAvailableHosts() {
-        logger.info(getClientName() + " getAvailableHosts");
+    public List<String> getDistinctKeys(String key) {
+        logger.info(getClientName() + " getDistinctKeys");
 
         long before = System.currentTimeMillis();
 
@@ -276,21 +302,21 @@ public class MongoDataManager implements IDataManager {
             MongoDatabase db = mongoClient.getDatabase(dbName);
             MongoCollection<Document> collection = db.getCollection("events");
 
-            DistinctIterable<String> docs = collection.distinct("host", String.class);
+            DistinctIterable<String> docs = collection.distinct(key, String.class);
 
-            List<String> hostsList = new ArrayList<>();
+            List<String> resultList = new ArrayList<>();
 
             MongoCursor<String> results = docs.iterator();
             while(results.hasNext()) {
-                hostsList.add(results.next());
+                resultList.add(results.next());
             }
 
-            logger.info(getClientName() + " getAvailableHosts: size=" + hostsList.size());
+            logger.info(getClientName() + " getDistinctKeys: size=" + resultList.size());
 
-            return hostsList;
+            return resultList;
 
         } catch (Exception e) {
-            logger.error(getClientName() + " getAvailableHosts: Exception: " + e.getMessage());
+            logger.error(getClientName() + " getDistinctKeys: Exception: " + e.getMessage());
             DMetrics.eventlogger_db_errors_total.labels(dbName, "events", "query").inc();
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;

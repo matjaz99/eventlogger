@@ -16,7 +16,6 @@
 package si.matjazcerkvenik.eventlogger.web;
 
 
-import org.primefaces.event.UnselectEvent;
 import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
@@ -26,12 +25,9 @@ import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.eventlogger.webhooks.WebhookMessage;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 @ManagedBean
@@ -94,6 +90,7 @@ public class BackendBean {
             } else {
                 DataFilter filter = new DataFilter();
                 filter.setHosts(selectedHosts);
+                filter.setIdents(selectedIdents);
                 LogFactory.getLogger().info("BackendBean: getConcatenatedEvents: apply filter " + filter.toString());
                 list = iDataManager.getEvents(filter);
             }
@@ -116,21 +113,12 @@ public class BackendBean {
 
     private String[] selectedHosts;
     private List<String> availableHosts;
+    private String[] selectedIdents;
+    private List<String> availableIdents;
 
     @PostConstruct
     public void init() {
-        LogFactory.getLogger().info("PostConstruct init");
-//        availableHosts = new ArrayList<>();
-//        availableHosts.add("Miami");
-//        availableHosts.add("London");
-//        availableHosts.add("Paris");
-//        availableHosts.add("Istanbul");
-//        availableHosts.add("Berlin");
-//        availableHosts.add("Barcelona");
-//        availableHosts.add("Rome");
-//        availableHosts.add("Brasilia");
-//        availableHosts.add("Amsterdam");
-
+        LogFactory.getLogger().info("BackendBean: PostConstruct init");
     }
 
     public String[] getSelectedHosts() {
@@ -148,7 +136,7 @@ public class BackendBean {
 
     public List<String> getAvailableHosts() {
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-        availableHosts = iDataManager.getAvailableHosts();
+        availableHosts = iDataManager.getDistinctKeys("host");
         DataManagerFactory.getInstance().returnClient(iDataManager);
         return availableHosts;
     }
@@ -157,8 +145,36 @@ public class BackendBean {
         this.availableHosts = availableHosts;
     }
 
+    public String[] getSelectedIdents() {
+        if (selectedIdents != null && selectedIdents.length > 0) {
+            for (int i = 0; i < selectedIdents.length; i++) {
+                LogFactory.getLogger().info("getSelectedIdents[" + i + "]: " + selectedIdents[i]);
+            }
+        }
+        return selectedIdents;
+    }
+
+    public void setSelectedIdents(String[] selectedIdents) {
+        this.selectedIdents = selectedIdents;
+    }
+
+    public List<String> getAvailableIdents() {
+        IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
+        availableIdents = iDataManager.getDistinctKeys("ident");
+        DataManagerFactory.getInstance().returnClient(iDataManager);
+        return availableIdents;
+    }
+
+    public void setAvailableIdents(List<String> availableIdents) {
+        this.availableIdents = availableIdents;
+    }
+
     public void selectedHostsChangeEvent(ValueChangeEvent event) {
         LogFactory.getLogger().info("selectedHostsChangeEvent: " + event.getNewValue().toString());
+    }
+
+    public void selectedIdentsChangeEvent(ValueChangeEvent event) {
+        LogFactory.getLogger().info("selectedIdentsChangeEvent: " + event.getNewValue().toString());
     }
 
 }

@@ -32,7 +32,7 @@ public interface IDataManager {
 
     public List<DEvent> getEvents(DataFilter filter);
 
-    public List<String> getAvailableHosts();
+    public List<String> getDistinctKeys(String key);
 
     public void cleanDB();
 

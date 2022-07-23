@@ -1,13 +1,11 @@
 package si.matjazcerkvenik.eventlogger.model;
 
-import java.util.List;
-
 public class DataFilter {
 
     private String sort;
     private int limit;
     private String[] hosts;
-    private String[] ident;
+    private String[] idents;
     private String regex;
     private long fromDate;
     private long toDate;
@@ -37,12 +35,12 @@ public class DataFilter {
         this.hosts = hosts;
     }
 
-    public String[] getIdent() {
-        return ident;
+    public String[] getIdents() {
+        return idents;
     }
 
-    public void setIdent(String[] ident) {
-        this.ident = ident;
+    public void setIdents(String[] idents) {
+        this.idents = idents;
     }
 
     public String getRegex() {
@@ -75,7 +73,7 @@ public class DataFilter {
                 "sort='" + sort + '\'' +
                 ", limit=" + limit +
                 ", hosts=" + hosts +
-                ", ident=" + ident +
+                ", ident=" + idents +
                 ", regex='" + regex + '\'' +
                 ", fromDate=" + fromDate +
                 ", toDate=" + toDate +

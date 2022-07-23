@@ -28,7 +28,21 @@
 						<f:selectItems value="#{backendBean.availableHosts}"/>
 					</p:selectCheckboxMenu>
 
+					<p:outputLabel value="Ident: " class="boldtext"/>
+					<p:selectCheckboxMenu id="multipleIdents"
+										  value="#{backendBean.selectedIdents}"
+										  valueChangeListener="#{backendBean.selectedIdentsChangeEvent}"
+										  label="Idents"
+										  style="min-width: 15rem"
+										  multiple="true"
+										  filter="true"
+										  filterMatchMode="startsWith"
+										  panelStyle="width: 30rem"
+										  scrollHeight="250">
 
+						<p:ajax update="msgForm"/>
+						<f:selectItems value="#{backendBean.availableIdents}"/>
+					</p:selectCheckboxMenu>
 
 				</p:panelGrid>
 
