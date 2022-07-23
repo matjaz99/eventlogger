@@ -83,7 +83,8 @@ public class BackendBean {
 
         try {
 
-            if (selectedHosts == null || selectedHosts.length == 0) {
+            if ((selectedHosts == null || selectedHosts.length == 0)
+                    && (selectedIdents == null || selectedIdents.length == 0)) {
                 // no filter
                 LogFactory.getLogger().info("BackendBean: getConcatenatedEvents: no filter");
                 list = iDataManager.getEvents(null);

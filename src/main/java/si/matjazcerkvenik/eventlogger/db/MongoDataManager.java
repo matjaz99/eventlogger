@@ -231,7 +231,6 @@ public class MongoDataManager implements IDataManager {
                         .into(new ArrayList<>());
             }
 
-
             logger.info(getClientName() + " docsResultList size=" + docsResultList.size());
 
             List<DEvent> eventList = new ArrayList<>();
@@ -263,7 +262,7 @@ public class MongoDataManager implements IDataManager {
     public Bson prepareBsonFilter(DataFilter filter) {
         Bson bsonFilter = null;
         List<Bson> tempList = new ArrayList<>();
-        if (filter.getHosts() != null) {
+        if (filter.getHosts() != null && filter.getHosts().length > 0) {
             Bson[] bArray = new Bson[filter.getHosts().length];
             for (int i = 0; i < filter.getHosts().length; i++) {
                 Bson b = Filters.eq("host", filter.getHosts()[i]);
@@ -272,7 +271,7 @@ public class MongoDataManager implements IDataManager {
             Bson hostsFilter = Filters.or(bArray);
             tempList.add(hostsFilter);
         }
-        if (filter.getIdents() != null) {
+        if (filter.getIdents() != null && filter.getIdents().length > 0) {
             Bson[] bArray = new Bson[filter.getIdents().length];
             for (int i = 0; i < filter.getIdents().length; i++) {
                 Bson b = Filters.eq("ident", filter.getIdents()[i]);
@@ -311,7 +310,7 @@ public class MongoDataManager implements IDataManager {
                 resultList.add(results.next());
             }
 
-            logger.info(getClientName() + " getDistinctKeys: size=" + resultList.size());
+            logger.info(getClientName() + " getDistinctKeys: for= " + key + ", size=" + resultList.size());
 
             return resultList;
 
