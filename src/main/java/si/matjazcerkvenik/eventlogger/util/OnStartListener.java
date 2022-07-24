@@ -64,8 +64,6 @@ public class OnStartListener implements ServletContextListener {
         DProps.RUNTIME_ID = UUID.randomUUID().toString();
         LogFactory.getLogger().info("RUNTIME_ID=" + DProps.RUNTIME_ID);
 
-        // Don't call DAO before reading env vars!!!
-
         // read all environment variables
         LogFactory.getLogger().info("***** Environment variables *****");
         Map<String, String> map = System.getenv();

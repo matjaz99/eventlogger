@@ -3,7 +3,7 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": "Prometheus",
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -22,6 +22,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 48,
+  "iteration": 1658668344796,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -60,8 +61,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 6,
+        "h": 3,
+        "w": 5,
         "x": 0,
         "y": 0
       },
@@ -91,7 +92,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": false,
-          "expr": "eventlogger_build_info",
+          "expr": "eventlogger_build_info{instance=\"$node\"}",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -101,6 +102,84 @@
         }
       ],
       "title": "Up time",
+      "type": "stat"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 5,
+        "y": 0
+      },
+      "id": 22,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "name"
+      },
+      "pluginVersion": "8.4.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": false,
+          "expr": "eventlogger_build_info{instance=\"$node\"}",
+          "format": "time_series",
+          "instant": true,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{version}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Eventlogger version",
       "type": "stat"
     },
     {
@@ -127,9 +206,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 6,
+        "h": 3,
+        "w": 4,
+        "x": 8,
         "y": 0
       },
       "id": 14,
@@ -155,7 +234,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": false,
-          "expr": "sum(eventlogger_events_total)",
+          "expr": "sum(eventlogger_events_total{instance=\"$node\"})",
           "instant": true,
           "interval": "",
           "legendFormat": "{{action}}",
@@ -164,6 +243,177 @@
       ],
       "title": "Total events",
       "type": "stat"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 15,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": true,
+          "expr": "sum(irate(eventlogger_events_total{instance=\"$node\"}[1m])) by (host) * 15",
+          "interval": "",
+          "legendFormat": "{{host}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Received events from hosts",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 0,
+        "y": 3
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": true,
+          "expr": "irate(eventlogger_http_requests_total{instance=\"$node\"}[1m]) * 15",
+          "interval": "",
+          "legendFormat": "{{remotehost}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Received requests from hosts",
+      "type": "timeseries"
     },
     {
       "fieldConfig": {
@@ -218,10 +468,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "h": 4,
         "w": 12,
-        "x": 12,
-        "y": 0
+        "x": 0,
+        "y": 7
       },
       "id": 4,
       "options": {
@@ -242,183 +492,13 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "irate(eventlogger_webhook_messages_size_total[5m]) * 15",
+          "expr": "irate(eventlogger_http_requests_size_total{instance=\"$node\"}[5m]) * 15",
           "interval": "",
           "legendFormat": "{{remotehost}}",
           "refId": "A"
         }
       ],
-      "title": "Received message size",
-      "type": "timeseries"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 12,
-        "x": 0,
-        "y": 5
-      },
-      "id": 2,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "exemplar": true,
-          "expr": "irate(eventlogger_webhook_messages_received_total[1m]) * 15",
-          "interval": "",
-          "legendFormat": "{{remotehost}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Received messages from hosts",
-      "type": "timeseries"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 12,
-        "x": 12,
-        "y": 5
-      },
-      "id": 15,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "exemplar": true,
-          "expr": "sum(irate(eventlogger_events_total[1m])) by (host) * 15",
-          "interval": "",
-          "legendFormat": "{{host}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Received events from hosts",
+      "title": "Received request size",
       "type": "timeseries"
     },
     {
@@ -470,13 +550,59 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "delete"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "insert"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "query"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 10
+        "h": 5,
+        "w": 8,
+        "x": 12,
+        "y": 9
       },
       "id": 12,
       "options": {
@@ -497,7 +623,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "irate(eventlogger_db_duration_seconds_count[5m]) * 15",
+          "expr": "irate(eventlogger_db_duration_seconds_count{instance=\"$node\"}[5m]) * 15",
           "interval": "",
           "legendFormat": "{{action}}",
           "refId": "A"
@@ -554,23 +680,185 @@
               }
             ]
           },
-          "unit": "s"
+          "unit": "none"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "sum(irate(eventlogger_db_errors_total[5m])) * 15"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Errors"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 5,
+        "w": 4,
+        "x": 20,
+        "y": 9
+      },
+      "id": 20,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "exemplar": true,
+          "expr": "sum(irate(eventlogger_db_errors_total{instance=\"$node\"}[5m])) * 15",
+          "interval": "",
+          "legendFormat": "Errors",
+          "refId": "A"
+        }
+      ],
+      "title": "DB errors",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "delete"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "insert"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "query"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 11,
         "w": 12,
         "x": 0,
-        "y": 18
+        "y": 11
       },
       "id": 6,
       "options": {
         "legend": {
           "calcs": [
             "mean",
-            "max",
-            "diff"
+            "max"
           ],
           "displayMode": "table",
           "placement": "right"
@@ -587,7 +875,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "rate(eventlogger_db_duration_seconds_sum[1m]) / rate(eventlogger_db_duration_seconds_count[1m])",
+          "expr": "rate(eventlogger_db_duration_seconds_sum{instance=\"$node\"}[5m]) / rate(eventlogger_db_duration_seconds_count{instance=\"$node\"}[5m])",
           "interval": "",
           "legendFormat": "{{action}}",
           "refId": "A"
@@ -646,13 +934,59 @@
           },
           "unit": "percentunit"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "query"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "insert"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "delete"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "semi-dark-purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 18
+        "y": 14
       },
       "id": 8,
       "options": {
@@ -673,7 +1007,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "sum(rate(eventlogger_db_duration_seconds_bucket{le=\"0.1\"}[5m])) by (action) / sum(rate(eventlogger_db_duration_seconds_count[5m])) by (action)",
+          "expr": "sum(rate(eventlogger_db_duration_seconds_bucket{instance=\"$node\", le=\"0.1\"}[5m])) by (action) / sum(rate(eventlogger_db_duration_seconds_count{instance=\"$node\"}[5m])) by (action)",
           "interval": "",
           "legendFormat": "{{action}}",
           "refId": "A"
@@ -738,7 +1072,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 22
       },
       "id": 10,
       "options": {
@@ -763,7 +1097,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "histogram_quantile(0.5, sum(rate(eventlogger_db_duration_seconds_bucket[1m])) by (le))",
+          "expr": "histogram_quantile(0.5, sum(rate(eventlogger_db_duration_seconds_bucket{instance=\"$node\"}[5m])) by (le))",
           "interval": "",
           "legendFormat": "50%",
           "refId": "A"
@@ -774,7 +1108,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "histogram_quantile(0.75, sum(rate(eventlogger_db_duration_seconds_bucket[1m])) by (le))",
+          "expr": "histogram_quantile(0.75, sum(rate(eventlogger_db_duration_seconds_bucket{instance=\"$node\"}[5m])) by (le))",
           "hide": false,
           "interval": "",
           "legendFormat": "75%",
@@ -786,7 +1120,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "exemplar": true,
-          "expr": "histogram_quantile(0.90, sum(rate(eventlogger_db_duration_seconds_bucket[1m])) by (le))",
+          "expr": "histogram_quantile(0.90, sum(rate(eventlogger_db_duration_seconds_bucket{instance=\"$node\"}[5m])) by (le))",
           "hide": false,
           "interval": "",
           "legendFormat": "90%",
@@ -802,7 +1136,31 @@
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "192.168.0.16:8080",
+          "value": "192.168.0.16:8080"
+        },
+        "definition": "label_values(eventlogger_build_info{app=\"EventLogger\"} , instance)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Node",
+        "multi": false,
+        "name": "node",
+        "options": [],
+        "query": {
+          "query": "label_values(eventlogger_build_info{app=\"EventLogger\"} , instance)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
   },
   "time": {
     "from": "now-1h",
@@ -812,6 +1170,6 @@
   "timezone": "",
   "title": "eventlogger v1.0",
   "uid": "XsQWX-e7k",
-  "version": 18,
+  "version": 40,
   "weekStart": ""
 }

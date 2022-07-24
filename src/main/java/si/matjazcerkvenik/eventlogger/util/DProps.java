@@ -20,6 +20,7 @@ public class DProps {
 
     // internal counters
     public static long webhookMessagesReceivedCount = 0;
+    public static long webhookEventsReceivedCount = 0;
 
     public static String RUNTIME_ID = "0000-0000-0000-0000";
     public static long START_UP_TIMESTAMP = 0;

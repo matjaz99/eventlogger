@@ -1,0 +1,40 @@
+version: '3.6'
+
+networks:
+  net:
+    driver: overlay
+    attachable: true
+
+configs:
+  fluentd_config:
+    file: ./fluentd.conf
+
+services:
+  fluentd:
+    #image: fluent/fluentd:v1.9-1
+    image: fluent/fluentd:v1.14-1
+    command:
+      - '--log-rotate-age'
+      - '10'
+      - '--log-rotate-size'
+      - '104857600'
+    networks:
+      - net
+    ports:
+      # http plugin endpoint port
+      - 9880:9880
+      # forward plugin endpoint port
+      - 24224:24224
+      - 24224:24224/udp
+      # syslog plugin
+      - 10514:10514/tcp
+      - 10514:10514/udp
+    environment:
+      - FLUENTD_CONF=fluentd.conf
+    user: root
+    configs:
+      - source: fluentd_config
+        target: /fluentd/etc/fluentd.conf
+    volumes:
+      - /var/log:/fluentd/var/log
+      - /var/lib/docker/containers:/fluentd/log/docker/containers

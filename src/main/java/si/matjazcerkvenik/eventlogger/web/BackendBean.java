@@ -46,6 +46,9 @@ public class BackendBean {
     public String getRuntimeId() {
         return DProps.RUNTIME_ID;
     }
+    public long getEventsCount() {
+        return DProps.webhookEventsReceivedCount;
+    }
 
     public List<WebhookMessage> getWebhookMessages() {
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();

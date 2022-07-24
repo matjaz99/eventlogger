@@ -310,7 +310,7 @@ public class MongoDataManager implements IDataManager {
                 resultList.add(results.next());
             }
 
-            logger.info(getClientName() + " getDistinctKeys: for= " + key + ", size=" + resultList.size());
+            logger.info(getClientName() + " getDistinctKeys: for=" + key + ", size=" + resultList.size());
 
             return resultList;
 

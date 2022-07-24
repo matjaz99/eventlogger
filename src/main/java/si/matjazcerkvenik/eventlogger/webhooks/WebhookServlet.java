@@ -49,6 +49,7 @@ public class WebhookServlet extends HttpServlet {
 		IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
 		iDataManager.addWebhookMessage(m);
 		DProps.webhookMessagesReceivedCount++;
+		DMetrics.eventlogger_http_requests_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc();
 		DMetrics.eventlogger_http_requests_size_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc(m.getContentLength());
 
 		// process body
@@ -63,10 +64,9 @@ public class WebhookServlet extends HttpServlet {
 			e.setTimestamp(System.currentTimeMillis());
 			eventList.add(e);
 			LogFactory.getLogger().trace(e.toString());
-			DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc(eventList.size());
+			DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
+			DProps.webhookEventsReceivedCount++;
 		}
-
-		DMetrics.eventlogger_http_requests_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc();
 
 		iDataManager.addEvents(eventList);
 		DataManagerFactory.getInstance().returnClient(iDataManager);
