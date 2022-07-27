@@ -26,8 +26,8 @@ RUN mkdir -p /opt/eventlogger/log
 COPY LICENSE /opt/eventlogger
 COPY README.md /opt/eventlogger
 
-HEALTHCHECK --interval=5m --timeout=3s \
-  CMD curl -f http://localhost:8080/eventlogger || exit 1
+#HEALTHCHECK --interval=5m --timeout=3s \
+#  CMD curl -f http://localhost:8080/eventlogger || exit 1
 
 EXPOSE 8080
 

@@ -250,7 +250,6 @@ public class MongoDataManager implements IDataManager {
 
         } catch (Exception e) {
             logger.error(getClientName() + " getEvents: Exception: " + e.getMessage());
-            e.printStackTrace();
             DMetrics.eventlogger_db_errors_total.labels(dbName, "events", "query").inc();
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
