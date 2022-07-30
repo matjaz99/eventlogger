@@ -46,10 +46,12 @@ public class MongoDataManager implements IDataManager {
     public static String dbName = "eventlogger";
     private MongoClient mongoClient;
     private int clientId = 0;
+    private String clientName;
 
     public MongoDataManager(int id) {
 
         clientId = id;
+        clientName = "Mongo[" + clientId + "]";
 
         int timeoutSeconds = 5;
 
@@ -69,7 +71,7 @@ public class MongoDataManager implements IDataManager {
 
     @Override
     public String getClientName() {
-        return "Mongo[" + clientId + "]";
+        return clientName;
     }
 
     @Override
@@ -208,7 +210,7 @@ public class MongoDataManager implements IDataManager {
     @Override
     public List<DEvent> getEvents(DataFilter filter) {
 
-        logger.info(getClientName() + " getEvents: " + filter);
+        logger.info(getClientName() + " getEvents: filter=" + filter);
 
         long before = System.currentTimeMillis();
 

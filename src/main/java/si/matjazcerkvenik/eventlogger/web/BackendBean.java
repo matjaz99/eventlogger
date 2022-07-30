@@ -34,22 +34,6 @@ import java.util.List;
 @SessionScoped
 public class BackendBean {
 
-    /* FOOTER */
-
-    public String getVersion() {
-        return DProps.VERSION;
-    }
-    public boolean isContainerized() { return DProps.IS_CONTAINERIZED; }
-    public String getLocalIpAddress() {
-        return DProps.LOCAL_IP;
-    }
-    public String getRuntimeId() {
-        return DProps.RUNTIME_ID;
-    }
-    public long getEventsCount() {
-        return DProps.webhookEventsReceivedCount;
-    }
-
     public List<WebhookMessage> getWebhookMessages() {
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
         List<WebhookMessage> list = iDataManager.getWebhookMessages();

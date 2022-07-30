@@ -29,6 +29,8 @@
     <servlet-mapping>
         <servlet-name>Webhook Servlet</servlet-name>
         <url-pattern>/webhook/*</url-pattern>
+<!--        <url-pattern>/webhook/fluentd-syslog/*</url-pattern>-->
+<!--        <url-pattern>/webhook/fluentd-plaintext/*</url-pattern>-->
     </servlet-mapping>
 
     <!-- Define the servlet for metrics -->

@@ -1,3 +1,22 @@
+/* General styling */
+body {
+	/*font-family: Verdana, Arial, Helvetica, sans-serif;*/
+	/*font-size: 10px;*/
+	/*color: #222222;*/
+	padding: 0px;
+  	margin: 0px;
+}
+hr {
+    border: 0;
+    height: 1px;
+    background: #777777;
+}
+.boldtext {
+    font-weight: bold;
+    font-size: 10px;
+}
+
+/* card */
 .card {
     background: #F0F0F0;
     padding: 0.5rem;
@@ -8,7 +27,6 @@
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-size: 9px;
 }
-
 
 /* footer */
 .ui-notificationbar {

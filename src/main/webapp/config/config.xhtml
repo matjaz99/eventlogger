@@ -11,9 +11,6 @@
 			<p:outputLabel value="Configuration" style="font-weight: bold; font-size: 24px;"/>
 			<p:outputLabel class="plaintext" value="(click on parameter to edit)" />
 
-			<br/>
-			<br/>
-
 			<h:form id="configForm">
 
 				<p:panelGrid columns="2">
@@ -23,11 +20,35 @@
 						<p:inputText value="#{configBean.dataRetention}" required="true" label="text"/>
 					</p:inplace>
 
-
-
 				</p:panelGrid>
 
 			</h:form>
+
+			<br/>
+
+			<p:outputLabel value="Runtime configuration" style="font-weight: bold; font-size: 24px;"/>
+			<p:outputLabel class="plaintext" value="(not editable; restart required)" />
+
+			<p:panelGrid columns="2">
+
+				<p:outputLabel value="Runtime ID: " class="boldtext"/>
+				<p:outputLabel value="#{configBean.runtimeId}"/>
+				<p:outputLabel value="Start timestamp: " class="boldtext"/>
+				<p:outputLabel value="#{configBean.startUpTimestamp}"/>
+				<p:outputLabel value="Version: " class="boldtext"/>
+				<p:outputLabel value="#{configBean.version}"/>
+				<p:outputLabel value="Containerized: " class="boldtext"/>
+				<p:outputLabel value="#{configBean.containerized}"/>
+				<p:outputLabel value="Local address: " class="boldtext"/>
+				<p:outputLabel value="#{configBean.localIp}"/>
+				<p:outputLabel value="Storage type: " class="boldtext"/>
+				<p:outputLabel value="#{configBean.storageType}"/>
+				<p:outputLabel value="Connection string: " class="boldtext"/>
+				<p:outputLabel value="#{configBean.mongoConnectionString}"/>
+				<p:outputLabel value="DB pool size: " class="boldtext"/>
+				<p:outputLabel value="#{configBean.dbPoolSize}"/>
+
+			</p:panelGrid>
 
 		</ui:define>
 	</div>

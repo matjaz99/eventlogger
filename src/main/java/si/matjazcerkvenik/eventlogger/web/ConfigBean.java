@@ -23,4 +23,42 @@ public class ConfigBean {
         }
     }
 
+    public long getEventsCount() {
+        return DProps.webhookEventsReceivedCount;
+    }
+
+    public String getRuntimeId() {
+        return DProps.RUNTIME_ID;
+    }
+
+    public long getStartUpTimestamp() {
+        return DProps.START_UP_TIMESTAMP;
+    }
+
+    public String getVersion() {
+        return DProps.VERSION;
+    }
+
+    public boolean isContainerized() {
+        return DProps.IS_CONTAINERIZED;
+    }
+
+    public String getLocalIp() {
+        return DProps.LOCAL_IP;
+    }
+
+    public String getStorageType() {
+        return DProps.EVENTLOGGER_STORAGE_TYPE;
+    }
+
+    public String getMongoConnectionString() {
+        if (DProps.EVENTLOGGER_STORAGE_TYPE.equalsIgnoreCase("mongodb"))
+            return DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING;
+        return "-";
+    }
+
+    public int getDbPoolSize() {
+        return DProps.EVENTLOGGER_DB_POOL_SIZE;
+    }
+
 }

@@ -15,36 +15,41 @@
  */
 package si.matjazcerkvenik.eventlogger.db;
 
+import com.mongodb.client.model.Sorts;
+import org.bson.conversions.Bson;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DataFilter;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.eventlogger.webhooks.WebhookMessage;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MemoryDataManager implements IDataManager {
 
     private static SimpleLogger logger = LogFactory.getLogger();
 
     private int clientId = 0;
+    private String clientName;
 
     public static List<WebhookMessage> webhookMessages = new LinkedList<>();
     public static List<DEvent> eventMessages = new LinkedList<>();
 
     public MemoryDataManager(int id) {
         clientId = id;
-        logger.info("MemoryDataManager: " + getClientName() + " initialized");
+        clientName = "Memory[" + clientId + "]";
+        logger.info(getClientName() + " initialized");
     }
 
     @Override
     public String getClientName() {
-        return "Memory[" + clientId + "]";
+        return clientName;
     }
 
     @Override
     public void addWebhookMessage(WebhookMessage webhookMessage) {
+        logger.info(getClientName() + " addWebhookMessage");
         webhookMessages.add(webhookMessage);
         if (webhookMessages.size() > 100) {
             webhookMessages.remove(0);
@@ -58,25 +63,58 @@ public class MemoryDataManager implements IDataManager {
 
     @Override
     public void addEvents(List<DEvent> eventList) {
+        logger.info(getClientName() + " addEvents: size=" + eventList.size());
         if (eventMessages.size() > 1000) {
             for (int i = 0; i < eventList.size(); i++) {
                 eventMessages.remove(0);
             }
         }
         eventMessages.addAll(eventList);
-        logger.info("MemoryDataManager: " + getClientName() + " new events added");
     }
 
     @Override
     public List<DEvent> getEvents(DataFilter filter) {
-        logger.info("MemoryDataManager: " + getClientName() + " get events list");
-        // TODO
+        logger.info(getClientName() + " getEvents: filter=" + filter);
+        // WARNING order is not guaranteed!!!
+        if (filter != null) {
+            List<DEvent> result = new ArrayList<>();
+            if (filter.getHosts() != null && filter.getHosts().length > 0) {
+                for (int i = 0; i < filter.getHosts().length; i++) {
+                    String h = filter.getHosts()[i];
+                    result.addAll(eventMessages.stream()
+                            .filter(e -> e.getHost().equals(h))
+                            .collect(Collectors.toList()));
+                }
+            }
+            if (filter.getIdents() != null && filter.getIdents().length > 0) {
+                for (int i = 0; i < filter.getIdents().length; i++) {
+                    String h = filter.getIdents()[i];
+                    result.addAll(eventMessages.stream()
+                            .filter(e -> e.getIdent().equals(h))
+                            .collect(Collectors.toList()));
+                }
+            }
+            return result;
+        }
         return eventMessages;
     }
 
     @Override
     public List<String> getDistinctKeys(String key) {
-        // TODO
+        logger.info(getClientName() + " getDistinctKeys");
+        Map<String, String> map = new HashMap<>();
+        if (key.equalsIgnoreCase("host")) {
+            for (DEvent e : eventMessages) {
+                map.put(e.getHost(), null);
+            }
+            return new ArrayList<String>(map.keySet());
+        }
+        if (key.equalsIgnoreCase("ident")) {
+            for (DEvent e : eventMessages) {
+                map.put(e.getIdent(), null);
+            }
+            return new ArrayList<String>(map.keySet());
+        }
         return null;
     }
 
