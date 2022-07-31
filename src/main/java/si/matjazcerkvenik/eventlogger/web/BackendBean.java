@@ -20,9 +20,8 @@ import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DataFilter;
-import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
-import si.matjazcerkvenik.eventlogger.webhooks.WebhookMessage;
+import si.matjazcerkvenik.eventlogger.webhooks.HttpRequest;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -34,9 +33,9 @@ import java.util.List;
 @SessionScoped
 public class BackendBean {
 
-    public List<WebhookMessage> getWebhookMessages() {
+    public List<HttpRequest> getWebhookMessages() {
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-        List<WebhookMessage> list = iDataManager.getWebhookMessages();
+        List<HttpRequest> list = iDataManager.getHttpRequests();
         DataManagerFactory.getInstance().returnClient(iDataManager);
         return list;
     }

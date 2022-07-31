@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package si.matjazcerkvenik.eventlogger.webhooks;
+package si.matjazcerkvenik.eventlogger.webhooks.fluentd;
 
 
 import com.google.gson.Gson;
@@ -24,6 +24,7 @@ import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
+import si.matjazcerkvenik.eventlogger.webhooks.HttpRequest;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
-public class WebhookServlet extends HttpServlet {
+public class FluentdSyslogWebhook extends HttpServlet {
 
 	private static final long serialVersionUID = 4275913222328716391L;
 
@@ -44,36 +45,47 @@ public class WebhookServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse response)
 			throws IOException {
 
-		WebhookMessage m = processIncomingRequest(req);
+		HttpRequest m = processIncomingRequest(req);
 
 		IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-		iDataManager.addWebhookMessage(m);
+		iDataManager.addHttpRequest(m);
 		DProps.webhookMessagesReceivedCount++;
 		DMetrics.eventlogger_http_requests_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc();
 		DMetrics.eventlogger_http_requests_size_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc(m.getContentLength());
 
 		// process body
-		String body = m.getBody().replace("}{", "}\n{");
-		String[] msgArray = body.split("\n");
-
-		GsonBuilder builder = new GsonBuilder();
-		Gson gson = builder.create();
 		List<DEvent> eventList = new ArrayList<>();
-		for (int i = 0; i < msgArray.length; i++) {
-			DEvent e = gson.fromJson(msgArray[i].trim(), DEvent.class);
-			e.setTimestamp(System.currentTimeMillis());
-			eventList.add(e);
-			LogFactory.getLogger().trace(e.toString());
-			DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
-			DProps.webhookEventsReceivedCount++;
+
+		if (req.getContentType().equalsIgnoreCase("application/x-ndjson")) {
+			// this is a ndjson (objects separated by \n)
+			String body = m.getBody().replace("}{", "}\n{");
+			String[] msgArray = body.split("\n");
+
+			GsonBuilder builder = new GsonBuilder();
+			Gson gson = builder.create();
+
+			for (int i = 0; i < msgArray.length; i++) {
+				DEvent e = gson.fromJson(msgArray[i].trim(), DEvent.class);
+				e.setTimestamp(System.currentTimeMillis());
+				e.setEventSource("fluentd-syslog");
+				eventList.add(e);
+				LogFactory.getLogger().trace(e.toString());
+				DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
+				DProps.webhookEventsReceivedCount++;
+			}
 		}
+		if (req.getContentType().equalsIgnoreCase("application/json")) {
+			// this is a json (array of objects)
+		}
+
+
 
 		iDataManager.addEvents(eventList);
 		DataManagerFactory.getInstance().returnClient(iDataManager);
 
 	}
 
-	private WebhookMessage processIncomingRequest(HttpServletRequest req) throws IOException {
+	private HttpRequest processIncomingRequest(HttpServletRequest req) throws IOException {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
@@ -96,7 +108,7 @@ public class WebhookServlet extends HttpServlet {
 		String body = getReqBody(req);
 		LogFactory.getLogger().debug("WebhookServlet: processIncomingRequest(): body: " + body);
 
-		WebhookMessage m = new WebhookMessage();
+		HttpRequest m = new HttpRequest();
 		m.setId(DProps.webhookMessagesReceivedCount);
 		m.setRuntimeId(DProps.RUNTIME_ID);
 		m.setTimestamp(System.currentTimeMillis());

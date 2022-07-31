@@ -22,6 +22,7 @@ public class DEvent {
     private String ident;
     private String pid;
     private String message;
+    private String eventSource;
 
     public long getTimestamp() {
         return timestamp;
@@ -63,13 +64,23 @@ public class DEvent {
         this.message = message;
     }
 
+    public String getEventSource() {
+        return eventSource;
+    }
+
+    public void setEventSource(String eventSource) {
+        this.eventSource = eventSource;
+    }
+
     @Override
     public String toString() {
-        return "DMessage{" +
-                "host='" + host + '\'' +
+        return "DEvent{" +
+                "timestamp=" + timestamp +
+                ", host='" + host + '\'' +
                 ", ident='" + ident + '\'' +
                 ", pid='" + pid + '\'' +
                 ", message='" + message + '\'' +
+                ", eventSource='" + eventSource + '\'' +
                 '}';
     }
 }

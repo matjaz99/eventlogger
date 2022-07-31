@@ -20,7 +20,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
 
-public class WebhookMessage {
+public class HttpRequest {
 
 	private long id;
 	private String runtimeId;

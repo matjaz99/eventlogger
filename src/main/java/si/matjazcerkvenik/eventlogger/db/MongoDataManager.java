@@ -31,11 +31,10 @@ import si.matjazcerkvenik.eventlogger.model.DataFilter;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
-import si.matjazcerkvenik.eventlogger.webhooks.WebhookMessage;
+import si.matjazcerkvenik.eventlogger.webhooks.HttpRequest;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -75,9 +74,9 @@ public class MongoDataManager implements IDataManager {
     }
 
     @Override
-    public void addWebhookMessage(WebhookMessage webhookMessage) {
+    public void addHttpRequest(HttpRequest HttpRequest) {
 
-        logger.info(getClientName() + " addWebhookMessage");
+        logger.info(getClientName() + " addHttpRequest");
 
         long before = System.currentTimeMillis();
 
@@ -87,27 +86,27 @@ public class MongoDataManager implements IDataManager {
 
 //            Document doc = Document.parse(new Gson().toJson(message));
             Document doc = new Document("_id", new ObjectId());
-            doc.append("id", webhookMessage.getId())
-                    .append("runtimeId", webhookMessage.getRuntimeId())
-                    .append("timestamp", webhookMessage.getTimestamp())
-                    .append("contentLength", webhookMessage.getContentLength())
-                    .append("contentType", webhookMessage.getContentType())
-                    .append("method", webhookMessage.getMethod())
-                    .append("protocol", webhookMessage.getProtocol())
-                    .append("remoteHost", webhookMessage.getRemoteHost())
-                    .append("remotePort", webhookMessage.getRemotePort())
-                    .append("requestUri", webhookMessage.getRequestUri())
-                    .append("headerMap", webhookMessage.getHeaderMap())
-                    .append("headerMapString", webhookMessage.getHeaderMapString())
-                    .append("parameterMap", webhookMessage.getParameterMap())
-                    .append("parameterMapString", webhookMessage.getParameterMapString())
-                    .append("body", webhookMessage.getBody());
+            doc.append("id", HttpRequest.getId())
+                    .append("runtimeId", HttpRequest.getRuntimeId())
+                    .append("timestamp", HttpRequest.getTimestamp())
+                    .append("contentLength", HttpRequest.getContentLength())
+                    .append("contentType", HttpRequest.getContentType())
+                    .append("method", HttpRequest.getMethod())
+                    .append("protocol", HttpRequest.getProtocol())
+                    .append("remoteHost", HttpRequest.getRemoteHost())
+                    .append("remotePort", HttpRequest.getRemotePort())
+                    .append("requestUri", HttpRequest.getRequestUri())
+                    .append("headerMap", HttpRequest.getHeaderMap())
+                    .append("headerMapString", HttpRequest.getHeaderMapString())
+                    .append("parameterMap", HttpRequest.getParameterMap())
+                    .append("parameterMapString", HttpRequest.getParameterMapString())
+                    .append("body", HttpRequest.getBody());
 
             // insert one doc
             collection.insertOne(doc);
 
         } catch (Exception e) {
-            logger.error(getClientName() + " addWebhookMessage: Exception: " + e.getMessage());
+            logger.error(getClientName() + " addHttpRequest: Exception: " + e.getMessage());
             DMetrics.eventlogger_db_errors_total.labels(dbName, "webhook", "insert").inc();
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
@@ -117,9 +116,9 @@ public class MongoDataManager implements IDataManager {
     }
 
     @Override
-    public List<WebhookMessage> getWebhookMessages() {
+    public List<HttpRequest> getHttpRequests() {
 
-        logger.info(getClientName() + " getWebhookMessages");
+        logger.info(getClientName() + " getHttpRequests");
 
         long before = System.currentTimeMillis();
         try {
@@ -133,7 +132,7 @@ public class MongoDataManager implements IDataManager {
 
             logger.info(getClientName() + " docsResultList size=" + docsResultList.size());
 
-            List<WebhookMessage> webhookMessageList = new ArrayList<>();
+            List<HttpRequest> HttpRequestList = new ArrayList<>();
 
 //            GsonBuilder builder = new GsonBuilder();
 //            Gson gson = builder.create();
@@ -143,7 +142,7 @@ public class MongoDataManager implements IDataManager {
 //                System.out.println("document: " + doc.toJson());
 //                WebhookMessage am = gson.fromJson(doc.toJson(), WebhookMessage.class);
 //                System.out.println("converted back: " + am.toString());
-                WebhookMessage m = new WebhookMessage();
+                HttpRequest m = new HttpRequest();
                 m.setId(((Number) doc.get("id")).longValue());
                 m.setRuntimeId(doc.getString("runtimeId"));
                 m.setTimestamp(((Number) doc.get("timestamp")).longValue());
@@ -160,13 +159,13 @@ public class MongoDataManager implements IDataManager {
 
                 // there are exceptions thrown if document.getString(xx) does not exist
 
-                webhookMessageList.add(m);
+                HttpRequestList.add(m);
             }
 
-            return webhookMessageList;
+            return HttpRequestList;
 
         } catch (Exception e) {
-            logger.error(getClientName() + " getWebhookMessages: Exception: ", e);
+            logger.error(getClientName() + " getHttpRequests: Exception: ", e);
             DMetrics.eventlogger_db_errors_total.labels(dbName, "webhook", "query").inc();
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
@@ -245,6 +244,7 @@ public class MongoDataManager implements IDataManager {
                 event.setIdent(doc.getString("ident"));
                 event.setPid(doc.getString("pid"));
                 event.setMessage(doc.getString("message"));
+                event.setEventSource(doc.get("eventSource", "null"));
                 eventList.add(event);
             }
 

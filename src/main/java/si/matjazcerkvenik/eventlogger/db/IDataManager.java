@@ -18,15 +18,17 @@ package si.matjazcerkvenik.eventlogger.db;
 
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DataFilter;
-import si.matjazcerkvenik.eventlogger.webhooks.WebhookMessage;
+import si.matjazcerkvenik.eventlogger.webhooks.HttpRequest;
 
 import java.util.List;
 
 public interface IDataManager {
 
-    public void addWebhookMessage(WebhookMessage webhookMessage);
+    public String getClientName();
 
-    public List<WebhookMessage> getWebhookMessages();
+    public void addHttpRequest(HttpRequest HttpRequest);
+
+    public List<HttpRequest> getHttpRequests();
 
     public void addEvents(List<DEvent> eventList);
 
@@ -35,8 +37,6 @@ public interface IDataManager {
     public List<String> getDistinctKeys(String key);
 
     public void cleanDB();
-
-    public String getClientName();
 
     public void close();
 

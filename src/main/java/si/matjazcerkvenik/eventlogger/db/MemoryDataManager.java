@@ -15,12 +15,10 @@
  */
 package si.matjazcerkvenik.eventlogger.db;
 
-import com.mongodb.client.model.Sorts;
-import org.bson.conversions.Bson;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DataFilter;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
-import si.matjazcerkvenik.eventlogger.webhooks.WebhookMessage;
+import si.matjazcerkvenik.eventlogger.webhooks.HttpRequest;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
 
 import java.util.*;
@@ -33,7 +31,7 @@ public class MemoryDataManager implements IDataManager {
     private int clientId = 0;
     private String clientName;
 
-    public static List<WebhookMessage> webhookMessages = new LinkedList<>();
+    public static List<HttpRequest> HttpRequests = new LinkedList<>();
     public static List<DEvent> eventMessages = new LinkedList<>();
 
     public MemoryDataManager(int id) {
@@ -48,17 +46,17 @@ public class MemoryDataManager implements IDataManager {
     }
 
     @Override
-    public void addWebhookMessage(WebhookMessage webhookMessage) {
+    public void addHttpRequest(HttpRequest HttpRequest) {
         logger.info(getClientName() + " addWebhookMessage");
-        webhookMessages.add(webhookMessage);
-        if (webhookMessages.size() > 100) {
-            webhookMessages.remove(0);
+        HttpRequests.add(HttpRequest);
+        if (HttpRequests.size() > 100) {
+            HttpRequests.remove(0);
         }
     }
 
     @Override
-    public List<WebhookMessage> getWebhookMessages() {
-        return webhookMessages;
+    public List<HttpRequest> getHttpRequests() {
+        return HttpRequests;
     }
 
     @Override
