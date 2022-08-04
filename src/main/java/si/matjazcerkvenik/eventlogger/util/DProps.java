@@ -19,7 +19,6 @@ package si.matjazcerkvenik.eventlogger.util;
 public class DProps {
 
     // internal counters
-    public static long webhookMessagesReceivedCount = 0;
     public static long webhookEventsReceivedCount = 0;
 
     public static String RUNTIME_ID = "0000-0000-0000-0000";
@@ -31,6 +30,8 @@ public class DProps {
     // memory or mongodb
     public static String EVENTLOGGER_STORAGE_TYPE = "mongodb";
     public static String EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@promvm:27017/test?authSource=admin";
+    public static int EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC = 5;
+    public static int EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC = 30;
     public static int EVENTLOGGER_DATA_RETENTION_DAYS = 30;
     public static int EVENTLOGGER_DB_POOL_SIZE = 3;
 

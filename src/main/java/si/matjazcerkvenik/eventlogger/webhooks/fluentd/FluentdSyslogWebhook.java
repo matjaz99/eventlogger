@@ -25,6 +25,7 @@ import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
 import si.matjazcerkvenik.eventlogger.webhooks.HttpRequest;
+import si.matjazcerkvenik.eventlogger.webhooks.RequestProcessor;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,7 @@ import java.util.*;
 public class FluentdSyslogWebhook extends HttpServlet {
 
 	private static final long serialVersionUID = 4275913222328716391L;
+	public static long requestsReceivedCount = 0;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -45,11 +47,10 @@ public class FluentdSyslogWebhook extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse response)
 			throws IOException {
 
-		HttpRequest m = processIncomingRequest(req);
+		HttpRequest m = RequestProcessor.processIncomingRequest(req, requestsReceivedCount++);
 
 		IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
 		iDataManager.addHttpRequest(m);
-		DProps.webhookMessagesReceivedCount++;
 		DMetrics.eventlogger_http_requests_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc();
 		DMetrics.eventlogger_http_requests_size_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc(m.getContentLength());
 
@@ -85,112 +86,4 @@ public class FluentdSyslogWebhook extends HttpServlet {
 
 	}
 
-	private HttpRequest processIncomingRequest(HttpServletRequest req) throws IOException {
-
-		StringBuilder sb = new StringBuilder();
-		sb.append("{");
-		sb.append("protocol=").append(req.getProtocol()).append(", ");
-		sb.append("remoteAddr=").append(req.getRemoteAddr()).append(", ");
-		sb.append("remoteHost=").append(req.getRemoteHost()).append(", ");
-		sb.append("remotePort=").append(req.getRemotePort()).append(", ");
-		sb.append("method=").append(req.getMethod()).append(", ");
-		sb.append("requestURI=").append(req.getRequestURI()).append(", ");
-		sb.append("scheme=").append(req.getScheme()).append(", ");
-		sb.append("characterEncoding=").append(req.getCharacterEncoding()).append(", ");
-		sb.append("contentLength=").append(req.getContentLength()).append(", ");
-		sb.append("contentType=").append(req.getContentType());
-		sb.append("}");
-
-		LogFactory.getLogger().info("WebhookServlet: processIncomingRequest(): " + sb.toString());
-
-		LogFactory.getLogger().debug("WebhookServlet: processIncomingRequest(): parameterMap: " + getReqParamsAsString(req));
-		LogFactory.getLogger().debug("WebhookServlet: processIncomingRequest(): headers: " + getReqHeadersAsString(req));
-		String body = getReqBody(req);
-		LogFactory.getLogger().debug("WebhookServlet: processIncomingRequest(): body: " + body);
-
-		HttpRequest m = new HttpRequest();
-		m.setId(DProps.webhookMessagesReceivedCount);
-		m.setRuntimeId(DProps.RUNTIME_ID);
-		m.setTimestamp(System.currentTimeMillis());
-		m.setContentLength(req.getContentLength());
-		m.setContentType(req.getContentType());
-		m.setMethod(req.getMethod());
-		m.setProtocol(req.getProtocol());
-		m.setRemoteHost(req.getRemoteHost());
-		m.setRemotePort(req.getRemotePort());
-		m.setRequestUri(req.getRequestURI());
-		m.setBody(body);
-		m.setHeaderMap(generateHeaderMap(req));
-		m.setParameterMap(generateParamMap(req));
-
-		return m;
-	}
-	
-	
-	private Map<String, String> generateHeaderMap(HttpServletRequest req) {
-		
-		Map<String, String> m = new HashMap<String, String>();
-		
-		Enumeration<String> headerNames = req.getHeaderNames();
-		while (headerNames.hasMoreElements()) {
-			String key = headerNames.nextElement();
-			String val = req.getHeader(key);
-			m.put(key, val);
-		}
-		return m;
-	}
-	
-	private Map<String, String> generateParamMap(HttpServletRequest req) {
-		
-		Map<String, String> m = new HashMap<String, String>();
-		Map<String, String[]> parameterMap = req.getParameterMap();
-		
-		for (Iterator<String> it = parameterMap.keySet().iterator(); it.hasNext();) {
-			String s = it.next();
-			m.put(s, parameterMap.get(s)[0]);
-		}
-		return m;
-	}
-	
-	
-	private String getReqHeadersAsString(HttpServletRequest req) {
-		
-		String headers = "";
-		Enumeration<String> headerNames = req.getHeaderNames();
-		while (headerNames.hasMoreElements()) {
-			String key = headerNames.nextElement();
-			//headerNames.toString();
-			String val = req.getHeader(key);
-			headers += key + "=" + val + ", ";
-		}
-		return headers;
-		
-	}
-	
-	private String getReqParamsAsString(HttpServletRequest req) {
-		Map<String, String[]> parameterMap = req.getParameterMap();
-		String params = "";
-		for (Iterator<String> it = parameterMap.keySet().iterator(); it.hasNext();) {
-			String s = it.next();
-			params += s + "=" + parameterMap.get(s)[0] + ", ";
-		}
-		return params;
-	}
-	
-	private String getReqBody(HttpServletRequest req) throws IOException {
-
-		if (req.getMethod().equalsIgnoreCase("get")) {
-			return req.getPathInfo() + " " + generateParamMap(req);
-		}
-
-		String body = "";
-		String s = req.getReader().readLine();
-		while (s != null) {
-			body += s;
-			s = req.getReader().readLine();
-		}
-		
-		return body;
-		
-	}
 }

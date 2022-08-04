@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class MongoDataManager implements IDataManager {
 
@@ -56,10 +57,10 @@ public class MongoDataManager implements IDataManager {
 
         MongoClientSettings settings = MongoClientSettings.builder()
                 .applyToSocketSettings(builder -> {
-                    builder.connectTimeout(timeoutSeconds * 1000, MILLISECONDS);
-                    builder.readTimeout(timeoutSeconds * 1000, MILLISECONDS);
+                    builder.connectTimeout(DProps.EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC, SECONDS);
+                    builder.readTimeout(DProps.EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC, SECONDS);
                 })
-                .applyToClusterSettings( builder -> builder.serverSelectionTimeout(timeoutSeconds * 1000, MILLISECONDS))
+                .applyToClusterSettings( builder -> builder.serverSelectionTimeout(DProps.EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC, SECONDS))
                 .applyConnectionString(new ConnectionString(DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING))
                 .build();
 
