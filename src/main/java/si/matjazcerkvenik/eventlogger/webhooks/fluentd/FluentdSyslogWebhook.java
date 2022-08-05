@@ -36,7 +36,6 @@ import java.util.*;
 public class FluentdSyslogWebhook extends HttpServlet {
 
 	private static final long serialVersionUID = 4275913222328716391L;
-	public static long requestsReceivedCount = 0;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -47,7 +46,7 @@ public class FluentdSyslogWebhook extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse response)
 			throws IOException {
 
-		HttpRequest m = RequestProcessor.processIncomingRequest(req, requestsReceivedCount++);
+		HttpRequest m = RequestProcessor.processIncomingRequest(req, DProps.requestsReceivedCount++);
 
 		IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
 		iDataManager.addHttpRequest(m);
@@ -58,25 +57,26 @@ public class FluentdSyslogWebhook extends HttpServlet {
 		List<DEvent> eventList = new ArrayList<>();
 
 		if (req.getContentType().equalsIgnoreCase("application/x-ndjson")) {
-			// this is a ndjson (objects separated by \n)
+			// this is a ndjson (objects separated by \n): {}{}{}
 			String body = m.getBody().replace("}{", "}\n{");
 			String[] msgArray = body.split("\n");
 
 			GsonBuilder builder = new GsonBuilder();
 			Gson gson = builder.create();
+			long now = System.currentTimeMillis();
 
 			for (int i = 0; i < msgArray.length; i++) {
 				DEvent e = gson.fromJson(msgArray[i].trim(), DEvent.class);
-				e.setTimestamp(System.currentTimeMillis());
+				e.setTimestamp(now);
 				e.setEventSource("fluentd-syslog");
 				eventList.add(e);
 				LogFactory.getLogger().trace(e.toString());
 				DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
-				DProps.webhookEventsReceivedCount++;
+				DProps.eventsReceivedCount++;
 			}
 		}
 		if (req.getContentType().equalsIgnoreCase("application/json")) {
-			// this is a json (array of objects)
+			// this is a json (array of objects): [{},{},{}]
 		}
 
 

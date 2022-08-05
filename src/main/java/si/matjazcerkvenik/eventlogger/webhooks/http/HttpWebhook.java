@@ -34,7 +34,6 @@ import java.util.*;
 public class HttpWebhook extends HttpServlet {
 
 	private static final long serialVersionUID = 4275913222328716391L;
-	public static long requestsReceivedCount = 0;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -45,7 +44,7 @@ public class HttpWebhook extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse response)
 			throws IOException {
 
-		HttpRequest m = RequestProcessor.processIncomingRequest(req, requestsReceivedCount++);
+		HttpRequest m = RequestProcessor.processIncomingRequest(req, DProps.requestsReceivedCount++);
 
 		IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
 		iDataManager.addHttpRequest(m);
@@ -61,7 +60,7 @@ public class HttpWebhook extends HttpServlet {
 		e.setEventSource("eventlogger-http");
 		LogFactory.getLogger().trace(e.toString());
 		DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
-		DProps.webhookEventsReceivedCount++;
+		DProps.eventsReceivedCount++;
 
 		List<DEvent> eventList = new ArrayList<>();
 		eventList.add(e);

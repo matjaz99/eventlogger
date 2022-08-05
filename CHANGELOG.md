@@ -3,6 +3,7 @@
 ## 0.2.2
 
 * [FEATURE] Added HTTP webhook for any kind of events with plaintext in the body
+* [ENHANCEMENT] Create index in MongoDB for host and ident
 
 * [DOCKER] `docker pull matjaz99/eventlogger:0.2.2`
 * [FIX] Filtering for memory storage

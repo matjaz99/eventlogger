@@ -19,7 +19,8 @@ package si.matjazcerkvenik.eventlogger.util;
 public class DProps {
 
     // internal counters
-    public static long webhookEventsReceivedCount = 0;
+    public static long requestsReceivedCount = 0;
+    public static long eventsReceivedCount = 0;
 
     public static String RUNTIME_ID = "0000-0000-0000-0000";
     public static long START_UP_TIMESTAMP = 0;

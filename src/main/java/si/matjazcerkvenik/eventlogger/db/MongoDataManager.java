@@ -20,6 +20,7 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.InsertManyOptions;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
@@ -44,9 +45,12 @@ public class MongoDataManager implements IDataManager {
 
     private static SimpleLogger logger = LogFactory.getLogger();
     public static String dbName = "eventlogger";
+    public static String dbCollectionEvents = "events";
+    public static String dbCollectionRequests = "requests";
     private MongoClient mongoClient;
     private int clientId = 0;
     private String clientName;
+    private static boolean eventsDbIndexCreated = false;
 
     public MongoDataManager(int id) {
 
@@ -66,7 +70,23 @@ public class MongoDataManager implements IDataManager {
 
         mongoClient = MongoClients.create(settings);
 
-        logger.info(getClientName() + " initialized");
+        if (!eventsDbIndexCreated) {
+            MongoDatabase database = mongoClient.getDatabase(dbName);
+
+            MongoCollection<Document> coll = database.getCollection(dbCollectionEvents);
+            if (coll == null) {
+                logger.info(getClientName() + " creating collection: " + dbCollectionEvents);
+                database.createCollection(dbCollectionEvents);
+            }
+            // create indexes
+            logger.info(getClientName() + " creating index: host");
+            coll.createIndex(Indexes.ascending("host"));
+            logger.info(getClientName() + " creating index: ident");
+            coll.createIndex(Indexes.ascending("ident"));
+            eventsDbIndexCreated = true;
+        }
+
+        logger.info(getClientName() + " client initialized");
     }
 
     @Override
@@ -83,7 +103,7 @@ public class MongoDataManager implements IDataManager {
 
         try {
             MongoDatabase db = mongoClient.getDatabase(dbName);
-            MongoCollection<Document> collection = db.getCollection("webhook");
+            MongoCollection<Document> collection = db.getCollection(dbCollectionRequests);
 
 //            Document doc = Document.parse(new Gson().toJson(message));
             Document doc = new Document("_id", new ObjectId());
@@ -108,10 +128,10 @@ public class MongoDataManager implements IDataManager {
 
         } catch (Exception e) {
             logger.error(getClientName() + " addHttpRequest: Exception: " + e.getMessage());
-            DMetrics.eventlogger_db_errors_total.labels(dbName, "webhook", "insert").inc();
+            DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionRequests, "insert").inc();
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
-            DMetrics.eventlogger_db_duration_seconds.labels(dbName, "webhook", "insert").observe(duration);
+            DMetrics.eventlogger_db_duration_seconds.labels(dbName, dbCollectionRequests, "insert").observe(duration);
         }
 
     }
@@ -124,7 +144,7 @@ public class MongoDataManager implements IDataManager {
         long before = System.currentTimeMillis();
         try {
             MongoDatabase db = mongoClient.getDatabase(dbName);
-            MongoCollection<Document> collection = db.getCollection("webhook");
+            MongoCollection<Document> collection = db.getCollection(dbCollectionRequests);
 
             List<Document> docsResultList = collection.find(Filters.eq("runtimeId", DProps.RUNTIME_ID))
                     .sort(Sorts.descending("id"))
@@ -167,10 +187,10 @@ public class MongoDataManager implements IDataManager {
 
         } catch (Exception e) {
             logger.error(getClientName() + " getHttpRequests: Exception: ", e);
-            DMetrics.eventlogger_db_errors_total.labels(dbName, "webhook", "query").inc();
+            DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionRequests, "query").inc();
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
-            DMetrics.eventlogger_db_duration_seconds.labels(dbName, "events", "query").observe(duration);
+            DMetrics.eventlogger_db_duration_seconds.labels(dbName, dbCollectionRequests, "query").observe(duration);
         }
 
         return null;
@@ -187,7 +207,7 @@ public class MongoDataManager implements IDataManager {
 
         try {
             MongoDatabase db = mongoClient.getDatabase(dbName);
-            MongoCollection<Document> collection = db.getCollection("events");
+            MongoCollection<Document> collection = db.getCollection(dbCollectionEvents);
 
             List<Document> list = new ArrayList<>();
 
@@ -200,10 +220,10 @@ public class MongoDataManager implements IDataManager {
 
         } catch (Exception e) {
             logger.error(getClientName() + " addEvents: Exception: " + e.getMessage());
-            DMetrics.eventlogger_db_errors_total.labels(dbName, "events", "insert").inc();
+            DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionEvents, "insert").inc();
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
-            DMetrics.eventlogger_db_duration_seconds.labels(dbName, "webhook", "insert").observe(duration);
+            DMetrics.eventlogger_db_duration_seconds.labels(dbName, dbCollectionEvents, "insert").observe(duration);
         }
     }
 
@@ -216,7 +236,7 @@ public class MongoDataManager implements IDataManager {
 
         try {
             MongoDatabase db = mongoClient.getDatabase(dbName);
-            MongoCollection<Document> collection = db.getCollection("events");
+            MongoCollection<Document> collection = db.getCollection(dbCollectionEvents);
 
             List<Document> docsResultList = null;
 
@@ -253,10 +273,10 @@ public class MongoDataManager implements IDataManager {
 
         } catch (Exception e) {
             logger.error(getClientName() + " getEvents: Exception: " + e.getMessage());
-            DMetrics.eventlogger_db_errors_total.labels(dbName, "events", "query").inc();
+            DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionEvents, "query").inc();
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
-            DMetrics.eventlogger_db_duration_seconds.labels(dbName, "events", "query").observe(duration);
+            DMetrics.eventlogger_db_duration_seconds.labels(dbName, dbCollectionEvents, "query").observe(duration);
         }
         return null;
     }
@@ -301,7 +321,7 @@ public class MongoDataManager implements IDataManager {
 
         try {
             MongoDatabase db = mongoClient.getDatabase(dbName);
-            MongoCollection<Document> collection = db.getCollection("events");
+            MongoCollection<Document> collection = db.getCollection(dbCollectionEvents);
 
             DistinctIterable<String> docs = collection.distinct(key, String.class);
 
@@ -318,10 +338,10 @@ public class MongoDataManager implements IDataManager {
 
         } catch (Exception e) {
             logger.error(getClientName() + " getDistinctKeys: Exception: " + e.getMessage());
-            DMetrics.eventlogger_db_errors_total.labels(dbName, "events", "query").inc();
+            DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionEvents, "query").inc();
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
-            DMetrics.eventlogger_db_duration_seconds.labels(dbName, "events", "query").observe(duration);
+            DMetrics.eventlogger_db_duration_seconds.labels(dbName, dbCollectionEvents, "query").observe(duration);
         }
         return null;
     }
@@ -339,20 +359,20 @@ public class MongoDataManager implements IDataManager {
             Bson filter = Filters.lte("timestamp", diff);
 
             MongoDatabase db = mongoClient.getDatabase(dbName);
-            MongoCollection<Document> collection = db.getCollection("webhook");
+            MongoCollection<Document> collection = db.getCollection(dbCollectionRequests);
             DeleteResult resultDeleteMany = collection.deleteMany(filter);
             logger.info( getClientName() + " cleanDB [webhook]: size=" + resultDeleteMany.getDeletedCount());
 
-            MongoCollection<Document> collection2 = db.getCollection("events");
+            MongoCollection<Document> collection2 = db.getCollection(dbCollectionEvents);
             DeleteResult resultDeleteMany2 = collection2.deleteMany(filter);
             logger.info( getClientName() + " cleanDB [events]: size=" + resultDeleteMany2.getDeletedCount());
 
         } catch (Exception e) {
             logger.error( getClientName() + " cleanDB: Exception: " + e.getMessage());
-            DMetrics.eventlogger_db_errors_total.labels(dbName, "webhook/events", "delete").inc();
+            DMetrics.eventlogger_db_errors_total.labels(dbName, "/", "delete").inc();
         } finally {
             double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
-            DMetrics.eventlogger_db_duration_seconds.labels(dbName, "events", "delete").observe(duration);
+            DMetrics.eventlogger_db_duration_seconds.labels(dbName, "/", "delete").observe(duration);
         }
 
     }
