@@ -24,6 +24,9 @@ import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.InsertManyOptions;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
+import io.krakens.grok.api.Grok;
+import io.krakens.grok.api.GrokCompiler;
+import io.krakens.grok.api.Match;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -37,6 +40,7 @@ import si.matjazcerkvenik.simplelogger.SimpleLogger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -214,6 +218,7 @@ public class MongoDataManager implements IDataManager {
             for (DEvent e : eventList) {
                 Document doc = Document.parse(new Gson().toJson(e));
                 list.add(doc);
+                tryGrokFilter(e.getMessage());
             }
 
             collection.insertMany(list, new InsertManyOptions().ordered(true));
@@ -381,4 +386,21 @@ public class MongoDataManager implements IDataManager {
     public void close() {
         mongoClient.close();
     }
+
+
+    /* Create a new grokCompiler instance */
+    GrokCompiler grokCompiler = GrokCompiler.newInstance();
+    { grokCompiler.registerDefaultPatterns(); }
+
+    private void tryGrokFilter(String line) {
+
+        //final Grok grok = grokCompiler.compile("error"); // not found
+        final Grok grok = grokCompiler.compile("%{GREEDYDATA}error%{GREEDYDATA}"); // found
+        // final Grok grok = grokCompiler.compile("(.*)\\{error\\}(.*)"); // not found
+//        final Grok grok = grokCompiler.compile("(.*)(\berror)(.*)"); // not found
+        Match gm = grok.match(line);
+        final Map<String, Object> capture = gm.capture();
+        logger.info("GROK RESULT[" + capture.size() + "]: " + capture.toString());
+    }
+
 }

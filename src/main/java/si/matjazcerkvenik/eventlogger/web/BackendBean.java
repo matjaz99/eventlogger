@@ -25,12 +25,14 @@ import si.matjazcerkvenik.eventlogger.webhooks.HttpRequest;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
 import javax.faces.event.ValueChangeEvent;
 import java.util.List;
 
 @ManagedBean
-@SessionScoped
+//@SessionScoped
+@RequestScoped
 public class BackendBean {
 
     public List<HttpRequest> getWebhookMessages() {

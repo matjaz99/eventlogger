@@ -1,14 +1,47 @@
 package si.matjazcerkvenik.eventlogger.util;
 
+import io.krakens.grok.api.Grok;
+import io.krakens.grok.api.GrokCompiler;
+import io.krakens.grok.api.Match;
+
+import java.util.Map;
+
 public class Test {
 
     public static void main(String[] args) {
 
-        String s = "{fkljlkj}{asdfasd}";
+        tryGrokFilter();
 
-        String[] sArray = s.split("\\}\\{");
+    }
 
-        System.out.println(sArray.length);
+    private static void tryGrokFilter() {
+
+        GrokCompiler grokCompiler = GrokCompiler.newInstance();
+        grokCompiler.registerDefaultPatterns();
+
+//        String line = "time=\"2022-08-06T15:04:49.297937545+02:00\" level=error msg=\"error sending message to peer\" error=\"rpc error: code = Unavailable desc = connection error: desc = \\\"transport: Error while dialing dial tcp 192.168.0.191:2377: connect: no route to host\\\"\"";
+//        String pattern = "error"; // not found
+//        String pattern = "%{GREEDYDATA}error%{GREEDYDATA}"; // found
+//        String pattern = "(.*)\\{error\\}(.*)"; // not found
+//        String pattern = "^(.*)\b(error)\b(.*)$"; // not found
+//        String pattern = ".*(?>error).*"; // not found
+//        String pattern = "(?<name0>.*)error(?<name1>.*)"; // found; the same as GREEDYDATA
+
+        String line = "New session 7 of user root.";
+        String pattern = "New session %{INT} of user root."; // found
+
+        final Grok grok = grokCompiler.compile(pattern);
+        Match gm = grok.match(line);
+        System.out.println("PATTERN: " + grok.getNamedRegex());
+        final Map<String, Object> capture = gm.capture();
+        if (capture.size() == 0) {
+            System.out.println("nothing found");
+            return;
+        }
+        for (String s : capture.keySet()) {
+            System.out.println("GROK RESULT: " + capture.get(s).toString());
+        }
+
     }
 
 }

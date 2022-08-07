@@ -67,8 +67,20 @@ public class ConfigBean {
     }
 
     public String getMongoConnectionString() {
-        if (DProps.EVENTLOGGER_STORAGE_TYPE.equalsIgnoreCase("mongodb"))
-            return DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING;
+        if (DProps.EVENTLOGGER_STORAGE_TYPE.equalsIgnoreCase("mongodb")) {
+            String s = DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING;
+            // mask password
+            String[] a1 = s.split("://");
+            if (a1[1].contains("@")) {
+                String[] a2 = a1[1].split("@");
+                if (a2[0].contains(":")) {
+                    String[] a3 = a2[0].split(":");
+                    s = s.replace(a3[0] + ":" + a3[1] + "@",
+                            a3[0] + ":" + "•••••••••" + "@");
+                }
+            }
+            return s;
+        }
         return "-";
     }
 
