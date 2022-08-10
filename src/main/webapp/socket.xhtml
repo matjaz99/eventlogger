@@ -10,10 +10,10 @@
 
 			<h:form id="msgForm">
 
-				<ui:repeat var="m" value="#{backendBean.webhookMessages}">
+				<ui:repeat var="m" value="#{backendBean.requests}">
 					<div class="card">
 						<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
-							<p:ajax event="load" listener="#{backendBean.getWebhookMessages()}"/>
+							<p:ajax event="load" listener="#{backendBean.getRequests()}"/>
 							<f:facet name="loading">
 								<p:skeleton width="200px" height="21px" class="p-mb-4"/>
 								<p:skeleton width="100%" height="42px"/>
@@ -23,6 +23,7 @@
 							<p>Time: #{m.formatedTimestamp}</p>
 							<p>ID: #{m.id}</p>
 							<p>Header: #{m.headerMapString}</p>
+							<p>Params: #{m.parameterMapString}</p>
 							<!--<p:commandButton onclick="PF('panel#{m.id}').toggle();" value="Show body" />-->
 							<p:commandLink onclick="PF('panel#{m.id}').toggle();" value="Show body" />
 							<p:panel id="mid#{m.id}" widgetVar="panel#{m.id}" closable="true" closeSpeed="500" toggleable="true" collapsed="true">

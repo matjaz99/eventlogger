@@ -51,13 +51,28 @@ public class HttpWebhook extends HttpServlet {
 		DMetrics.eventlogger_http_requests_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc();
 		DMetrics.eventlogger_http_requests_size_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc(m.getContentLength());
 
+		if (req.getContentType().equalsIgnoreCase("application/json")) {
+		}
+		if (req.getContentType().equalsIgnoreCase("text/plain")) {
+		}
+		if (req.getContentType().equalsIgnoreCase("application/xml")) {
+		}
+
 		// process body
 		DEvent e = new DEvent();
+		e.setId(DProps.eventsReceivedCount++);
+		e.setRuntimeId(DProps.RUNTIME_ID);
 		e.setTimestamp(System.currentTimeMillis());
 		e.setHost(m.getRemoteHost());
-		e.setIdent("-");
+		e.setIdent("eventlogger.http");
+		if (m.getParameterMap().containsKey("ident")) {
+			e.setIdent(m.getParameterMap().get("ident"));
+		}
+		if (m.getParameterMap().containsKey("tag")) {
+			e.setTag(m.getParameterMap().get("tag"));
+		}
 		e.setMessage(m.getBody());
-		e.setEventSource("eventlogger-http");
+		e.setEventSource("eventlogger.http");
 		LogFactory.getLogger().trace(e.toString());
 		DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
 		DProps.eventsReceivedCount++;

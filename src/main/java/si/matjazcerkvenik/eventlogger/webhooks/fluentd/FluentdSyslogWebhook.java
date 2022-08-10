@@ -67,12 +67,13 @@ public class FluentdSyslogWebhook extends HttpServlet {
 
 			for (int i = 0; i < msgArray.length; i++) {
 				DEvent e = gson.fromJson(msgArray[i].trim(), DEvent.class);
+				e.setId(DProps.eventsReceivedCount++);
+				e.setRuntimeId(DProps.RUNTIME_ID);
 				e.setTimestamp(now);
-				e.setEventSource("fluentd-syslog");
+				e.setEventSource("fluentd.syslog");
 				eventList.add(e);
 				LogFactory.getLogger().trace(e.toString());
 				DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
-				DProps.eventsReceivedCount++;
 			}
 		}
 		if (req.getContentType().equalsIgnoreCase("application/json")) {

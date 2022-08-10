@@ -15,7 +15,7 @@
  */
 package si.matjazcerkvenik.eventlogger.model;
 
-public class DataFilter {
+public class DFilter {
 
     private String sort;
     private int limit;

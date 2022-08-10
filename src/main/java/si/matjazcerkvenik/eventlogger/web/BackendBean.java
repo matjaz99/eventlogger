@@ -19,23 +19,24 @@ package si.matjazcerkvenik.eventlogger.web;
 import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
-import si.matjazcerkvenik.eventlogger.model.DataFilter;
+import si.matjazcerkvenik.eventlogger.model.DFilter;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.eventlogger.webhooks.HttpRequest;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import java.util.List;
+import java.util.Map;
 
 @ManagedBean
-//@SessionScoped
-@RequestScoped
+@SessionScoped
+//@RequestScoped
 public class BackendBean {
 
-    public List<HttpRequest> getWebhookMessages() {
+    public List<HttpRequest> getRequests() {
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
         List<HttpRequest> list = iDataManager.getHttpRequests();
         DataManagerFactory.getInstance().returnClient(iDataManager);
@@ -53,7 +54,7 @@ public class BackendBean {
                 LogFactory.getLogger().info("BackendBean: getEvents: no filter");
                 list = iDataManager.getEvents(null);
             } else {
-                DataFilter filter = new DataFilter();
+                DFilter filter = new DFilter();
                 filter.setHosts(selectedHosts);
                 LogFactory.getLogger().info("BackendBean: getEvents: apply filter " + filter.toString());
                 list = iDataManager.getEvents(filter);
@@ -77,7 +78,7 @@ public class BackendBean {
                 LogFactory.getLogger().info("BackendBean: getConcatenatedEvents: no filter");
                 list = iDataManager.getEvents(null);
             } else {
-                DataFilter filter = new DataFilter();
+                DFilter filter = new DFilter();
                 filter.setHosts(selectedHosts);
                 filter.setIdents(selectedIdents);
                 LogFactory.getLogger().info("BackendBean: getConcatenatedEvents: apply filter " + filter.toString());
@@ -108,6 +109,10 @@ public class BackendBean {
     @PostConstruct
     public void init() {
         LogFactory.getLogger().info("BackendBean: PostConstruct init");
+        Map<String, String> params = FacesContext.getCurrentInstance().
+                getExternalContext().getRequestParameterMap();
+        String parameterOne = params.get("filter");
+        LogFactory.getLogger().info("BackendBean: PostConstruct filter=" + parameterOne);
     }
 
     public String[] getSelectedHosts() {

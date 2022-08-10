@@ -16,7 +16,7 @@
 package si.matjazcerkvenik.eventlogger.db;
 
 import si.matjazcerkvenik.eventlogger.model.DEvent;
-import si.matjazcerkvenik.eventlogger.model.DataFilter;
+import si.matjazcerkvenik.eventlogger.model.DFilter;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.eventlogger.webhooks.HttpRequest;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
@@ -71,7 +71,7 @@ public class MemoryDataManager implements IDataManager {
     }
 
     @Override
-    public List<DEvent> getEvents(DataFilter filter) {
+    public List<DEvent> getEvents(DFilter filter) {
         logger.info(getClientName() + " getEvents: filter=" + filter);
         // WARNING order is not guaranteed!!!
         if (filter != null) {

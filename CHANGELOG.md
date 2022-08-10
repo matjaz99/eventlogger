@@ -2,10 +2,10 @@
 
 ## 0.2.2
 
+* [DOCKER] `docker pull matjaz99/eventlogger:0.2.2`
+* [CHANGE] Removed `webhook/*` endpoint. Instead, use either `webhook/fluentd-syslog*` or `webhook/http/*`
 * [FEATURE] Added HTTP webhook for any kind of events with plaintext in the body
 * [ENHANCEMENT] Create index in MongoDB for host and ident
-
-* [DOCKER] `docker pull matjaz99/eventlogger:0.2.2`
 * [FIX] Filtering for memory storage
 
 ## 0.2.1 Filtering events / 2022-07-25

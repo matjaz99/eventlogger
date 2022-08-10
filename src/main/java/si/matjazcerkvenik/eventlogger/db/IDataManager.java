@@ -17,7 +17,7 @@ package si.matjazcerkvenik.eventlogger.db;
 
 
 import si.matjazcerkvenik.eventlogger.model.DEvent;
-import si.matjazcerkvenik.eventlogger.model.DataFilter;
+import si.matjazcerkvenik.eventlogger.model.DFilter;
 import si.matjazcerkvenik.eventlogger.webhooks.HttpRequest;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public interface IDataManager {
 
     public void addEvents(List<DEvent> eventList);
 
-    public List<DEvent> getEvents(DataFilter filter);
+    public List<DEvent> getEvents(DFilter filter);
 
     public List<String> getDistinctKeys(String key);
 

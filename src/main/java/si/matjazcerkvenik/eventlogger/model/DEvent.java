@@ -17,12 +17,33 @@ package si.matjazcerkvenik.eventlogger.model;
 
 public class DEvent {
 
+    /** Just a counter; starts from zero on restart */
+    private long id;
+    /** Runtime ID; uniqueness is guaranteed together with ID */
+    private String runtimeId;
     private long timestamp;
     private String host;
     private String ident;
     private String pid;
+    private String tag;
     private String message;
     private String eventSource;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getRuntimeId() {
+        return runtimeId;
+    }
+
+    public void setRuntimeId(String runtimeId) {
+        this.runtimeId = runtimeId;
+    }
 
     public long getTimestamp() {
         return timestamp;
@@ -54,6 +75,14 @@ public class DEvent {
 
     public void setPid(String pid) {
         this.pid = pid;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public String getMessage() {

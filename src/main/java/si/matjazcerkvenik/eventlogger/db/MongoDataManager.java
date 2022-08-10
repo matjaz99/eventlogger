@@ -31,7 +31,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
-import si.matjazcerkvenik.eventlogger.model.DataFilter;
+import si.matjazcerkvenik.eventlogger.model.DFilter;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class MongoDataManager implements IDataManager {
@@ -151,7 +150,7 @@ public class MongoDataManager implements IDataManager {
             MongoCollection<Document> collection = db.getCollection(dbCollectionRequests);
 
             List<Document> docsResultList = collection.find(Filters.eq("runtimeId", DProps.RUNTIME_ID))
-                    .sort(Sorts.descending("id"))
+                    .sort(Sorts.descending("timestamp", "id"))
                     .limit(100)
                     .into(new ArrayList<>());
 
@@ -233,7 +232,7 @@ public class MongoDataManager implements IDataManager {
     }
 
     @Override
-    public List<DEvent> getEvents(DataFilter filter) {
+    public List<DEvent> getEvents(DFilter filter) {
 
         logger.info(getClientName() + " getEvents: filter=" + filter);
 
@@ -247,13 +246,13 @@ public class MongoDataManager implements IDataManager {
 
             if (filter == null) {
                 docsResultList = collection.find()
-                        .sort(Sorts.descending("timestamp"))
+                        .sort(Sorts.descending("timestamp", "id"))
                         .limit(1000)
                         .into(new ArrayList<>());
             } else {
                 Bson bsonFilter = prepareBsonFilter(filter);
                 docsResultList = collection.find(bsonFilter)
-                        .sort(Sorts.descending("timestamp"))
+                        .sort(Sorts.descending("timestamp", "id"))
                         .limit(1000)
                         .into(new ArrayList<>());
             }
@@ -265,10 +264,13 @@ public class MongoDataManager implements IDataManager {
             for (Document doc : docsResultList) {
                 logger.trace(getClientName() + " doc=" + doc.toJson());
                 DEvent event = new DEvent();
+                event.setId(((Number) doc.get("id")).longValue());
+                event.setRuntimeId(doc.getString("runtimeId"));
                 event.setTimestamp(((Number) doc.get("timestamp", 0)).longValue());
                 event.setHost(doc.getString("host"));
                 event.setIdent(doc.getString("ident"));
                 event.setPid(doc.getString("pid"));
+                event.setTag(doc.getString("tag"));
                 event.setMessage(doc.getString("message"));
                 event.setEventSource(doc.get("eventSource", "null"));
                 eventList.add(event);
@@ -286,7 +288,7 @@ public class MongoDataManager implements IDataManager {
         return null;
     }
 
-    public Bson prepareBsonFilter(DataFilter filter) {
+    public Bson prepareBsonFilter(DFilter filter) {
         Bson bsonFilter = null;
         List<Bson> tempList = new ArrayList<>();
         if (filter.getHosts() != null && filter.getHosts().length > 0) {
@@ -388,19 +390,19 @@ public class MongoDataManager implements IDataManager {
     }
 
 
+
+
+
     /* Create a new grokCompiler instance */
     GrokCompiler grokCompiler = GrokCompiler.newInstance();
     { grokCompiler.registerDefaultPatterns(); }
 
     private void tryGrokFilter(String line) {
 
-        //final Grok grok = grokCompiler.compile("error"); // not found
-        final Grok grok = grokCompiler.compile("%{GREEDYDATA}error%{GREEDYDATA}"); // found
-        // final Grok grok = grokCompiler.compile("(.*)\\{error\\}(.*)"); // not found
-//        final Grok grok = grokCompiler.compile("(.*)(\berror)(.*)"); // not found
+        Grok grok = grokCompiler.compile("%{GREEDYDATA}(error|Error|ERROR)%{GREEDYDATA}");
         Match gm = grok.match(line);
-        final Map<String, Object> capture = gm.capture();
-        logger.info("GROK RESULT[" + capture.size() + "]: " + capture.toString());
+        Map<String, Object> capture = gm.capture();
+        if (!capture.isEmpty()) logger.trace("GROK RESULT[" + capture.size() + "]: " + capture.toString());
     }
 
 }

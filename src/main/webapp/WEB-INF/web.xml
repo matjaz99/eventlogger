@@ -28,7 +28,6 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>Fluentd Syslog Webhook Servlet</servlet-name>
-        <url-pattern>/webhook/*</url-pattern>
         <url-pattern>/webhook/fluentd-syslog/*</url-pattern>
     </servlet-mapping>
     <servlet>
