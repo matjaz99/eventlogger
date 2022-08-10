@@ -1,7 +1,7 @@
 # eventlogger for logging events
 
 [![Build Status](https://semaphoreci.com/api/v1/matjaz99-44/eventlogger/branches/main/shields_badge.svg)](https://semaphoreci.com/matjaz99-44/eventlogger)
-[![Build Status](https://semaphoreci.com/api/v1/matjaz99-44/eventlogger/branches/main/shields_badge.svg)](https://semaphoreci.com/matjaz99-44/eventlogger)
+[![GitHub release](https://img.shields.io/github/release/matjaz99/eventlogger.svg)](https://GitHub.com/matjaz99/eventlogger/releases/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/matjaz99/eventlogger.svg)](https://hub.docker.com/r/matjaz99/eventlogger)
 
 Eventlogger collects events from fluentd (eg. log files) and visualizes them in web GUI.
