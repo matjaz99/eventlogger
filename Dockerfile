@@ -1,5 +1,5 @@
 # Build stage
-FROM maven:3.8.6-openjdk-11 AS build
+FROM maven:3.8.1-openjdk-11 AS build
 
 ARG SIMPLE_LOGGER_VERSION=1.7.0
 
