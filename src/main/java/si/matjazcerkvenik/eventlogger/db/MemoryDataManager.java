@@ -18,7 +18,7 @@ package si.matjazcerkvenik.eventlogger.db;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DFilter;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
-import si.matjazcerkvenik.eventlogger.webhooks.HttpRequest;
+import si.matjazcerkvenik.eventlogger.model.DRequest;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
 
 import java.util.*;
@@ -31,7 +31,7 @@ public class MemoryDataManager implements IDataManager {
     private int clientId = 0;
     private String clientName;
 
-    public static List<HttpRequest> HttpRequests = new LinkedList<>();
+    public static List<DRequest> httpRequests = new LinkedList<>();
     public static List<DEvent> eventMessages = new LinkedList<>();
 
     public MemoryDataManager(int id) {
@@ -46,17 +46,17 @@ public class MemoryDataManager implements IDataManager {
     }
 
     @Override
-    public void addHttpRequest(HttpRequest HttpRequest) {
+    public void addHttpRequest(DRequest DRequest) {
         logger.info(getClientName() + " addWebhookMessage");
-        HttpRequests.add(HttpRequest);
-        if (HttpRequests.size() > 100) {
-            HttpRequests.remove(0);
+        httpRequests.add(DRequest);
+        if (httpRequests.size() > 100) {
+            httpRequests.remove(0);
         }
     }
 
     @Override
-    public List<HttpRequest> getHttpRequests() {
-        return HttpRequests;
+    public List<DRequest> getHttpRequests() {
+        return httpRequests;
     }
 
     @Override

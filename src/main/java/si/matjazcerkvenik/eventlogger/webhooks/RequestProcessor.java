@@ -15,6 +15,7 @@
  */
 package si.matjazcerkvenik.eventlogger.webhooks;
 
+import si.matjazcerkvenik.eventlogger.model.DRequest;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
@@ -27,7 +28,7 @@ import java.util.Map;
 
 public class RequestProcessor {
 
-    public static HttpRequest processIncomingRequest(HttpServletRequest req, long requestId) throws IOException {
+    public static DRequest processIncomingRequest(HttpServletRequest req, long requestId) throws IOException {
 
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -50,7 +51,7 @@ public class RequestProcessor {
         String body = getReqBody(req);
         LogFactory.getLogger().debug("RequestProcessor: processIncomingRequest(): body: " + body);
 
-        HttpRequest m = new HttpRequest();
+        DRequest m = new DRequest();
         m.setId(requestId);
         m.setRuntimeId(DProps.RUNTIME_ID);
         m.setTimestamp(System.currentTimeMillis());

@@ -35,7 +35,7 @@ import si.matjazcerkvenik.eventlogger.model.DFilter;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
-import si.matjazcerkvenik.eventlogger.webhooks.HttpRequest;
+import si.matjazcerkvenik.eventlogger.model.DRequest;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
 
 import java.util.ArrayList;
@@ -98,7 +98,7 @@ public class MongoDataManager implements IDataManager {
     }
 
     @Override
-    public void addHttpRequest(HttpRequest HttpRequest) {
+    public void addHttpRequest(DRequest DRequest) {
 
         logger.info(getClientName() + " addHttpRequest");
 
@@ -110,21 +110,21 @@ public class MongoDataManager implements IDataManager {
 
 //            Document doc = Document.parse(new Gson().toJson(message));
             Document doc = new Document("_id", new ObjectId());
-            doc.append("id", HttpRequest.getId())
-                    .append("runtimeId", HttpRequest.getRuntimeId())
-                    .append("timestamp", HttpRequest.getTimestamp())
-                    .append("contentLength", HttpRequest.getContentLength())
-                    .append("contentType", HttpRequest.getContentType())
-                    .append("method", HttpRequest.getMethod())
-                    .append("protocol", HttpRequest.getProtocol())
-                    .append("remoteHost", HttpRequest.getRemoteHost())
-                    .append("remotePort", HttpRequest.getRemotePort())
-                    .append("requestUri", HttpRequest.getRequestUri())
-                    .append("headerMap", HttpRequest.getHeaderMap())
-                    .append("headerMapString", HttpRequest.getHeaderMapString())
-                    .append("parameterMap", HttpRequest.getParameterMap())
-                    .append("parameterMapString", HttpRequest.getParameterMapString())
-                    .append("body", HttpRequest.getBody());
+            doc.append("id", DRequest.getId())
+                    .append("runtimeId", DRequest.getRuntimeId())
+                    .append("timestamp", DRequest.getTimestamp())
+                    .append("contentLength", DRequest.getContentLength())
+                    .append("contentType", DRequest.getContentType())
+                    .append("method", DRequest.getMethod())
+                    .append("protocol", DRequest.getProtocol())
+                    .append("remoteHost", DRequest.getRemoteHost())
+                    .append("remotePort", DRequest.getRemotePort())
+                    .append("requestUri", DRequest.getRequestUri())
+                    .append("headerMap", DRequest.getHeaderMap())
+                    .append("headerMapString", DRequest.getHeaderMapString())
+                    .append("parameterMap", DRequest.getParameterMap())
+                    .append("parameterMapString", DRequest.getParameterMapString())
+                    .append("body", DRequest.getBody());
 
             // insert one doc
             collection.insertOne(doc);
@@ -140,7 +140,7 @@ public class MongoDataManager implements IDataManager {
     }
 
     @Override
-    public List<HttpRequest> getHttpRequests() {
+    public List<DRequest> getHttpRequests() {
 
         logger.info(getClientName() + " getHttpRequests");
 
@@ -156,7 +156,7 @@ public class MongoDataManager implements IDataManager {
 
             logger.info(getClientName() + " docsResultList size=" + docsResultList.size());
 
-            List<HttpRequest> HttpRequestList = new ArrayList<>();
+            List<DRequest> dRequestList = new ArrayList<>();
 
 //            GsonBuilder builder = new GsonBuilder();
 //            Gson gson = builder.create();
@@ -166,7 +166,7 @@ public class MongoDataManager implements IDataManager {
 //                System.out.println("document: " + doc.toJson());
 //                WebhookMessage am = gson.fromJson(doc.toJson(), WebhookMessage.class);
 //                System.out.println("converted back: " + am.toString());
-                HttpRequest m = new HttpRequest();
+                DRequest m = new DRequest();
                 m.setId(((Number) doc.get("id")).longValue());
                 m.setRuntimeId(doc.getString("runtimeId"));
                 m.setTimestamp(((Number) doc.get("timestamp")).longValue());
@@ -183,10 +183,10 @@ public class MongoDataManager implements IDataManager {
 
                 // there are exceptions thrown if document.getString(xx) does not exist
 
-                HttpRequestList.add(m);
+                dRequestList.add(m);
             }
 
-            return HttpRequestList;
+            return dRequestList;
 
         } catch (Exception e) {
             logger.error(getClientName() + " getHttpRequests: Exception: ", e);

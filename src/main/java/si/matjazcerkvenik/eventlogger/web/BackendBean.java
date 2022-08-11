@@ -21,7 +21,7 @@ import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DFilter;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
-import si.matjazcerkvenik.eventlogger.webhooks.HttpRequest;
+import si.matjazcerkvenik.eventlogger.model.DRequest;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -36,9 +36,9 @@ import java.util.Map;
 //@RequestScoped
 public class BackendBean {
 
-    public List<HttpRequest> getRequests() {
+    public List<DRequest> getRequests() {
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-        List<HttpRequest> list = iDataManager.getHttpRequests();
+        List<DRequest> list = iDataManager.getHttpRequests();
         DataManagerFactory.getInstance().returnClient(iDataManager);
         return list;
     }

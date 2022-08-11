@@ -18,6 +18,7 @@ services:
       - SIMPLELOGGER_FILENAME=/opt/eventlogger/log/eventlogger.log
       - EVENTLOGGER_DATA_RETENTION_DAYS=30
       - EVENTLOGGER_DB_POOL_SIZE=3
+      # choose storage type: mongodb or memory
       - EVENTLOGGER_STORAGE_TYPE=mongodb
       - EVENTLOGGER_MONGODB_CONNECTION_STRING=mongodb://admin:mongodbpassword@172.29.18.22:27017/?authSource=admin
       - EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC=5

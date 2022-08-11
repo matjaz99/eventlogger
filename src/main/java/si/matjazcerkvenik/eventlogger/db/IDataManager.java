@@ -18,7 +18,7 @@ package si.matjazcerkvenik.eventlogger.db;
 
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DFilter;
-import si.matjazcerkvenik.eventlogger.webhooks.HttpRequest;
+import si.matjazcerkvenik.eventlogger.model.DRequest;
 
 import java.util.List;
 
@@ -26,9 +26,9 @@ public interface IDataManager {
 
     public String getClientName();
 
-    public void addHttpRequest(HttpRequest HttpRequest);
+    public void addHttpRequest(DRequest DRequest);
 
-    public List<HttpRequest> getHttpRequests();
+    public List<DRequest> getHttpRequests();
 
     public void addEvents(List<DEvent> eventList);
 

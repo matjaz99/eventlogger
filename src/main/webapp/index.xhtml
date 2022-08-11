@@ -1,0 +1,41 @@
+<ui:composition template="/templates/pageTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <div id="contentFrame">
+        <ui:define name="contentFrame">
+
+            <h:form>
+
+                <h:outputLink value="/eventlogger/events" >
+                    /events
+                </h:outputLink>
+
+                <br/>
+
+                <h:outputLink value="/eventlogger/requests" >
+                    /requests
+                </h:outputLink>
+
+                <br/>
+
+                <h:outputLink value="/eventlogger/config" >
+                    /config
+                </h:outputLink>
+
+                <br/>
+
+                <h:outputLink value="/eventlogger/metrics" >
+                    /metrics
+                </h:outputLink>
+
+            </h:form>
+
+        </ui:define>
+    </div>
+
+</ui:composition>
+

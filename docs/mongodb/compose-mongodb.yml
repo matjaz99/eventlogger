@@ -1,3 +1,45 @@
-# TODO
+version: '3.6'
 
+networks:
+  net:
+    driver: overlay
+    attachable: true
 
+volumes:
+  mongodb_storage:
+    driver: local
+
+services:
+  mongodb:
+    image: mongo:5.0.6
+    ports:
+      - 27017:27017
+    networks:
+      - net
+    environment:
+      MONGO_INITDB_DATABASE: "testdb"
+      MONGO_INITDB_ROOT_USERNAME: "admin"
+      MONGO_INITDB_ROOT_PASSWORD: "mongodbpassword"
+    volumes:
+      - mongodb_storage:/data/db
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  mongo-express:
+    image: mongo-express:0.54.0
+    ports:
+      - 8081:8081
+    networks:
+      - net
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_ADMINUSERNAME: "admin"
+      ME_CONFIG_MONGODB_ADMINPASSWORD: "mongodbpassword"
+      ME_CONFIG_MONGODB_AUTH_USERNAME: "admin"
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: "mongodbpassword"
+    #volumes:
+    #  - mongodb_storage:/data/db
+    deploy:
+      mode: replicated
+      replicas: 1

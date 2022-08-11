@@ -22,7 +22,7 @@ import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
-import si.matjazcerkvenik.eventlogger.webhooks.HttpRequest;
+import si.matjazcerkvenik.eventlogger.model.DRequest;
 import si.matjazcerkvenik.eventlogger.webhooks.RequestProcessor;
 
 import javax.servlet.http.HttpServlet;
@@ -44,7 +44,7 @@ public class HttpWebhook extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse response)
 			throws IOException {
 
-		HttpRequest m = RequestProcessor.processIncomingRequest(req, DProps.requestsReceivedCount++);
+		DRequest m = RequestProcessor.processIncomingRequest(req, DProps.requestsReceivedCount++);
 
 		IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
 		iDataManager.addHttpRequest(m);

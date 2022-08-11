@@ -16,6 +16,18 @@ $ docker run -d TODO ...
 
 ## Configuration
 
+## Storage type
+
+Eventlogger currently supports two storage types: `memory` or `mongodb`.
+
+### Memory
+
+Memory storage type stores all data internally in memory. It is limited to the last 1000 events, 
+but it works out-of-the-box without any configuration.
+
+### MongoDB
+
+
 
 ## Configuring data sources
 
@@ -31,6 +43,10 @@ Eventlogger supports the following data sources in fluentd:
 
 Examples of each fluentd configuration can be found here (move to docs).
 
+### Generic http webhook
+
+This is basic http webhook which receives any GET or POST http method with some data. The data is taken 
+either from the body of the message (in post request) or from URL parameters in case of get request.
 
 
 

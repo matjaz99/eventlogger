@@ -32,7 +32,7 @@ public class DMetrics {
 
     public static final Counter eventlogger_http_requests_total = Counter.build()
             .name("eventlogger_http_requests_total")
-            .help("Total number of received webhook messages.")
+            .help("Total number of received http requests.")
             .labelNames("remotehost", "method", "webhook")
             .register();
 
