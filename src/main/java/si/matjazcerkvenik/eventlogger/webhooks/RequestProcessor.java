@@ -56,6 +56,7 @@ public class RequestProcessor {
         m.setRuntimeId(DProps.RUNTIME_ID);
         m.setTimestamp(System.currentTimeMillis());
         m.setContentLength(req.getContentLength());
+        if (m.getContentLength() < 0) m.setContentLength(0);
         m.setContentType(req.getContentType());
         m.setMethod(req.getMethod());
         m.setProtocol(req.getProtocol());
