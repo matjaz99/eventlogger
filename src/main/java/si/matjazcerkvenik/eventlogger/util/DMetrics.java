@@ -44,7 +44,7 @@ public class DMetrics {
 
     public static final Counter eventlogger_events_total = Counter.build()
             .name("eventlogger_events_total")
-            .help("Total size of received events.")
+            .help("Total received events.")
             .labelNames("source", "host", "ident")
             .register();
 

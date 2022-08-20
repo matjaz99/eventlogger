@@ -17,6 +17,7 @@ package si.matjazcerkvenik.eventlogger.db;
 
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DFilter;
+import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.eventlogger.model.DRequest;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
@@ -62,10 +63,8 @@ public class MemoryDataManager implements IDataManager {
     @Override
     public void addEvents(List<DEvent> eventList) {
         logger.info(getClientName() + " addEvents: size=" + eventList.size());
-        if (eventMessages.size() > 1000) {
-            for (int i = 0; i < eventList.size(); i++) {
-                eventMessages.remove(0);
-            }
+        while (eventMessages.size() > DProps.EVENTLOGGER_MEMORY_BUFFER_SIZE) {
+            eventMessages.remove(0);
         }
         eventMessages.addAll(eventList);
     }

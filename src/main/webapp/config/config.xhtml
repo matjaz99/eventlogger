@@ -19,6 +19,10 @@
 					<p:inplace editor="true">
 						<p:inputText value="#{configBean.dataRetention}" required="true" label="text"/>
 					</p:inplace>
+					<p:outputLabel value="Memory buffer size: " class="boldtext"/>
+					<p:inplace editor="true">
+						<p:inputText value="#{configBean.bufferSize}" required="true" label="text"/>
+					</p:inplace>
 
 				</p:panelGrid>
 
@@ -33,8 +37,8 @@
 
 				<p:outputLabel value="Runtime ID: " class="boldtext"/>
 				<p:outputLabel value="#{configBean.runtimeId}"/>
-				<p:outputLabel value="Start timestamp: " class="boldtext"/>
-				<p:outputLabel value="#{configBean.startUpTimestamp}"/>
+				<p:outputLabel value="Up time: " class="boldtext"/>
+				<p:outputLabel value="#{configBean.upTime}"/>
 				<p:outputLabel value="Version: " class="boldtext"/>
 				<p:outputLabel value="#{configBean.version}"/>
 				<p:outputLabel value="Containerized: " class="boldtext"/>

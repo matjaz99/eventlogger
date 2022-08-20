@@ -72,6 +72,7 @@ public class OnStartListener implements ServletContextListener {
         }
 
         DProps.EVENTLOGGER_STORAGE_TYPE = System.getenv().getOrDefault("EVENTLOGGER_STORAGE_TYPE", "memory").trim();
+        DProps.EVENTLOGGER_MEMORY_BUFFER_SIZE = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MEMORY_BUFFER_SIZE", "1000").trim());
         DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = System.getenv().getOrDefault("EVENTLOGGER_MONGODB_CONNECTION_STRING", "mongodb://admin:mongodbpassword@mongovm:27017/?authSource=admin").trim();
         DProps.EVENTLOGGER_DATA_RETENTION_DAYS = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_DATA_RETENTION_DAYS", "30").trim());
         DProps.EVENTLOGGER_DB_POOL_SIZE = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_DB_POOL_SIZE", "3").trim());
@@ -81,7 +82,8 @@ public class OnStartListener implements ServletContextListener {
         // set development environment
         if (new File("/Users/matjaz").exists()) {
             LogFactory.getLogger().warn("#######   RUNNING IN DEV MODE   #######");
-            DProps.EVENTLOGGER_STORAGE_TYPE = System.getenv().getOrDefault("EVENTLOGGER_STORAGE_TYPE", "mongodb").trim();
+            DProps.EVENTLOGGER_STORAGE_TYPE = System.getenv().getOrDefault("EVENTLOGGER_STORAGE_TYPE", "memory").trim();
+//            DProps.EVENTLOGGER_STORAGE_TYPE = System.getenv().getOrDefault("EVENTLOGGER_STORAGE_TYPE", "mongodb").trim();
             DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = System.getenv().getOrDefault("EVENTLOGGER_MONGODB_CONNECTION_STRING", "mongodb://admin:mongodbpassword@almavm:27017/?authSource=admin").trim();
             DProps.EVENTLOGGER_DATA_RETENTION_DAYS = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_DATA_RETENTION_DAYS", "500").trim());
             DProps.EVENTLOGGER_DB_POOL_SIZE = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_DB_POOL_SIZE", "3").trim());

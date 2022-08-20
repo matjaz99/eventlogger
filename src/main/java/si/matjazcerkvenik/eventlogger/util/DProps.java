@@ -27,9 +27,11 @@ public class DProps {
     public static String VERSION = "n/a";
     public static boolean IS_CONTAINERIZED = false;
     public static String LOCAL_IP;
+    public static String DATE_FORMAT = "yyyy/MM/dd H:mm:ss";
 
     // memory or mongodb
     public static String EVENTLOGGER_STORAGE_TYPE = "mongodb";
+    public static int EVENTLOGGER_MEMORY_BUFFER_SIZE = 1000;
     public static String EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@promvm:27017/test?authSource=admin";
     public static int EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC = 5;
     public static int EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC = 30;

@@ -16,6 +16,7 @@
 package si.matjazcerkvenik.eventlogger.web;
 
 import si.matjazcerkvenik.eventlogger.util.DProps;
+import si.matjazcerkvenik.eventlogger.util.Formatter;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
 import javax.faces.bean.ManagedBean;
@@ -25,16 +26,29 @@ import javax.faces.bean.SessionScoped;
 @SessionScoped
 public class ConfigBean {
 
-    public String getDataRetention() {
-        return Integer.toString(DProps.EVENTLOGGER_DATA_RETENTION_DAYS);
+    public Integer getDataRetention() {
+        return DProps.EVENTLOGGER_DATA_RETENTION_DAYS;
     }
 
-    public void setDataRetention(String s) {
+    public void setDataRetention(Integer i) {
         try {
-            DProps.EVENTLOGGER_DATA_RETENTION_DAYS = Integer.parseInt(s.trim());
+            DProps.EVENTLOGGER_DATA_RETENTION_DAYS = i;
             LogFactory.getLogger().info("ConfigBean: set EVENTLOGGER_DATA_RETENTION_DAYS: " + DProps.EVENTLOGGER_DATA_RETENTION_DAYS);
         } catch (NumberFormatException e) {
             LogFactory.getLogger().error("ConfigBean: set EVENTLOGGER_DATA_RETENTION_DAYS failed: " + e.getMessage());
+        }
+    }
+
+    public Integer getBufferSize() {
+        return DProps.EVENTLOGGER_MEMORY_BUFFER_SIZE;
+    }
+
+    public void setBufferSize(Integer i) {
+        try {
+            DProps.EVENTLOGGER_MEMORY_BUFFER_SIZE = i;
+            LogFactory.getLogger().info("ConfigBean: set EVENTLOGGER_MEMORY_BUFFER_SIZE: " + DProps.EVENTLOGGER_MEMORY_BUFFER_SIZE);
+        } catch (NumberFormatException e) {
+            LogFactory.getLogger().error("ConfigBean: set EVENTLOGGER_MEMORY_BUFFER_SIZE failed: " + e.getMessage());
         }
     }
 
@@ -46,8 +60,9 @@ public class ConfigBean {
         return DProps.RUNTIME_ID;
     }
 
-    public long getStartUpTimestamp() {
-        return DProps.START_UP_TIMESTAMP;
+    public String getUpTime() {
+        int secUp = (int) ((System.currentTimeMillis() - DProps.START_UP_TIMESTAMP) / 1000);
+        return Formatter.convertToDHMSFormat(secUp);
     }
 
     public String getVersion() {
