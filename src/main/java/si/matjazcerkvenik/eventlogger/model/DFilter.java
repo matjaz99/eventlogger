@@ -15,6 +15,8 @@
  */
 package si.matjazcerkvenik.eventlogger.model;
 
+import java.util.Arrays;
+
 public class DFilter {
 
     private String sort;
@@ -87,8 +89,8 @@ public class DFilter {
         return "DataFilter{" +
                 "sort='" + sort + '\'' +
                 ", limit=" + limit +
-                ", hosts=" + hosts +
-                ", ident=" + idents +
+                ", hosts=[" + Arrays.toString(hosts) + "]" +
+                ", ident=[" + Arrays.toString(idents) + "]" +
                 ", regex='" + regex + '\'' +
                 ", fromDate=" + fromDate +
                 ", toDate=" + toDate +

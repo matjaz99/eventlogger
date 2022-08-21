@@ -63,7 +63,7 @@ public class MemoryDataManager implements IDataManager {
     @Override
     public void addEvents(List<DEvent> eventList) {
         logger.info(getClientName() + " addEvents: size=" + eventList.size());
-        while (eventMessages.size() > DProps.EVENTLOGGER_MEMORY_BUFFER_SIZE) {
+        while (eventMessages.size() + eventList.size() > DProps.EVENTLOGGER_MEMORY_BUFFER_SIZE) {
             eventMessages.remove(0);
         }
         eventMessages.addAll(eventList);
