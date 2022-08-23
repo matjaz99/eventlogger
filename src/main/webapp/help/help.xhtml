@@ -1,0 +1,97 @@
+<ui:composition template="/templates/pageTemplate.xhtml"
+				xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui">
+
+	<div id="contentFrame">
+		<ui:define name="contentFrame">
+
+			<p:outputLabel value="Contents" class="boldtext"/>
+
+			<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
+				<ul>
+					<li>Webhooks</li>
+					<li>bbb</li>
+					<li>ccc</li>
+					<li>ddd</li>
+					<li>eee</li>
+				</ul>
+			</p:outputPanel>
+
+			<hr/>
+
+			<p:outputLabel value="Webhooks" class="boldtext"/>
+
+			<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
+				<p>
+					Two types of webhooks exist in eventlogger.
+				</p>
+				<p>
+					http - for plain text messages
+				</p>
+				<p>
+					fluentd-syslog - for syslog messages from fluentd in json or ndjson format
+				</p>
+			</p:outputPanel>
+
+			<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
+				<p>
+					http - for plain text messages
+				</p>
+			</p:outputPanel>
+
+			<p:outputPanel>
+				<div class="card">
+					<pre style="font-size: 12px;">GET  /eventlogger/api/v1/http?tag=json&amp;ident=my-process&amp;msg=This is the text message</pre>
+				</div>
+			</p:outputPanel>
+
+			<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
+				<p>or</p>
+			</p:outputPanel>
+
+			<p:outputPanel>
+				<div class="card">
+					<pre style="font-size: 12px;">POST  /eventlogger/api/v1/http?tag=json&amp;ident=my-process</pre>
+					<pre style="font-size: 12px;">Body: {"anything":1,"or":"just plain text"}</pre>
+				</div>
+			</p:outputPanel>
+
+			<hr/>
+
+			<p:outputLabel value="HTTP endpoint" class="boldtext"/>
+
+			<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
+				<span>
+					Generic HTTP endpoint accepts any GET or POST http request. Message is taken
+					from URL params in case of GET request or from the body of POST request.
+				</span>
+			</p:outputPanel>
+
+			<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
+				<span>
+					For GET requests the URL params must be set as:
+				</span>
+				<ul>
+					<li>HTTP webhook</li>
+					<li>Fluentd-syslog webhook</li>
+					<li>ccc</li>
+					<li>ddd</li>
+					<li>eee</li>
+				</ul>
+			</p:outputPanel>
+
+			<p:outputPanel>
+				<div class="card">
+					<pre style="font-size: 12px;">GET  /eventlogger/api/v1/http?tag=json&amp;ident=my-process&amp;msg=This is the text message</pre>
+				</div>
+			</p:outputPanel>
+
+
+		</ui:define>
+	</div>
+
+</ui:composition>
+

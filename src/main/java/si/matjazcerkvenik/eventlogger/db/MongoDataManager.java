@@ -73,23 +73,36 @@ public class MongoDataManager implements IDataManager {
 
         mongoClient = MongoClients.create(settings);
 
-        if (!eventsDbIndexCreated) {
-            MongoDatabase database = mongoClient.getDatabase(dbName);
+        initializeDatabase();
 
-            MongoCollection<Document> coll = database.getCollection(dbCollectionEvents);
-            if (coll == null) {
-                logger.info(getClientName() + " creating collection: " + dbCollectionEvents);
-                database.createCollection(dbCollectionEvents);
+    }
+
+    /**
+     * Create collection and create indexes
+     */
+    private void initializeDatabase() {
+        if (!eventsDbIndexCreated) {
+            try {
+                MongoDatabase database = mongoClient.getDatabase(dbName);
+
+                MongoCollection<Document> coll = database.getCollection(dbCollectionEvents);
+                if (coll == null) {
+                    logger.info(getClientName() + " creating collection: " + dbCollectionEvents);
+                    database.createCollection(dbCollectionEvents);
+                }
+                // create indexes
+                logger.info(getClientName() + " creating index: host");
+                coll.createIndex(Indexes.ascending("host"));
+                logger.info(getClientName() + " creating index: ident");
+                coll.createIndex(Indexes.ascending("ident"));
+                eventsDbIndexCreated = true;
+                logger.info(getClientName() + " database initialized");
+                logger.info(getClientName() + " client ready");
+            } catch (Exception e) {
+                logger.error(getClientName() + " error initializing database: " + e.getMessage());
             }
-            // create indexes
-            logger.info(getClientName() + " creating index: host");
-            coll.createIndex(Indexes.ascending("host"));
-            logger.info(getClientName() + " creating index: ident");
-            coll.createIndex(Indexes.ascending("ident"));
-            eventsDbIndexCreated = true;
         }
 
-        logger.info(getClientName() + " client initialized");
     }
 
     @Override

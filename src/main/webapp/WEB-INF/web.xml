@@ -8,6 +8,7 @@
         <welcome-file>requests.xhtml</welcome-file>
         <welcome-file>events.xhtml</welcome-file>
         <welcome-file>config.xhtml</welcome-file>
+        <welcome-file>help.xhtml</welcome-file>
     </welcome-file-list>
 
     <!-- Define the JSF servlet (manages the request processing life cycle for JavaServer Faces) -->
@@ -29,7 +30,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>Fluentd Syslog Webhook Servlet</servlet-name>
-        <url-pattern>/webhook/fluentd-syslog/*</url-pattern>
+        <url-pattern>/api/v1/fluentd-syslog/*</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>HTTP Webhook Servlet</servlet-name>
@@ -38,7 +39,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>HTTP Webhook Servlet</servlet-name>
-        <url-pattern>/webhook/http/*</url-pattern>
+        <url-pattern>/api/v1/http/*</url-pattern>
     </servlet-mapping>
 
     <!-- Define the servlet for metrics -->

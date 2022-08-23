@@ -1,6 +1,12 @@
 # EventLogger changelog
 
-## 0.2.2
+## 0.3.0
+
+* [DOCKER] `docker pull matjaz99/eventlogger:0.3.0`
+* [CHANGE] Renamed `webhook/*` endpoint to `api/v1/*`. Sounds better.
+* [FEATURE] Help view
+
+## 0.2.2 HTTP webhook / 2022-08-21
 
 * [DOCKER] `docker pull matjaz99/eventlogger:0.2.2`
 * [CHANGE] Removed `webhook/` endpoint. Instead, use either `webhook/fluentd-syslog/` or `webhook/http/`
