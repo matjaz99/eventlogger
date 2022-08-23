@@ -10,10 +10,10 @@
 
 			<p:outputLabel value="Contents" class="boldtext"/>
 
-			<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
+			<p:outputPanel>
 				<ul>
-					<li>Webhooks</li>
-					<li>bbb</li>
+					<li>HTTP Webhooks</li>
+					<li>Fluentd out_http plugin</li>
 					<li>ccc</li>
 					<li>ddd</li>
 					<li>eee</li>
@@ -22,34 +22,32 @@
 
 			<hr/>
 
-			<p:outputLabel value="Webhooks" class="boldtext"/>
+			<p:outputLabel value="HTTP Webhooks" class="boldtext"/>
 
-			<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
-				<p>
-					Two types of webhooks exist in eventlogger.
-				</p>
-				<p>
-					http - for plain text messages
-				</p>
-				<p>
-					fluentd-syslog - for syslog messages from fluentd in json or ndjson format
-				</p>
-			</p:outputPanel>
-
-			<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
-				<p>
-					http - for plain text messages
-				</p>
+			<p:outputPanel>
+				<p>HTTP webhook accepts any GET http request that contains the following URL parameters:</p>
+				<ul>
+					<li>ident - identification of the process that sent the event [required]</li>
+					<li>tag - custom label [optional]</li>
+					<li>msg - plain text message [required]</li>
+				</ul>
+				<p>Example:</p>
 			</p:outputPanel>
 
 			<p:outputPanel>
 				<div class="card">
-					<pre style="font-size: 12px;">GET  /eventlogger/api/v1/http?tag=json&amp;ident=my-process&amp;msg=This is the text message</pre>
+					<pre style="font-size: 12px;">GET  /eventlogger/api/v1/http?tag=test&amp;ident=my-process&amp;msg=This is the text message</pre>
 				</div>
 			</p:outputPanel>
 
-			<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
-				<p>or</p>
+			<p:outputPanel>
+				<p>HTTP webhook also accepts any POST http request that contains the following URL parameters and
+					contains the message in the request body:</p>
+				<ul>
+					<li>ident - identification of the process that sent the event [required]</li>
+					<li>tag - custom label [optional]</li>
+				</ul>
+				<p>Example:</p>
 			</p:outputPanel>
 
 			<p:outputPanel>
@@ -61,34 +59,98 @@
 
 			<hr/>
 
-			<p:outputLabel value="HTTP endpoint" class="boldtext"/>
+			<p:outputLabel value="Collecting syslog events with fluentd" class="boldtext"/>
 
-			<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
-				<span>
-					Generic HTTP endpoint accepts any GET or POST http request. Message is taken
-					from URL params in case of GET request or from the body of POST request.
-				</span>
-			</p:outputPanel>
-
-			<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
-				<span>
-					For GET requests the URL params must be set as:
-				</span>
-				<ul>
-					<li>HTTP webhook</li>
-					<li>Fluentd-syslog webhook</li>
-					<li>ccc</li>
-					<li>ddd</li>
-					<li>eee</li>
-				</ul>
+			<p:outputPanel>
+				<p>
+					Configure Fluentd to listen for syslog events on port 10514 and forward them
+					to Eventlogger using out_http plugin.
+				</p>
 			</p:outputPanel>
 
 			<p:outputPanel>
 				<div class="card">
-					<pre style="font-size: 12px;">GET  /eventlogger/api/v1/http?tag=json&amp;ident=my-process&amp;msg=This is the text message</pre>
+					<pre style="font-size: 12px;">
+&lt;source&gt;
+  @type syslog
+  port 10514
+  bind 0.0.0.0
+  &lt;transport udp&gt;
+  &lt;/transport&gt;
+  add_remote_addr true
+  tag syslog.udp
+  &lt;parse&gt;
+    @type syslog
+    message_format auto
+  &lt;/parse&gt;
+&lt;/source&gt;
+
+&lt;source&gt;
+  @type syslog
+  port 10514
+  bind 0.0.0.0
+  &lt;transport tcp&gt;
+  &lt;/transport&gt;
+  tag syslog.tcp
+  &lt;parse&gt;
+    message_format auto
+  &lt;/parse&gt;
+&lt;/source&gt;
+
+&lt;filter syslog.**&gt;
+  @type record_transformer
+  &lt;record&gt;
+    tag "\${tag}"
+  &lt;/record&gt;
+&lt;/filter&gt;
+
+&lt;match syslog.**&gt;
+  @type http
+  endpoint http://eventlogger:8080/eventlogger/api/v1/fluentd-syslog
+  open_timeout 2
+  &lt;format&gt;
+    @type json
+  &lt;/format&gt;
+  &lt;buffer&gt;
+    flush_interval 5s
+  &lt;/buffer&gt;
+&lt;/match&gt;</pre>
 				</div>
 			</p:outputPanel>
 
+			<hr/>
+
+			<p:outputLabel value="Configure syslog on the Linux server" class="boldtext"/>
+
+			<p:outputPanel>
+				<p>
+					ss
+				</p>
+			</p:outputPanel>
+
+			<p:outputPanel>
+				<div class="card">
+					<pre style="font-size: 12px;">TODO</pre>
+				</div>
+			</p:outputPanel>
+
+			<hr/>
+
+			<p:outputLabel value="Configure syslog driver on Docker container" class="boldtext"/>
+
+			<p:outputPanel>
+				<p>
+					ss
+				</p>
+			</p:outputPanel>
+
+			<p:outputLabel value="File tailing" class="boldtext"/>
+
+			<p:outputPanel>
+				<p>
+					ss
+				</p>
+			</p:outputPanel>
 
 		</ui:define>
 	</div>

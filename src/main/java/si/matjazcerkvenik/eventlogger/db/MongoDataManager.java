@@ -47,9 +47,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class MongoDataManager implements IDataManager {
 
     private static SimpleLogger logger = LogFactory.getLogger();
-    public static String dbName = "eventlogger";
-    public static String dbCollectionEvents = "events";
-    public static String dbCollectionRequests = "requests";
+    public static final String dbName = "eventlogger";
+    public static final String dbCollectionEvents = "events";
+    public static final String dbCollectionRequests = "requests";
     private MongoClient mongoClient;
     private int clientId = 0;
     private String clientName;
