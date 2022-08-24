@@ -124,14 +124,21 @@
 
 			<p:outputPanel>
 				<p>
-					ss
+					Open the /etc/rsyslogd.conf and add a line like this:
 				</p>
 			</p:outputPanel>
 
 			<p:outputPanel>
 				<div class="card">
-					<pre style="font-size: 12px;">TODO</pre>
+					<pre style="font-size: 12px;">*.*     @192.168.0.123:10514</pre>
 				</div>
+			</p:outputPanel>
+
+			<p:outputPanel>
+				<p>
+					Restart syslog (or rsyslog). This will tell syslog to send all messages to fluentd
+					syslog plugin (or another syslog server). Use single @ for udp, and @@ for tcp.
+				</p>
 			</p:outputPanel>
 
 			<hr/>
@@ -140,11 +147,63 @@
 
 			<p:outputPanel>
 				<p>
-					ss
+					Use Docker's built-in syslog logging driver to send logs to fluentd syslog plugin.
+					Select a syslog format and add a custom tag that will become an ident in fluentd.
 				</p>
 			</p:outputPanel>
 
-			<p:outputLabel value="File tailing" class="boldtext"/>
+			<p:outputPanel>
+				<div class="card">
+					<pre style="font-size: 12px;">services:
+  httpd:
+    image: httpd
+    ports:
+      - 8888:80
+    logging:
+      driver: syslog
+      options:
+        syslog-address: 'udp://192.168.0.123:10514'
+        tag: httpd.log
+        syslog-format: rfc5424</pre>
+				</div>
+			</p:outputPanel>
+
+			<hr/>
+
+			<p:outputLabel value="Configure fluentd driver on Docker container" class="boldtext"/>
+
+			<p:outputPanel>
+				<p>
+					Use Docker's built-in fluentd logging driver to send logs to fluentd forward plugin.
+					Set address of fluentd and add a custom tag.
+				</p>
+			</p:outputPanel>
+
+			<p:outputPanel>
+				<div class="card">
+					<pre style="font-size: 12px;">services:
+  httpd:
+    image: httpd
+    ports:
+      - 8888:80
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 192.168.0.123:24224
+        tag: httpd.access</pre>
+				</div>
+			</p:outputPanel>
+
+			<p:outputPanel>
+				<p>
+					Use Docker's built-in fluentd logging driver to send logs to fluentd forward plugin.
+					Set address of fluentd and add a custom tag.
+				</p>
+			</p:outputPanel>
+
+			<hr/>
+
+			<p:outputLabel value="File tailing with fluentd" class="boldtext"/>
 
 			<p:outputPanel>
 				<p>
