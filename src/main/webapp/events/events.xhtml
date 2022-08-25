@@ -45,6 +45,28 @@
 						<f:selectItems value="#{backendBean.availableIdents}"/>
 					</p:selectCheckboxMenu>
 
+					<p:commandButton value="Filter *" type="button" icon="pi pi-filter" styleClass="ui-button-outlined" onclick="PF('fltrdlg').show(200)"/>
+					<p:dialog header="Filter" widgetVar="fltrdlg"  showEffect="fade" modal="true">
+						<p:panelGrid columns="2">
+							<p:selectOneMenu id="option" value="#{selectOneMenuView.selectedOption}">
+								<f:selectItem itemLabel="Contains" itemValue="Option0"/>
+								<f:selectItem itemLabel="RegEx" itemValue="Option1"/>
+								<f:selectItem itemLabel="Grok" itemValue="Option2"/>
+							</p:selectOneMenu>
+							<p:inputText size="80"/>
+							<p:outputLabel value="Limit:"/>
+							<p:inputText value="1000"/>
+							<p:outputLabel value="Sort ascending:"/>
+							<p:toggleSwitch value="#{selectBooleanView.value3}"/>
+						</p:panelGrid>
+
+						<f:facet name="footer">
+							<p:commandButton type="button" value="Reset" styleClass="ui-button-flat ui-button-secondary" style="width: 6rem;" />
+							<p:commandButton type="button" value="Apply" styleClass="ui-button-flat" style="width: 6rem;" onclick="PF('fltrdlg').hide(500);" />
+							<p:ajax update="msgForm"/>
+						</f:facet>
+					</p:dialog>
+
 				</p:panelGrid>
 
 
