@@ -28,6 +28,15 @@ hr {
     font-size: 9px;
 }
 
+/* selectcheckboxmenu labels */
+body .ui-selectcheckboxmenu .ui-selectcheckboxmenu-multiple-container .ui-selectcheckboxmenu-token {
+  padding: 1px 0;
+  margin: 0 0.5rem 0 0;
+  background: #e3f0ff;
+  color: #2977c6;
+  border-radius: 4px;
+}
+
 /* footer */
 .ui-notificationbar {
 	position: fixed;

@@ -36,6 +36,15 @@ import java.util.Map;
 //@RequestScoped
 public class BackendBean {
 
+    @PostConstruct
+    public void init() {
+        LogFactory.getLogger().info("BackendBean: PostConstruct init");
+        Map<String, String> params = FacesContext.getCurrentInstance().
+                getExternalContext().getRequestParameterMap();
+        String parameterOne = params.get("filter");
+        LogFactory.getLogger().info("BackendBean: PostConstruct filter=" + parameterOne);
+    }
+
     public List<DRequest> getRequests() {
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
         List<DRequest> list = iDataManager.getHttpRequests();
@@ -101,19 +110,22 @@ public class BackendBean {
 
     }
 
+
+
+
+    /*****************************************************/
+    /**                                                 **/
+    /**            host and ident filter                **/
+    /**                                                 **/
+    /*****************************************************/
+
+
+
+
     private String[] selectedHosts;
     private List<String> availableHosts;
     private String[] selectedIdents;
     private List<String> availableIdents;
-
-    @PostConstruct
-    public void init() {
-        LogFactory.getLogger().info("BackendBean: PostConstruct init");
-        Map<String, String> params = FacesContext.getCurrentInstance().
-                getExternalContext().getRequestParameterMap();
-        String parameterOne = params.get("filter");
-        LogFactory.getLogger().info("BackendBean: PostConstruct filter=" + parameterOne);
-    }
 
     public String[] getSelectedHosts() {
         if (selectedHosts != null && selectedHosts.length > 0) {
@@ -164,11 +176,56 @@ public class BackendBean {
     }
 
     public void selectedHostsChangeEvent(ValueChangeEvent event) {
-        LogFactory.getLogger().info("selectedHostsChangeEvent: " + event.getNewValue().toString());
+        LogFactory.getLogger().debug("selectedHostsChangeEvent: " + event.getNewValue().toString());
     }
 
     public void selectedIdentsChangeEvent(ValueChangeEvent event) {
-        LogFactory.getLogger().info("selectedIdentsChangeEvent: " + event.getNewValue().toString());
+        LogFactory.getLogger().debug("selectedIdentsChangeEvent: " + event.getNewValue().toString());
     }
 
+
+
+    /*****************************************************/
+    /**                                                 **/
+    /**           the rest of the filter                **/
+    /**                                                 **/
+    /*****************************************************/
+
+
+    private String selectedSearchOption;
+    private String searchPattern;
+    private int limit = 1000;
+    private boolean sortAscending;
+
+    public String getSelectedSearchOption() {
+        return selectedSearchOption;
+    }
+
+    public void setSelectedSearchOption(String selectedSearchOption) {
+        this.selectedSearchOption = selectedSearchOption;
+    }
+
+    public String getSearchPattern() {
+        return searchPattern;
+    }
+
+    public void setSearchPattern(String searchPattern) {
+        this.searchPattern = searchPattern;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public boolean isSortAscending() {
+        return sortAscending;
+    }
+
+    public void setSortAscending(boolean sortAscending) {
+        this.sortAscending = sortAscending;
+    }
 }

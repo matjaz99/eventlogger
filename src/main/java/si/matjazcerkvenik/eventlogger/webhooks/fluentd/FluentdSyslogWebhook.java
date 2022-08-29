@@ -72,6 +72,8 @@ public class FluentdSyslogWebhook extends HttpServlet {
 				e.setTimestamp(now);
 				e.setEventSource("fluentd.syslog");
 				eventList.add(e);
+				if (e.getHost() == null) e.setHost(m.getRemoteHost());
+				if (e.getIdent() == null) e.setIdent("unknown");
 				LogFactory.getLogger().trace(e.toString());
 				DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
 			}

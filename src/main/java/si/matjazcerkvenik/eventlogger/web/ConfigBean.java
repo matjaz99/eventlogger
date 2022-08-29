@@ -20,10 +20,12 @@ import si.matjazcerkvenik.eventlogger.util.Formatter;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
 
 @ManagedBean
-@SessionScoped
+//@SessionScoped
+@RequestScoped
 public class ConfigBean {
 
     public Integer getDataRetention() {

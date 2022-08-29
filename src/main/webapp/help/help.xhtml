@@ -196,9 +196,32 @@
 
 			<p:outputPanel>
 				<p>
-					Use Docker's built-in fluentd logging driver to send logs to fluentd forward plugin.
-					Set address of fluentd and add a custom tag.
+					Event must be sent to eventlogger's
+					http endpoint. It is highly recommended to set the ident in URL parameters.
+					Example how to configure forward plugin.
 				</p>
+			</p:outputPanel>
+
+			<p:outputPanel>
+				<div class="card">
+					<pre style="font-size: 12px;">&lt;source&gt;
+  @type forward
+  port 24224
+  bind 0.0.0.0
+&lt;/source&gt;
+
+&lt;match httpd.access&gt;
+    @type http
+      endpoint http://192.168.0.16:8080/eventlogger/api/v1/http?ident=httpd.access
+      open_timeout 2
+      &lt;format&gt;
+        @type json
+      &lt;/format&gt;
+      &lt;buffer&gt;
+        flush_interval 10s
+      &lt;/buffer&gt;
+ &lt;/match&gt;</pre>
+				</div>
 			</p:outputPanel>
 
 			<hr/>

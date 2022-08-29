@@ -38,46 +38,53 @@ public class HttpWebhook extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        DRequest m = RequestProcessor.processIncomingRequest(req, DProps.requestsReceivedCount++);
+		DRequest m = RequestProcessor.processIncomingRequest(req, DProps.requestsReceivedCount++);
 
-        IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-        iDataManager.addHttpRequest(m);
-        DMetrics.eventlogger_http_requests_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc();
-        DMetrics.eventlogger_http_requests_size_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc(m.getContentLength());
+		IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
+		iDataManager.addHttpRequest(m);
+		DMetrics.eventlogger_http_requests_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc();
+		DMetrics.eventlogger_http_requests_size_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc(m.getContentLength());
 
-        // process body
-        DEvent e = new DEvent();
-        e.setId(DProps.eventsReceivedCount++);
-        e.setRuntimeId(DProps.RUNTIME_ID);
-        e.setTimestamp(System.currentTimeMillis());
-        e.setHost(m.getRemoteHost());
-        e.setIdent("eventlogger.http");
-        if (m.getParameterMap().containsKey("ident")) {
-            e.setIdent(m.getParameterMap().get("ident"));
-        }
-        if (m.getParameterMap().containsKey("tag")) {
-            e.setTag(m.getParameterMap().get("tag"));
-        }
-        if (m.getParameterMap().containsKey("msg")) {
-            e.setMessage(m.getParameterMap().get("msg"));
-        } else if (m.getParameterMap().containsKey("message")) {
-            e.setMessage(m.getParameterMap().get("message"));
-        } else {
-            e.setMessage(null);
-        }
-        e.setEventSource("eventlogger.http.get");
-        LogFactory.getLogger().trace(e.toString());
-        DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
+		try {
 
-        if (e.getMessage() != null) {
-            List<DEvent> eventList = new ArrayList<>();
-            eventList.add(e);
-            iDataManager.addEvents(eventList);
-            DataManagerFactory.getInstance().returnClient(iDataManager);
-            return;
-        }
+			// process body
+			DEvent e = new DEvent();
+			e.setId(DProps.eventsReceivedCount++);
+			e.setRuntimeId(DProps.RUNTIME_ID);
+			e.setTimestamp(System.currentTimeMillis());
+			e.setHost(m.getRemoteHost());
+			e.setIdent("eventlogger.http");
+			if (m.getParameterMap().containsKey("ident")) {
+				e.setIdent(m.getParameterMap().get("ident"));
+			}
+			if (m.getParameterMap().containsKey("tag")) {
+				e.setTag(m.getParameterMap().get("tag"));
+			}
+			if (m.getParameterMap().containsKey("msg")) {
+				e.setMessage(m.getParameterMap().get("msg"));
+			} else if (m.getParameterMap().containsKey("message")) {
+				e.setMessage(m.getParameterMap().get("message"));
+			} else {
+				e.setMessage(null);
+			}
+			e.setEventSource("eventlogger.http.get");
+			LogFactory.getLogger().trace(e.toString());
+			DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
 
-        LogFactory.getLogger().warn("HttpWebhook: doGet: message is empty; event will be ignored");
+			if (e.getMessage() != null) {
+				List<DEvent> eventList = new ArrayList<>();
+				eventList.add(e);
+				iDataManager.addEvents(eventList);
+				return;
+			}
+
+			LogFactory.getLogger().warn("HttpWebhook: doGet: message is empty; event will be ignored");
+
+		} catch (Exception e) {
+			LogFactory.getLogger().warn("HttpWebhook: doGet: Exception: " + e.getMessage());
+		} finally {
+			DataManagerFactory.getInstance().returnClient(iDataManager);
+		}
 
 	}
 
