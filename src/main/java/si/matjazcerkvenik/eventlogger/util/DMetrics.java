@@ -48,6 +48,12 @@ public class DMetrics {
             .labelNames("source", "host", "ident")
             .register();
 
+    public static final Counter eventlogger_events_ignored_total = Counter.build()
+            .name("eventlogger_events_ignored_total")
+            .help("You are losing some events")
+            .labelNames("source", "method")
+            .register();
+
     public static final Histogram eventlogger_db_duration_seconds = Histogram.build()
             .buckets(0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1.0)
             .name("eventlogger_db_duration_seconds")

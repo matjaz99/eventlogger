@@ -94,6 +94,8 @@ public class BackendBean {
                 list = iDataManager.getEvents(filter);
             }
 
+//            list = iDataManager.getEvents(composeFilter());
+
             if (list == null) return "no data";
 
             StringBuilder sb = new StringBuilder();
@@ -108,6 +110,33 @@ public class BackendBean {
             DataManagerFactory.getInstance().returnClient(iDataManager);
         }
 
+    }
+
+    public DFilter composeFilter() {
+        DFilter filter = new DFilter();
+        boolean filterIsAltered = false;
+
+        if (selectedHosts != null && selectedHosts.length > 0) {
+            filter.setHosts(selectedHosts);
+            filterIsAltered = true;
+        }
+        if (selectedIdents != null && selectedIdents.length > 0) {
+            filter.setIdents(selectedIdents);
+            filterIsAltered = true;
+        }
+        if (limit == 0) {
+            filter.setLimit(1000);
+        } else {
+            filter.setLimit(limit);
+            filterIsAltered = true;
+        }
+
+        // if nothing is set, return null
+        if (!filterIsAltered) return null;
+
+        LogFactory.getLogger().info("BackendBean: composeFilter: " + filter.toString());
+
+        return filter;
     }
 
 
