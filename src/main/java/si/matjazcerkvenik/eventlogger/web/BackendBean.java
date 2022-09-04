@@ -81,20 +81,20 @@ public class BackendBean {
 
         try {
 
-            if ((selectedHosts == null || selectedHosts.length == 0)
-                    && (selectedIdents == null || selectedIdents.length == 0)) {
-                // no filter
-                LogFactory.getLogger().info("BackendBean: getConcatenatedEvents: no filter");
-                list = iDataManager.getEvents(null);
-            } else {
-                DFilter filter = new DFilter();
-                filter.setHosts(selectedHosts);
-                filter.setIdents(selectedIdents);
-                LogFactory.getLogger().info("BackendBean: getConcatenatedEvents: apply filter " + filter.toString());
-                list = iDataManager.getEvents(filter);
-            }
+//            if ((selectedHosts == null || selectedHosts.length == 0)
+//                    && (selectedIdents == null || selectedIdents.length == 0)) {
+//                // no filter
+//                LogFactory.getLogger().info("BackendBean: getConcatenatedEvents: no filter");
+//                list = iDataManager.getEvents(null);
+//            } else {
+//                DFilter filter = new DFilter();
+//                filter.setHosts(selectedHosts);
+//                filter.setIdents(selectedIdents);
+//                LogFactory.getLogger().info("BackendBean: getConcatenatedEvents: apply filter " + filter.toString());
+//                list = iDataManager.getEvents(filter);
+//            }
 
-//            list = iDataManager.getEvents(composeFilter());
+            list = iDataManager.getEvents(composeFilter());
 
             if (list == null) return "no data";
 
@@ -124,12 +124,14 @@ public class BackendBean {
             filter.setIdents(selectedIdents);
             filterIsAltered = true;
         }
-        if (limit == 0) {
-            filter.setLimit(1000);
-        } else {
-            filter.setLimit(limit);
+        if (selectedSearchOption != null && selectedSearchOption.length() > 0) {
+            filter.setSearchType(selectedSearchOption);
+        }
+        if (selectedSearchPattern != null && selectedSearchPattern.length() > 0) {
+            filter.setSearchPattern(selectedSearchPattern);
             filterIsAltered = true;
         }
+        filter.setLimit(limit);
 
         // if nothing is set, return null
         if (!filterIsAltered) return null;
@@ -139,6 +141,9 @@ public class BackendBean {
         return filter;
     }
 
+    public void doFinishCreateFilter() {
+        LogFactory.getLogger().info(">>> BackendBean: doFinishCreateFilter: " + selectedSearchPattern);
+    }
 
 
 
@@ -147,8 +152,6 @@ public class BackendBean {
     /**            host and ident filter                **/
     /**                                                 **/
     /*****************************************************/
-
-
 
 
     private String[] selectedHosts;
@@ -216,15 +219,12 @@ public class BackendBean {
 
     /*****************************************************/
     /**                                                 **/
-    /**           the rest of the filter                **/
+    /**                  regex filter                   **/
     /**                                                 **/
     /*****************************************************/
 
-
     private String selectedSearchOption;
-    private String searchPattern;
-    private int limit = 1000;
-    private boolean sortAscending;
+    private String selectedSearchPattern;
 
     public String getSelectedSearchOption() {
         return selectedSearchOption;
@@ -234,13 +234,37 @@ public class BackendBean {
         this.selectedSearchOption = selectedSearchOption;
     }
 
-    public String getSearchPattern() {
-        return searchPattern;
+    public String getSelectedSearchPattern() {
+        return selectedSearchPattern;
     }
 
-    public void setSearchPattern(String searchPattern) {
-        this.searchPattern = searchPattern;
+    public void setSelectedSearchPattern(String selectedSearchPattern) {
+        this.selectedSearchPattern = selectedSearchPattern;
     }
+
+
+
+    /*****************************************************/
+    /**                                                 **/
+    /**                  time filter                    **/
+    /**                                                 **/
+    /*****************************************************/
+
+
+
+
+
+
+    /*****************************************************/
+    /**                                                 **/
+    /**           the rest of the filter                **/
+    /**                                                 **/
+    /*****************************************************/
+
+
+
+    private int limit = 1000;
+    private boolean sortAscending;
 
     public int getLimit() {
         return limit;

@@ -23,7 +23,8 @@ public class DFilter {
     private int limit;
     private String[] hosts;
     private String[] idents;
-    private String regex;
+    private String searchType;
+    private String searchPattern;
     private long fromDate;
     private long toDate;
 
@@ -60,12 +61,20 @@ public class DFilter {
         this.idents = idents;
     }
 
-    public String getRegex() {
-        return regex;
+    public String getSearchType() {
+        return searchType;
     }
 
-    public void setRegex(String regex) {
-        this.regex = regex;
+    public void setSearchType(String searchType) {
+        this.searchType = searchType;
+    }
+
+    public String getSearchPattern() {
+        return searchPattern;
+    }
+
+    public void setSearchPattern(String searchPattern) {
+        this.searchPattern = searchPattern;
     }
 
     public long getFromDate() {
@@ -86,12 +95,13 @@ public class DFilter {
 
     @Override
     public String toString() {
-        return "DataFilter{" +
+        return "DFilter{" +
                 "sort='" + sort + '\'' +
                 ", limit=" + limit +
                 ", hosts=[" + Arrays.toString(hosts) + "]" +
                 ", ident=[" + Arrays.toString(idents) + "]" +
-                ", regex='" + regex + '\'' +
+                ", searchType='" + searchType + '\'' +
+                ", searchPattern='" + searchPattern + '\'' +
                 ", fromDate=" + fromDate +
                 ", toDate=" + toDate +
                 '}';
