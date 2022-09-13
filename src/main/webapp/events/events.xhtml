@@ -46,30 +46,7 @@
 					</p:selectCheckboxMenu>
 
 					<p:commandButton value="Filter *" type="button" icon="pi pi-filter" styleClass="ui-button-outlined" onclick="PF('fltrdlg').show(200)"/>
-					<p:dialog header="Filter" widgetVar="fltrdlg" showEffect="fade" modal="true">
-						<p:panelGrid columns="2">
-							<p:selectOneMenu id="option" value="#{backendBean.selectedSearchOption}">
-								<f:selectItem itemLabel="Contains" itemValue="CONTAINS"/>
-								<f:selectItem itemLabel="RegEx" itemValue="REGEX"/>
-								<f:selectItem itemLabel="Grok" itemValue="GROK"/>
-							</p:selectOneMenu>
-							<p:inputText size="80" placeholder="pattern" value="#{backendBean.selectedSearchPattern}"/>
-							<p:outputLabel value="Limit:"/>
-							<p:inputText value="#{backendBean.limit}"/>
-							<p:outputLabel value="Sort ascending:"/>
-							<p:toggleSwitch value="#{backendBean.sortAscending}"/>
-						</p:panelGrid>
 
-						<f:facet name="footer">
-							<p:commandButton type="button" value="Reset" styleClass="ui-button-flat ui-button-secondary" style="width: 6rem;" />
-							<p:commandButton type="button" value="Apply"
-											 styleClass="ui-button-flat"
-											 style="width: 6rem;"
-											 onclick="PF('fltrdlg').hide(500);"
-											 actionListener="#{backendBean.doFinishCreateFilter}"/>
-							<p:ajax update="msgForm eventPanel"/>
-						</f:facet>
-					</p:dialog>
 
 				</p:panelGrid>
 
@@ -84,6 +61,36 @@
 			</h:form>
 
 
+			<h:form id="filterForm">
+			<p:dialog id="fDialog" header="Filter" widgetVar="fltrdlg" showEffect="fade" modal="true">
+
+				<p:panelGrid columns="2">
+					<p:selectOneMenu id="option" value="#{backendBean.selectedSearchOption}">
+						<f:selectItem itemLabel="Contains" itemValue="CONTAINS"/>
+						<f:selectItem itemLabel="RegEx" itemValue="REGEX"/>
+						<f:selectItem itemLabel="Grok" itemValue="GROK"/>
+					</p:selectOneMenu>
+					<p:inputText size="80" placeholder="pattern" value="#{backendBean.selectedSearchPattern}"/>
+					<p:outputLabel value="Limit:"/>
+					<p:inputText value="#{backendBean.limit}"/>
+					<p:outputLabel value="Sort ascending:"/>
+					<p:toggleSwitch value="#{backendBean.sortAscending}"/>
+				</p:panelGrid>
+
+				<f:facet name="footer">
+					<p:commandButton type="button" value="Reset" styleClass="ui-button-flat ui-button-secondary" style="width: 6rem;" />
+					<p:commandButton type="button" value="Apply"
+									 styleClass="ui-button-flat"
+									 style="width: 6rem;"
+									 onclick="PF('fltrdlg').hide(500);"
+									 actionListener="#{backendBean.createFilterAction()}"
+									 action="#{backendBean.createFilterAction()}"
+									 update="filterForm"/>
+					<p:ajax update="msgForm filterForm"/>
+				</f:facet>
+
+			</p:dialog>
+			</h:form>
 
 			<!--			<p:poll interval="10" update="msgForm" />-->
 

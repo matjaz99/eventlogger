@@ -27,6 +27,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import java.util.List;
 import java.util.Map;
@@ -133,6 +134,8 @@ public class BackendBean {
         }
         filter.setLimit(limit);
 
+        LogFactory.getLogger().info("BackendBean: filter is altered: " + filterIsAltered);
+
         // if nothing is set, return null
         if (!filterIsAltered) return null;
 
@@ -141,9 +144,15 @@ public class BackendBean {
         return filter;
     }
 
-    public void doFinishCreateFilter() {
+    public void doFinishCreateFilter(ActionEvent event) {
         LogFactory.getLogger().info(">>> BackendBean: doFinishCreateFilter: " + selectedSearchPattern);
     }
+
+    public void createFilterAction() {
+        LogFactory.getLogger().info(">>> BackendBean: createFilterAction: " + selectedSearchPattern);
+    }
+
+
 
 
 
@@ -224,7 +233,7 @@ public class BackendBean {
     /*****************************************************/
 
     private String selectedSearchOption;
-    private String selectedSearchPattern;
+    private String selectedSearchPattern = "^[test]*$";
 
     public String getSelectedSearchOption() {
         return selectedSearchOption;

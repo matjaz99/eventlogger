@@ -256,14 +256,14 @@ public class MongoDataManager implements IDataManager {
             MongoCollection<Document> collection = db.getCollection(dbCollectionEvents);
 
             List<Document> docsResultList = null;
+            Bson bsonFilter = prepareBsonFilter(filter);
 
-            if (filter == null) {
+            if (filter == null || bsonFilter == null) {
                 docsResultList = collection.find()
                         .sort(Sorts.descending("timestamp", "id"))
                         .limit(1000)
                         .into(new ArrayList<>());
             } else {
-                Bson bsonFilter = prepareBsonFilter(filter);
                 docsResultList = collection.find(bsonFilter)
                         .sort(Sorts.descending("timestamp", "id"))
                         .limit(1000)
@@ -323,13 +323,14 @@ public class MongoDataManager implements IDataManager {
             tempList.add(identsFilter);
         }
 
-        if (!tempList.isEmpty()) {
-
+        if (tempList.isEmpty()) {
+            return null;
         }
         Bson[] barr = new Bson[tempList.size()];
         tempList.toArray(barr);
 
         bsonFilter = Filters.and(barr);
+        logger.debug("prepareBsonFilter: " + bsonFilter.toString());
         return bsonFilter;
     }
 
