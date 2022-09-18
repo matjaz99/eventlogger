@@ -256,14 +256,14 @@ public class MongoDataManager implements IDataManager {
             MongoCollection<Document> collection = db.getCollection(dbCollectionEvents);
 
             List<Document> docsResultList = null;
-            Bson bsonFilter = prepareBsonFilter(filter);
 
-            if (filter == null || bsonFilter == null) {
+            if (filter == null) {
                 docsResultList = collection.find()
                         .sort(Sorts.descending("timestamp", "id"))
                         .limit(1000)
                         .into(new ArrayList<>());
             } else {
+                Bson bsonFilter = prepareBsonFilter(filter);
                 docsResultList = collection.find(bsonFilter)
                         .sort(Sorts.descending("timestamp", "id"))
                         .limit(1000)

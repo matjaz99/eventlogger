@@ -144,12 +144,15 @@ public class BackendBean {
         return filter;
     }
 
-    public void doFinishCreateFilter(ActionEvent event) {
-        LogFactory.getLogger().info(">>> BackendBean: doFinishCreateFilter: " + selectedSearchPattern);
+    public void resetFilter() {
+        LogFactory.getLogger().info(">>> BackendBean: resetFilter");
+        selectedSearchPattern = null;
+        selectedSearchOption = "CONTAINS";
+        limit = 1000;
     }
 
-    public void createFilterAction() {
-        LogFactory.getLogger().info(">>> BackendBean: createFilterAction: " + selectedSearchPattern);
+    public void applyFilterAction() {
+        LogFactory.getLogger().info(">>> BackendBean: applyFilterAction: " + selectedSearchPattern);
     }
 
 
@@ -233,7 +236,7 @@ public class BackendBean {
     /*****************************************************/
 
     private String selectedSearchOption;
-    private String selectedSearchPattern = "^[test]*$";
+    private String selectedSearchPattern;
 
     public String getSelectedSearchOption() {
         return selectedSearchOption;
@@ -260,9 +263,24 @@ public class BackendBean {
     /*****************************************************/
 
 
+    private int timeRange1 = 1;
+    private int timeRange2 = 20;
 
+    public int getTimeRange1() {
+        return timeRange1;
+    }
 
+    public void setTimeRange1(int timeRange1) {
+        this.timeRange1 = timeRange1;
+    }
 
+    public int getTimeRange2() {
+        return timeRange2;
+    }
+
+    public void setTimeRange2(int timeRange2) {
+        this.timeRange2 = timeRange2;
+    }
 
     /*****************************************************/
     /**                                                 **/
