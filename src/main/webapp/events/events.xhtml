@@ -55,7 +55,7 @@
 <!--							<f:selectItem itemLabel="RegEx" itemValue="REGEX"/>-->
 							<f:selectItem itemLabel="Grok" itemValue="GROK"/>
 						</p:selectOneMenu>
-						<p:inputText size="80" placeholder="^pattern$" value="#{backendBean.selectedSearchPattern}"/>
+						<p:inputText size="80" placeholder="/.*pattern.*/" value="#{backendBean.selectedSearchPattern}"/>
 						<p:outputLabel value="Time range:"/>
 						<p:panel>
 							<h:panelGrid columns="1" style="margin-bottom: 10px">
@@ -68,14 +68,16 @@
 						<p:outputLabel value="Limit:"/>
 						<p:inputText value="#{backendBean.limit}"/>
 						<p:outputLabel value="Sort ascending:"/>
-						<p:toggleSwitch value="#{backendBean.sortAscending}"/>
+						<p:toggleSwitch value="#{backendBean.sortAscending}">
+							<p:ajax listener="#{backendBean.applyFilterAction}" update="msgForm"/>
+						</p:toggleSwitch>
 						<p:commandButton type="submit" value="Reset"
-										 styleClass="ui-button-flat ui-button-secondary"
+										 styleClass="ui-button-outlined ui-button-secondary"
 										 style="width: 6rem;"
 										 action="#{backendBean.resetFilter}"
 										 update="msgForm"/>
 						<p:commandButton type="submit" value="Apply"
-										 styleClass="ui-button-flat"
+										 styleClass="ui-button-outlined"
 										 style="width: 6rem;"
 										 action="#{backendBean.applyFilterAction}"
 										 update="msgForm" />

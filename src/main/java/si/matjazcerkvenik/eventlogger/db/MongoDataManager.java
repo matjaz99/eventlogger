@@ -264,9 +264,15 @@ public class MongoDataManager implements IDataManager {
                         .into(new ArrayList<>());
             } else {
                 Bson bsonFilter = prepareBsonFilter(filter);
+                Bson bsonSorting;
+                if (filter.isAscending()) {
+                    bsonSorting = Sorts.ascending("timestamp", "id");
+                } else {
+                    bsonSorting = Sorts.descending("timestamp", "id");
+                }
                 docsResultList = collection.find(bsonFilter)
-                        .sort(Sorts.descending("timestamp", "id"))
-                        .limit(1000)
+                        .sort(bsonSorting)
+                        .limit(filter.getLimit())
                         .into(new ArrayList<>());
             }
 
@@ -321,6 +327,10 @@ public class MongoDataManager implements IDataManager {
             }
             Bson identsFilter = Filters.or(bArray);
             tempList.add(identsFilter);
+        }
+        if (filter.getSearchPattern() != null && filter.getSearchPattern().length() > 0) {
+            Bson b = Filters.regex("message", filter.getSearchPattern());
+            tempList.add(b);
         }
 
         if (tempList.isEmpty()) {

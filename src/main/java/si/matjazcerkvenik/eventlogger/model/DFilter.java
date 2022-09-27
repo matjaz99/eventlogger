@@ -21,6 +21,7 @@ public class DFilter {
 
     private String sort;
     private int limit;
+    private boolean ascending = false;
     private String[] hosts;
     private String[] idents;
     private String searchType;
@@ -43,6 +44,14 @@ public class DFilter {
 
     public void setLimit(int limit) {
         this.limit = limit;
+    }
+
+    public boolean isAscending() {
+        return ascending;
+    }
+
+    public void setAscending(boolean ascending) {
+        this.ascending = ascending;
     }
 
     public String[] getHosts() {

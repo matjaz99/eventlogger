@@ -20,14 +20,13 @@ import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DFilter;
-import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.eventlogger.model.DRequest;
+import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +113,16 @@ public class BackendBean {
     }
 
     public DFilter composeFilter() {
+
+        LogFactory.getLogger().info("BackendBean: composeFilter: selectedHosts=" + selectedHosts);
+        LogFactory.getLogger().info("BackendBean: composeFilter: selectedIdents=" + selectedIdents);
+        LogFactory.getLogger().info("BackendBean: composeFilter: selectedSearchOption=" + selectedSearchOption);
+        LogFactory.getLogger().info("BackendBean: composeFilter: selectedSearchPattern=" + selectedSearchPattern);
+        LogFactory.getLogger().info("BackendBean: composeFilter: sortAscending=" + sortAscending);
+        LogFactory.getLogger().info("BackendBean: composeFilter: limit=" + limit);
+        LogFactory.getLogger().info("BackendBean: composeFilter: timeRange1=" + timeRange1);
+        LogFactory.getLogger().info("BackendBean: composeFilter: timeRange2=" + timeRange2);
+
         DFilter filter = new DFilter();
         boolean filterIsAltered = false;
 
@@ -132,6 +141,10 @@ public class BackendBean {
             filter.setSearchPattern(selectedSearchPattern);
             filterIsAltered = true;
         }
+        if (sortAscending) {
+            filter.setAscending(true);
+            filterIsAltered = true;
+        }
         filter.setLimit(limit);
 
         LogFactory.getLogger().info("BackendBean: filter is altered: " + filterIsAltered);
@@ -147,7 +160,8 @@ public class BackendBean {
     public void resetFilter() {
         LogFactory.getLogger().info(">>> BackendBean: resetFilter");
         selectedSearchPattern = null;
-        selectedSearchOption = "CONTAINS";
+        selectedSearchOption = null;
+        sortAscending = false;
         limit = 1000;
     }
 
@@ -159,11 +173,11 @@ public class BackendBean {
 
 
 
-    /*****************************************************/
-    /**                                                 **/
-    /**            host and ident filter                **/
-    /**                                                 **/
-    /*****************************************************/
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
+    /*                                                   */
+    /*             host and ident filter                 */
+    /*                                                   */
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
     private String[] selectedHosts;
@@ -229,11 +243,11 @@ public class BackendBean {
 
 
 
-    /*****************************************************/
-    /**                                                 **/
-    /**                  regex filter                   **/
-    /**                                                 **/
-    /*****************************************************/
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
+    /*                                                   */
+    /*                   regex filter                    */
+    /*                                                   */
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     private String selectedSearchOption;
     private String selectedSearchPattern;
@@ -256,11 +270,11 @@ public class BackendBean {
 
 
 
-    /*****************************************************/
-    /**                                                 **/
-    /**                  time filter                    **/
-    /**                                                 **/
-    /*****************************************************/
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
+    /*                                                   */
+    /*                   time filter                     */
+    /*                                                   */
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
     private int timeRange1 = 1;
@@ -282,11 +296,11 @@ public class BackendBean {
         this.timeRange2 = timeRange2;
     }
 
-    /*****************************************************/
-    /**                                                 **/
-    /**           the rest of the filter                **/
-    /**                                                 **/
-    /*****************************************************/
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
+    /*                                                   */
+    /*            the rest of the filter                 */
+    /*                                                   */
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
 
