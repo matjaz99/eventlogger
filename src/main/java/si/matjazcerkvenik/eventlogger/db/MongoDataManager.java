@@ -331,6 +331,8 @@ public class MongoDataManager implements IDataManager {
         if (filter.getSearchPattern() != null && filter.getSearchPattern().length() > 0) {
             Bson b = Filters.regex("message", filter.getSearchPattern());
             tempList.add(b);
+            // https://www.mongodb.com/docs/manual/reference/operator/query/regex/
+            //https://www.mongodb.com/docs/manual/reference/operator/query/regex/#std-label-syntax-restrictions
         }
 
         if (tempList.isEmpty()) {

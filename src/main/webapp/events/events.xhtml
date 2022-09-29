@@ -51,11 +51,11 @@
 				<p:panel id="filterPanel" widgetVar="filterPanel" closable="true" toggleSpeed="500" toggleable="true" collapsed="true">
 					<p:panelGrid columns="2">
 						<p:selectOneMenu id="option" value="#{backendBean.selectedSearchOption}">
-							<f:selectItem itemLabel="Contains" itemValue="CONTAINS"/>
-<!--							<f:selectItem itemLabel="RegEx" itemValue="REGEX"/>-->
+<!--							<f:selectItem itemLabel="Contains" itemValue="CONTAINS"/>-->
+							<f:selectItem itemLabel="RegEx" itemValue="REGEX"/>
 							<f:selectItem itemLabel="Grok" itemValue="GROK"/>
 						</p:selectOneMenu>
-						<p:inputText size="80" placeholder="/.*pattern.*/" value="#{backendBean.selectedSearchPattern}"/>
+						<p:inputText size="80" placeholder="^[pattern]$" value="#{backendBean.selectedSearchPattern}"/>
 						<p:outputLabel value="Time range:"/>
 						<p:panel>
 							<h:panelGrid columns="1" style="margin-bottom: 10px">
