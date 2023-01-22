@@ -23,6 +23,7 @@ services:
       - EVENTLOGGER_MONGODB_CONNECTION_STRING=mongodb://admin:mongodbpassword@172.29.18.22:27017/?authSource=admin
       - EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC=5
       - EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC=30
+      - EVENTLOGGER_ALARM_DESTINATION=http://alertmonitor:8080/alerts
     volumes:
       - /var/log:/opt/eventlogger/log
     deploy:

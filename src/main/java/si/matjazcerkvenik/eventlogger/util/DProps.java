@@ -38,4 +38,6 @@ public class DProps {
     public static int EVENTLOGGER_DATA_RETENTION_DAYS = 30;
     public static int EVENTLOGGER_DB_POOL_SIZE = 3;
 
+    public static String EVENTLOGGER_ALARM_DESTINATION = "http://alertmonitor:8080/alerts";
+
 }

@@ -5,6 +5,7 @@
 * [DOCKER] `docker pull matjaz99/eventlogger:0.3.0`
 * [CHANGE] Renamed `webhook/*` endpoint to `api/v1/*`. Sounds better.
 * [FEATURE] Help view
+* [FEATURE] Sending alarms
 
 ## 0.2.2 HTTP webhook / 2022-08-21
 

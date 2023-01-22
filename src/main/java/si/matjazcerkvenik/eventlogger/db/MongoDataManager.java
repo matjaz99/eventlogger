@@ -30,12 +30,11 @@ import io.krakens.grok.api.Match;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import si.matjazcerkvenik.eventlogger.model.DEvent;
-import si.matjazcerkvenik.eventlogger.model.DFilter;
+import si.matjazcerkvenik.eventlogger.model.*;
+import si.matjazcerkvenik.eventlogger.util.AlarmMananger;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
-import si.matjazcerkvenik.eventlogger.model.DRequest;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
 
 import java.util.ArrayList;
@@ -54,6 +53,11 @@ public class MongoDataManager implements IDataManager {
     private int clientId = 0;
     private String clientName;
     private static boolean eventsDbIndexCreated = false;
+
+    private DAlarm mongoAlarm = new DAlarm("eventlogger", "MongoDB down",
+            DAlarmSeverity.CRITICAL,
+            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING,
+            "Cannot connect to MongoDB");
 
     public MongoDataManager(int id) {
 
@@ -98,7 +102,9 @@ public class MongoDataManager implements IDataManager {
                 eventsDbIndexCreated = true;
                 logger.info(getClientName() + " database initialized");
                 logger.info(getClientName() + " client ready");
+                AlarmMananger.clearAlarm(mongoAlarm);
             } catch (Exception e) {
+                AlarmMananger.raiseAlarm(mongoAlarm);
                 logger.error(getClientName() + " error initializing database: " + e.getMessage());
             }
         }
@@ -142,7 +148,10 @@ public class MongoDataManager implements IDataManager {
             // insert one doc
             collection.insertOne(doc);
 
+            AlarmMananger.clearAlarm(mongoAlarm);
+
         } catch (Exception e) {
+            AlarmMananger.raiseAlarm(mongoAlarm);
             logger.error(getClientName() + " addHttpRequest: Exception: " + e.getMessage());
             DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionRequests, "insert").inc();
         } finally {
@@ -199,9 +208,12 @@ public class MongoDataManager implements IDataManager {
                 dRequestList.add(m);
             }
 
+            AlarmMananger.clearAlarm(mongoAlarm);
+
             return dRequestList;
 
         } catch (Exception e) {
+            AlarmMananger.raiseAlarm(mongoAlarm);
             logger.error(getClientName() + " getHttpRequests: Exception: ", e);
             DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionRequests, "query").inc();
         } finally {
@@ -235,7 +247,10 @@ public class MongoDataManager implements IDataManager {
 
             collection.insertMany(list, new InsertManyOptions().ordered(true));
 
+            AlarmMananger.clearAlarm(mongoAlarm);
+
         } catch (Exception e) {
+            AlarmMananger.raiseAlarm(mongoAlarm);
             logger.error(getClientName() + " addEvents: Exception: " + e.getMessage());
             DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionEvents, "insert").inc();
         } finally {
@@ -295,9 +310,12 @@ public class MongoDataManager implements IDataManager {
                 eventList.add(event);
             }
 
+            AlarmMananger.clearAlarm(mongoAlarm);
+
             return eventList;
 
         } catch (Exception e) {
+            AlarmMananger.raiseAlarm(mongoAlarm);
             logger.error(getClientName() + " getEvents: Exception: " + e.getMessage());
             DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionEvents, "query").inc();
         } finally {
@@ -367,9 +385,12 @@ public class MongoDataManager implements IDataManager {
 
             logger.info(getClientName() + " getDistinctKeys: for=" + key + ", size=" + resultList.size());
 
+            AlarmMananger.clearAlarm(mongoAlarm);
+
             return resultList;
 
         } catch (Exception e) {
+            AlarmMananger.raiseAlarm(mongoAlarm);
             logger.error(getClientName() + " getDistinctKeys: Exception: " + e.getMessage());
             DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionEvents, "query").inc();
         } finally {
@@ -400,7 +421,10 @@ public class MongoDataManager implements IDataManager {
             DeleteResult resultDeleteMany2 = collection2.deleteMany(filter);
             logger.info( getClientName() + " cleanDB [events]: size=" + resultDeleteMany2.getDeletedCount());
 
+            AlarmMananger.clearAlarm(mongoAlarm);
+
         } catch (Exception e) {
+            AlarmMananger.raiseAlarm(mongoAlarm);
             logger.error( getClientName() + " cleanDB: Exception: " + e.getMessage());
             DMetrics.eventlogger_db_errors_total.labels(dbName, "/", "delete").inc();
         } finally {

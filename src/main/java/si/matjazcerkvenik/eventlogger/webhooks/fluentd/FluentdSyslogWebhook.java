@@ -20,7 +20,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
+import si.matjazcerkvenik.eventlogger.model.DAlarm;
+import si.matjazcerkvenik.eventlogger.model.DAlarmSeverity;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
+import si.matjazcerkvenik.eventlogger.util.AlarmMananger;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
@@ -76,6 +79,17 @@ public class FluentdSyslogWebhook extends HttpServlet {
 				if (e.getIdent() == null) e.setIdent("unknown");
 				LogFactory.getLogger().trace(e.toString());
 				DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
+
+				// TODO check rules
+				if (e.getMessage().contains("command not found")) {
+					DAlarm a = new DAlarm(e.getHost(), "Command not found",
+							DAlarmSeverity.MAJOR, e.getHost(), "addInfo");
+					AlarmMananger.raiseAlarm(a);
+				} else if (e.getMessage().contains("Connection closed by remote host")) {
+					DAlarm a = new DAlarm(e.getHost(), "Connection closed by remote host",
+							DAlarmSeverity.MAJOR, e.getHost(), "addInfo");
+					AlarmMananger.raiseAlarm(a);
+				}
 			}
 		}
 		if (req.getContentType().equalsIgnoreCase("application/json")) {
