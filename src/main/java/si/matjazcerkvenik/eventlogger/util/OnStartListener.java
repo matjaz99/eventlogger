@@ -16,6 +16,8 @@
 package si.matjazcerkvenik.eventlogger.util;
 
 
+import si.matjazcerkvenik.eventlogger.model.config.ConfigReader;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.*;
@@ -79,6 +81,7 @@ public class OnStartListener implements ServletContextListener {
         DProps.EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC", "5").trim());
         DProps.EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC", "30").trim());
         DProps.EVENTLOGGER_ALARM_DESTINATION = System.getenv().getOrDefault("EVENTLOGGER_ALARM_DESTINATION", "http://alertmonitor:8080/alertmonitor/alerts").trim();
+        DProps.EVENTLOGGER_EVENT_RULES_CONFIG_FILE = System.getenv().getOrDefault("EVENTLOGGER_EVENT_RULES_CONFIG_FILE", "/opt/eventlogger/event_rules.yml").trim();
 
         // set development environment
         if (new File("/Users/matjaz").exists()) {
@@ -89,6 +92,7 @@ public class OnStartListener implements ServletContextListener {
             DProps.EVENTLOGGER_DATA_RETENTION_DAYS = 500;
             DProps.EVENTLOGGER_DB_POOL_SIZE = 10;
             DProps.EVENTLOGGER_ALARM_DESTINATION = "http://192.168.0.25:7070/alertmonitor/webhook/eventlogger";
+            DProps.EVENTLOGGER_EVENT_RULES_CONFIG_FILE = "event_rules.yml";
         }
 
         // runtime memory info
@@ -112,6 +116,10 @@ public class OnStartListener implements ServletContextListener {
         }
 
         DMetrics.eventlogger_build_info.labels("EventLogger", DProps.RUNTIME_ID, DProps.VERSION, System.getProperty("os.name")).set(DProps.START_UP_TIMESTAMP);
+
+        // load yaml config file
+        DProps.yamlConfig = ConfigReader.loadProvidersYamlConfig(DProps.EVENTLOGGER_EVENT_RULES_CONFIG_FILE);
+        System.out.println("YAML: " + DProps.yamlConfig.toString());
 
     }
 

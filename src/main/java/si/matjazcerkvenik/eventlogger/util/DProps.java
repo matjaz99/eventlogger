@@ -16,11 +16,15 @@
 package si.matjazcerkvenik.eventlogger.util;
 
 
+import si.matjazcerkvenik.eventlogger.model.config.YamlConfig;
+
 public class DProps {
 
     // internal counters
     public static long requestsReceivedCount = 0;
     public static long eventsReceivedCount = 0;
+
+    public static YamlConfig yamlConfig;
 
     public static String RUNTIME_ID = "0000-0000-0000-0000";
     public static long START_UP_TIMESTAMP = 0;
@@ -28,6 +32,7 @@ public class DProps {
     public static boolean IS_CONTAINERIZED = false;
     public static String LOCAL_IP;
     public static String DATE_FORMAT = "yyyy/MM/dd H:mm:ss";
+    public static String EVENTLOGGER_EVENT_RULES_CONFIG_FILE = "/opt/eventlogger/event_rules.yml";
 
     // memory or mongodb
     public static String EVENTLOGGER_STORAGE_TYPE = "mongodb";

@@ -20,9 +20,14 @@ import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
 import io.prometheus.client.Histogram;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DMetrics {
 
     public static CollectorRegistry registry = CollectorRegistry.defaultRegistry;
+
+    public static Map<String, Counter> customCounterMetrics = new HashMap<>();
 
     public static final Gauge eventlogger_build_info = Gauge.build()
             .name("eventlogger_build_info")
@@ -65,6 +70,12 @@ public class DMetrics {
             .name("eventlogger_db_errors_total")
             .help("Total number of errors (exceptions) of DB operations.")
             .labelNames("database", "table", "action")
+            .register();
+
+    public static final Histogram eventlogger_rule_evaluation_seconds = Histogram.build()
+            .buckets(0.05, 0.1, 0.2, 0.3, 0.5, 1.0)
+            .name("eventlogger_rule_evaluation_seconds")
+            .help("Histogram of rule evaluation duration")
             .register();
 
 }

@@ -18,11 +18,13 @@ package si.matjazcerkvenik.eventlogger.webhooks.fluentd;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.prometheus.client.Counter;
 import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DAlarm;
 import si.matjazcerkvenik.eventlogger.model.DAlarmSeverity;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
+import si.matjazcerkvenik.eventlogger.model.config.DRule;
 import si.matjazcerkvenik.eventlogger.util.AlarmMananger;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
@@ -80,16 +82,7 @@ public class FluentdSyslogWebhook extends HttpServlet {
 				LogFactory.getLogger().trace(e.toString());
 				DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
 
-				// TODO check rules
-				if (e.getMessage().contains("command not found")) {
-					DAlarm a = new DAlarm(e.getHost(), "Command not found",
-							DAlarmSeverity.MAJOR, e.getHost(), "addInfo");
-					AlarmMananger.raiseAlarm(a);
-				} else if (e.getMessage().contains("Connection closed by remote host")) {
-					DAlarm a = new DAlarm(e.getHost(), "Connection closed by remote host",
-							DAlarmSeverity.MAJOR, e.getHost(), "addInfo");
-					AlarmMananger.raiseAlarm(a);
-				}
+				evaluateRules(e);
 			}
 		}
 		if (req.getContentType().equalsIgnoreCase("application/json")) {
@@ -100,6 +93,54 @@ public class FluentdSyslogWebhook extends HttpServlet {
 
 		iDataManager.addEvents(eventList);
 		DataManagerFactory.getInstance().returnClient(iDataManager);
+
+	}
+
+	private void evaluateRules(DEvent event) {
+
+		long before = System.nanoTime();
+
+		// TODO check rules
+
+		for (DRule rule : DProps.yamlConfig.getRules()) {
+
+			if (!rule.getFilter().get("ident").equalsIgnoreCase(event.getIdent())) {
+				continue;
+			}
+
+			if (!event.getMessage().contains(rule.getPattern().get("expr"))) {
+				continue;
+			}
+
+			if (rule.getAction().get("type").equalsIgnoreCase("alarm")) {
+
+				DAlarm a = new DAlarm(event.getHost(), rule.getName(),
+						DAlarmSeverity.MAJOR, event.getIdent(), "addInfo");
+				AlarmMananger.raiseAlarm(a);
+
+			}
+
+			if (rule.getAction().get("type").equalsIgnoreCase("count")) {
+
+				Counter counter;
+				if (!DMetrics.customCounterMetrics.containsKey(rule.getAction().get("metricName"))) {
+					counter = DMetrics.customCounterMetrics.get(rule.getAction().get("metricName"));
+				} else {
+					counter = Counter.build()
+							.name(rule.getAction().get("metricName"))
+							.help(rule.getName())
+							.labelNames("host", "ident")
+							.register();
+				}
+
+				counter.labels(event.getHost(), event.getIdent()).inc();
+
+			}
+
+		}
+
+		double duration = (System.nanoTime() - before) * 1.0 / 1000000000;
+		DMetrics.eventlogger_rule_evaluation_seconds.observe(duration);
 
 	}
 
