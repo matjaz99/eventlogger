@@ -52,9 +52,9 @@ public class MongoDataManager implements IDataManager {
     private MongoClient mongoClient;
     private int clientId = 0;
     private String clientName;
-    private static boolean eventsDbIndexCreated = false;
+    private static boolean dbIndexCreated = false;
 
-    private DAlarm mongoAlarm = new DAlarm("eventlogger", "MongoDB down",
+    private static DAlarm mongoAlarm = new DAlarm("eventlogger", "MongoDB down",
             DAlarmSeverity.CRITICAL,
             DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING,
             "Cannot connect to MongoDB");
@@ -85,7 +85,7 @@ public class MongoDataManager implements IDataManager {
      * Create collection and create indexes
      */
     private void initializeDatabase() {
-        if (!eventsDbIndexCreated) {
+        if (!dbIndexCreated) {
             try {
                 MongoDatabase database = mongoClient.getDatabase(dbName);
 
@@ -99,7 +99,7 @@ public class MongoDataManager implements IDataManager {
                 coll.createIndex(Indexes.ascending("host"));
                 logger.info(getClientName() + " creating index: ident");
                 coll.createIndex(Indexes.ascending("ident"));
-                eventsDbIndexCreated = true;
+                dbIndexCreated = true;
                 logger.info(getClientName() + " database initialized");
                 logger.info(getClientName() + " client ready");
                 AlarmMananger.clearAlarm(mongoAlarm);

@@ -1,3 +1,18 @@
+/*
+   Copyright 2021 Matjaž Cerkvenik
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
 package si.matjazcerkvenik.eventlogger.util;
 
 import com.google.gson.Gson;
@@ -42,7 +57,7 @@ public class AlarmMananger {
 
         if (DProps.EVENTLOGGER_ALARM_DESTINATION == null) return;
 
-        logger.info("push(): sending " + severity + ": " + body);
+        logger.info("AlarmMananger: push(): sending " + severity + ": " + body);
 
         OkHttpClient httpClient = new OkHttpClient();
         MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
@@ -56,38 +71,16 @@ public class AlarmMananger {
                     .build();
 
             Response response = httpClient.newCall(request).execute();
-//            logger.info("push(): responseCode=" + response.code());
+            logger.info("AlarmMananger: push(): responseCode=" + response.code());
             boolean success = response.isSuccessful();
             int responseCode = response.code();
             String responseText = response.body().string();
             response.close();
 
         } catch (Exception e) {
-            logger.error("push(): Could not send alarm. " + e.getMessage());
+            logger.error("AlarmMananger: push(): Could not send alarm. " + e.getMessage());
         }
 
-    }
-
-    public static void main(String... args) {
-        DAlarm a1 = new DAlarm();
-        a1.setAlarmName("alarm name");
-        a1.setSeverity(1);
-        a1.setSourceInfo("source info");
-
-        DAlarm a2 = new DAlarm();
-        a2.setAlarmName("alarm name 2");
-        a2.setSeverity(2);
-        a2.setSourceInfo("source info 2");
-
-//        toJsonString(a1);
-
-        List<DAlarm> list = new ArrayList<>();
-        list.add(a1);
-        list.add(a2);
-
-        Gson gson = new Gson();
-        String s = gson.toJson(list);
-        System.out.println(s);
     }
 
     public static String toJsonString(DAlarm alarm) {
@@ -95,13 +88,6 @@ public class AlarmMananger {
         String s = gson.toJson(alarm);
         System.out.println(s);
         return s;
-//        ObjectMapper mapper = new ObjectMapper();
-//        try {
-//            return "[" + mapper.writeValueAsString(alarm) + "]";
-//        } catch (JsonProcessingException e) {
-//            logger.error("JsonProcessingException: " + e.getMessage());
-//        }
-//        return null;
     }
 
     public static String toJsonStringAllAlarms() {
@@ -109,13 +95,6 @@ public class AlarmMananger {
         String s = gson.toJson(activeAlarmsList.values());
         System.out.println(s);
         return s;
-//        ObjectMapper mapper = new ObjectMapper();
-//        try {
-//            return mapper.writeValueAsString(activeAlarmsList.values());
-//        } catch (JsonProcessingException e) {
-//            logger.error("JsonProcessingException: " + e.getMessage());
-//        }
-//        return null;
     }
 
 }

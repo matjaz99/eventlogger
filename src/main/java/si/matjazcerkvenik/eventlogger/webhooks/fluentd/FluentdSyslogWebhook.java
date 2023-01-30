@@ -18,6 +18,9 @@ package si.matjazcerkvenik.eventlogger.webhooks.fluentd;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.krakens.grok.api.Grok;
+import io.krakens.grok.api.GrokCompiler;
+import io.krakens.grok.api.Match;
 import io.prometheus.client.Counter;
 import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
@@ -37,6 +40,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FluentdSyslogWebhook extends HttpServlet {
 
@@ -104,26 +109,62 @@ public class FluentdSyslogWebhook extends HttpServlet {
 
 		for (DRule rule : DProps.yamlConfig.getRules()) {
 
-			if (!rule.getFilter().get("ident").equalsIgnoreCase(event.getIdent())) {
-				continue;
+			// check filter
+			if (rule.getFilter() != null) {
+				if (rule.getFilter().containsKey("ident")) {
+					if (!rule.getFilter().get("ident").equalsIgnoreCase(event.getIdent())) {
+						continue;
+					}
+				}
 			}
 
-			if (!event.getMessage().contains(rule.getPattern().get("expr"))) {
-				continue;
+
+			// check expression
+			if (rule.getPattern().get("type").equalsIgnoreCase("regex")) {
+
+				Pattern pattern = Pattern.compile(rule.getPattern().get("expr"), Pattern.CASE_INSENSITIVE);
+				Matcher matcher = pattern.matcher(event.getMessage());
+				boolean matchFound = matcher.find();
+				if(matchFound) {
+					System.out.println("regex Match found");
+				} else {
+					System.out.println("regex Match not found");
+					continue;
+				}
+
+
+			} else if (rule.getPattern().get("type").equalsIgnoreCase("grok")) {
+
+				GrokCompiler grokCompiler = GrokCompiler.newInstance();
+				grokCompiler.registerDefaultPatterns();
+
+				final Grok grok = grokCompiler.compile(rule.getPattern().get("expr"));
+				Match gm = grok.match(event.getMessage());
+				System.out.println("GROK PATTERN: " + grok.getNamedRegex());
+				final Map<String, Object> capture = gm.capture();
+				if (capture.size() == 0) {
+					System.out.println("nothing found");
+					continue;
+				}
+				for (String s : capture.keySet()) {
+					System.out.println("GROK RESULT: " + capture.get(s).toString());
+				}
+
+			} else {
+
 			}
 
+			// execute an action
 			if (rule.getAction().get("type").equalsIgnoreCase("alarm")) {
 
 				DAlarm a = new DAlarm(event.getHost(), rule.getName(),
 						DAlarmSeverity.MAJOR, event.getIdent(), "addInfo");
 				AlarmMananger.raiseAlarm(a);
 
-			}
-
-			if (rule.getAction().get("type").equalsIgnoreCase("count")) {
+			} else if (rule.getAction().get("type").equalsIgnoreCase("count")) {
 
 				Counter counter;
-				if (!DMetrics.customCounterMetrics.containsKey(rule.getAction().get("metricName"))) {
+				if (DMetrics.customCounterMetrics.containsKey(rule.getAction().get("metricName"))) {
 					counter = DMetrics.customCounterMetrics.get(rule.getAction().get("metricName"));
 				} else {
 					counter = Counter.build()
@@ -134,7 +175,10 @@ public class FluentdSyslogWebhook extends HttpServlet {
 				}
 
 				counter.labels(event.getHost(), event.getIdent()).inc();
+				DMetrics.customCounterMetrics.put(rule.getAction().get("metricName"), counter);
 
+			} else {
+				LogFactory.getLogger().info("no action");
 			}
 
 		}

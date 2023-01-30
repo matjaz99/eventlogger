@@ -1,6 +1,20 @@
+/*
+   Copyright 2021 Matjaž Cerkvenik
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
 package si.matjazcerkvenik.eventlogger.model;
 
-import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.Formatter;
 import si.matjazcerkvenik.eventlogger.util.MD5Checksum;
 
@@ -22,7 +36,7 @@ public class DAlarm {
     public DAlarm(String alarmSource, String alarmName, int severity, String sourceInfo, String additionalInfo) {
         this.alarmSource = alarmSource;
         this.alarmName = alarmName;
-        this.severity = severity;
+        setSeverity(severity);
         this.sourceInfo = sourceInfo;
         this.additionalInfo = additionalInfo;
     }
@@ -30,7 +44,7 @@ public class DAlarm {
     public DAlarm(String alarmSource, String alarmName, int severity, String sourceInfo, String additionalInfo, boolean isEvent) {
         this.alarmSource = alarmSource;
         this.alarmName = alarmName;
-        this.severity = severity;
+        setSeverity(severity);
         this.sourceInfo = sourceInfo;
         this.additionalInfo = additionalInfo;
         if (isEvent) this.notificationType = "event";
@@ -73,24 +87,32 @@ public class DAlarm {
 
     public void setSeverity(int severity) {
         this.severity = severity;
+        switch (this.severity) {
+            case 1:
+                severityString = "Critical";
+                break;
+            case 2:
+                severityString = "Major";
+                break;
+            case 3:
+                severityString = "Minor";
+                break;
+            case 4:
+                severityString = "Warning";
+                break;
+            case 5:
+                severityString = "Clear";
+                break;
+            case 6:
+                severityString = "Informational";
+                break;
+            default:
+                severityString = "Indeterminate";
+        }
     }
 
     public String getSeverityString() {
-        switch (severity) {
-            case 1:
-                return "Critical";
-            case 2:
-                return "Major";
-            case 3:
-                return "Minor";
-            case 4:
-                return "Warning";
-            case 5:
-                return "Clear";
-            case 6:
-                return "Informational";
-        }
-        return "Indeterminate";
+        return severityString;
     }
 
     public String getSourceInfo() {
