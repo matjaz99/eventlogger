@@ -73,7 +73,7 @@ public class DMetrics {
             .register();
 
     public static final Histogram eventlogger_rule_evaluation_seconds = Histogram.build()
-            .buckets(0.05, 0.1, 0.2, 0.3, 0.5, 1.0)
+            .buckets(0.01, 0.02, 0.03, 0.05, 0.1, 0.2, 0.3, 0.5, 1.0)
             .name("eventlogger_rule_evaluation_seconds")
             .help("Histogram of rule evaluation duration")
             .register();

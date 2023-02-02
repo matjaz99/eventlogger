@@ -111,37 +111,16 @@ public class HttpWebhook extends HttpServlet {
 		}
 
 		try {
-			// process body
-			DEvent e = new DEvent();
-			e.setId(DProps.eventsReceivedCount++);
-			e.setRuntimeId(DProps.RUNTIME_ID);
-			e.setTimestamp(System.currentTimeMillis());
-			e.setHost(m.getRemoteHost());
-			e.setIdent("eventlogger.http.post");
-			e.setPid("0");
-			if (m.getParameterMap().containsKey("ident")) {
-				e.setIdent(m.getParameterMap().get("ident"));
-			}
-			if (m.getParameterMap().containsKey("pid")) {
-				e.setPid(m.getParameterMap().get("pid"));
-			}
-			if (m.getParameterMap().containsKey("tag")) {
-				e.setTag(m.getParameterMap().get("tag"));
-			}
-			e.setMessage(m.getBody());
-			e.setEventSource("eventlogger.http.post");
-			LogFactory.getLogger().trace(e.toString());
-			DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
 
-			if (e.getMessage() != null && e.getMessage().trim().length() > 0) {
-				List<DEvent> eventList = new ArrayList<>();
-				eventList.add(e);
-				iDataManager.addEvents(eventList);
-				return;
+			if (req.getContentType().equalsIgnoreCase("application/json")) {
+				processApplicationJson(m, iDataManager);
+			}
+			if (req.getContentType().equalsIgnoreCase("text/plain")) {
+			}
+			if (req.getContentType().equalsIgnoreCase("application/xml")) {
 			}
 
-			DMetrics.eventlogger_events_ignored_total.labels(m.getRemoteHost(), m.getMethod()).inc();
-			LogFactory.getLogger().warn("HttpWebhook: doPost: message is empty; event will be ignored");
+
 
 		} catch (Exception e) {
 			LogFactory.getLogger().warn("HttpWebhook: doPost: Exception: " + e.getMessage());
@@ -149,6 +128,40 @@ public class HttpWebhook extends HttpServlet {
 			DataManagerFactory.getInstance().returnClient(iDataManager);
 		}
 
+	}
+
+	private void processApplicationJson(DRequest m, IDataManager iDataManager) {
+		// process body
+		DEvent e = new DEvent();
+		e.setId(DProps.eventsReceivedCount++);
+		e.setRuntimeId(DProps.RUNTIME_ID);
+		e.setTimestamp(System.currentTimeMillis());
+		e.setHost(m.getRemoteHost());
+		e.setIdent("eventlogger.http.post");
+		e.setPid("0");
+		if (m.getParameterMap().containsKey("ident")) {
+			e.setIdent(m.getParameterMap().get("ident"));
+		}
+		if (m.getParameterMap().containsKey("pid")) {
+			e.setPid(m.getParameterMap().get("pid"));
+		}
+		if (m.getParameterMap().containsKey("tag")) {
+			e.setTag(m.getParameterMap().get("tag"));
+		}
+		e.setMessage(m.getBody());
+		e.setEventSource("eventlogger.http.post");
+		LogFactory.getLogger().trace(e.toString());
+		DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
+
+		if (e.getMessage() != null && e.getMessage().trim().length() > 0) {
+			List<DEvent> eventList = new ArrayList<>();
+			eventList.add(e);
+			iDataManager.addEvents(eventList);
+			return;
+		}
+
+		DMetrics.eventlogger_events_ignored_total.labels(m.getRemoteHost(), m.getMethod()).inc();
+		LogFactory.getLogger().warn("HttpWebhook: doPost: message is empty; event will be ignored");
 	}
 
 }
