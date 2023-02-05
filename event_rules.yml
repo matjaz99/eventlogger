@@ -7,7 +7,7 @@ rules:
       type: regex
     action:
       type: count
-      metricName: eventlogger_rule_error_count
+      metricName: event_error_count
   - name: Find user logins
     pattern:
       expr: "session opened for user root"
@@ -21,11 +21,9 @@ rules:
     pattern:
       expr: "command not found"
       type: regex
-    #filter:
-    #  ident: "*"
     action:
       type: count
-      metricName: eventlogger_rule_command_not_found_total
+      metricName: event_command_not_found_total
   - name: Started Session
     pattern:
       expr: "Started Session \\d+ of user"
@@ -34,7 +32,7 @@ rules:
       ident: "systemd"
     action:
       type: count
-      metricName: eventlogger_rule_session_started_total
+      metricName: event_session_started_total
   - name: Connection closed by remote host
     pattern:
       expr: "Connection closed by remote host"
@@ -43,7 +41,7 @@ rules:
       ident: "sshd"
     action:
       type: count
-      metricName: eventlogger_rule_connection_closed_total
+      metricName: event_connection_closed_total
   - name: The swarm does not have a leader
     pattern:
       expr: "%{GREEDYDATA}error%{GREEDYDATA}The swarm does not have a leader%{GREEDYDATA}"
@@ -52,7 +50,7 @@ rules:
       ident: "dockerd"
     action:
       type: count
-      metricName: eventlogger_rule_swarm_no_leader_total
+      metricName: event_swarm_no_leader_total
   - name: The swarm does not have a leader alarm
     pattern:
       expr: "%{GREEDYDATA}error%{GREEDYDATA}The swarm does not have a leader%{GREEDYDATA}"
@@ -69,3 +67,5 @@ rules:
 # log - write event to separate log
 # tag - add custom tags
 # ignore - ignore event
+
+# groups of rules, apply to webhook endpoint

@@ -63,22 +63,8 @@ public class ConfigReader {
         for (DRule pc : configs) {
 
             // check mandatory parameters
-            LogFactory.getLogger().info("checking provider config: " + pc.getName());
+            LogFactory.getLogger().info("checking config: " + pc.getName());
             if (pc.getName() == null) throw new ConfigException("missing name");
-
-//            if (pc.getType().equalsIgnoreCase("prometheus")) {
-//
-//                checkParam(pc.getParams(), PrometheusDataProvider.DP_PARAM_KEY_SERVER, "http://undefined-hostname-config:9090");
-//                checkParam(pc.getParams(), PrometheusDataProvider.DP_PARAM_KEY_CLIENT_POOL_SIZE, "1");
-//                checkParam(pc.getParams(), PrometheusDataProvider.DP_PARAM_KEY_CLIENT_CONNECT_TIMEOUT_SEC, "10");
-//                checkParam(pc.getParams(), PrometheusDataProvider.DP_PARAM_KEY_CLIENT_READ_TIMEOUT_SEC, "60");
-//                checkParam(pc.getParams(), PrometheusDataProvider.DP_PARAM_KEY_SYNC_INTERVAL_SEC, "60");
-//
-//            } else if (pc.getType().equalsIgnoreCase("eventlogger")) {
-//
-//            } else {
-//
-//            }
 
         }
 

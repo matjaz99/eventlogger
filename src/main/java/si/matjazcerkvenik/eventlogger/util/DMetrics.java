@@ -60,7 +60,7 @@ public class DMetrics {
             .register();
 
     public static final Histogram eventlogger_db_duration_seconds = Histogram.build()
-            .buckets(0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1.0)
+            .buckets(0.05, 0.1, 0.2, 0.3, 0.5, 1.0, 2.0, 3.0, 5.0)
             .name("eventlogger_db_duration_seconds")
             .labelNames("database", "table", "action")
             .help("DB response time")

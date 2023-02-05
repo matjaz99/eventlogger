@@ -16,6 +16,9 @@
 package si.matjazcerkvenik.eventlogger.webhooks.http;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
@@ -103,13 +106,6 @@ public class HttpWebhook extends HttpServlet {
 		DMetrics.eventlogger_http_requests_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc();
 		DMetrics.eventlogger_http_requests_size_total.labels(m.getRemoteHost(), m.getMethod(), "/*").inc(m.getContentLength());
 
-		if (req.getContentType().equalsIgnoreCase("application/json")) {
-		}
-		if (req.getContentType().equalsIgnoreCase("text/plain")) {
-		}
-		if (req.getContentType().equalsIgnoreCase("application/xml")) {
-		}
-
 		try {
 
 			if (req.getContentType().equalsIgnoreCase("application/json")) {
@@ -132,31 +128,61 @@ public class HttpWebhook extends HttpServlet {
 
 	private void processApplicationJson(DRequest m, IDataManager iDataManager) {
 		// process body
-		DEvent e = new DEvent();
-		e.setId(DProps.eventsReceivedCount++);
-		e.setRuntimeId(DProps.RUNTIME_ID);
-		e.setTimestamp(System.currentTimeMillis());
-		e.setHost(m.getRemoteHost());
-		e.setIdent("eventlogger.http.post");
-		e.setPid("0");
-		if (m.getParameterMap().containsKey("ident")) {
-			e.setIdent(m.getParameterMap().get("ident"));
-		}
-		if (m.getParameterMap().containsKey("pid")) {
-			e.setPid(m.getParameterMap().get("pid"));
-		}
-		if (m.getParameterMap().containsKey("tag")) {
-			e.setTag(m.getParameterMap().get("tag"));
-		}
-		e.setMessage(m.getBody());
-		e.setEventSource("eventlogger.http.post");
-		LogFactory.getLogger().trace(e.toString());
-		DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
+//		DEvent e = new DEvent();
+//		e.setId(DProps.eventsReceivedCount++);
+//		e.setRuntimeId(DProps.RUNTIME_ID);
+//		e.setTimestamp(System.currentTimeMillis());
+//		e.setHost(m.getRemoteHost());
+//		e.setIdent("eventlogger.http.post");
+//		e.setPid("0");
+//		if (m.getParameterMap().containsKey("ident")) {
+//			e.setIdent(m.getParameterMap().get("ident"));
+//		}
+//		if (m.getParameterMap().containsKey("pid")) {
+//			e.setPid(m.getParameterMap().get("pid"));
+//		}
+//		if (m.getParameterMap().containsKey("tag")) {
+//			e.setTag(m.getParameterMap().get("tag"));
+//		}
+//		e.setMessage(m.getBody());
+//		e.setEventSource("eventlogger.http.post");
+//		LogFactory.getLogger().trace(e.toString());
+//		DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), m.getRemoteHost(), e.getIdent()).inc();
 
-		if (e.getMessage() != null && e.getMessage().trim().length() > 0) {
-			List<DEvent> eventList = new ArrayList<>();
-			eventList.add(e);
-			iDataManager.addEvents(eventList);
+		// TODO check if it is an array or just a json object
+
+		GsonBuilder builder = new GsonBuilder();
+		Gson gson = builder.create();
+		List<DEvent> elist = gson.fromJson(m.getBody().trim(), new TypeToken<List<DEvent>>(){}.getType());
+
+		String ident = "null";
+		long now = System.currentTimeMillis();
+
+		for (DEvent de : elist) {
+			de.setId(DProps.eventsReceivedCount++);
+			de.setRuntimeId(DProps.RUNTIME_ID);
+			de.setTimestamp(now);
+			de.setHost(m.getRemoteHost());
+			de.setEventSource(m.getRemoteHost());
+			de.setIdent("eventlogger.http.post");
+			de.setPid("0");
+			if (m.getParameterMap().containsKey("ident")) {
+				ident = m.getParameterMap().get("ident");
+				de.setIdent(ident);
+			}
+			if (m.getParameterMap().containsKey("pid")) {
+				de.setPid(m.getParameterMap().get("pid"));
+			}
+			if (m.getParameterMap().containsKey("tag")) {
+				de.setTag(m.getParameterMap().get("tag"));
+			}
+			LogFactory.getLogger().trace(de.toString());
+//			System.out.println(de.toString());
+		}
+
+		if (elist != null && elist.size() > 0) {
+			iDataManager.addEvents(elist);
+			DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), m.getRemoteHost(), ident).inc(elist.size());
 			return;
 		}
 
