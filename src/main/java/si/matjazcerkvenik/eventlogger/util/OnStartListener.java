@@ -81,7 +81,7 @@ public class OnStartListener implements ServletContextListener {
         DProps.EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC", "5").trim());
         DProps.EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC", "30").trim());
         DProps.EVENTLOGGER_ALARM_DESTINATION = System.getenv().getOrDefault("EVENTLOGGER_ALARM_DESTINATION", "http://alertmonitor:8080/alertmonitor/alerts").trim();
-        DProps.EVENTLOGGER_EVENT_RULES_CONFIG_FILE = System.getenv().getOrDefault("EVENTLOGGER_EVENT_RULES_CONFIG_FILE", "/opt/eventlogger/event_rules.yml").trim();
+        DProps.EVENTLOGGER_EVENT_RULES_CONFIG_FILE = System.getenv().getOrDefault("EVENTLOGGER_EVENT_RULES_CONFIG_FILE", "/opt/eventlogger/rules/event_rules.yml").trim();
 
         // set development environment
         if (new File("/Users/matjaz").exists()) {
@@ -93,18 +93,8 @@ public class OnStartListener implements ServletContextListener {
             DProps.EVENTLOGGER_DATA_RETENTION_DAYS = 500;
             DProps.EVENTLOGGER_DB_POOL_SIZE = 10;
             DProps.EVENTLOGGER_ALARM_DESTINATION = "http://192.168.0.25:7070/alertmonitor/webhook/eventlogger";
-            DProps.EVENTLOGGER_EVENT_RULES_CONFIG_FILE = "event_rules.yml";
+            DProps.EVENTLOGGER_EVENT_RULES_CONFIG_FILE = "rules/event_rules.yml";
         }
-
-        // runtime memory info
-        int mb = 1024 * 1024;
-        Runtime instance = Runtime.getRuntime();
-        LogFactory.getLogger().info("***** Heap utilization statistics [MB] *****");
-        LogFactory.getLogger().info("Total Memory: " + instance.totalMemory() / mb); // available memory
-        LogFactory.getLogger().info("Free Memory: " + instance.freeMemory() / mb); // free memory
-        LogFactory.getLogger().info("Used Memory: "
-                + (instance.totalMemory() - instance.freeMemory()) / mb); // used memory
-        LogFactory.getLogger().info("Max Memory: " + instance.maxMemory() / mb); // Maximum available memory
 
         // is running inside docker
         try (Stream< String > stream =
@@ -120,7 +110,6 @@ public class OnStartListener implements ServletContextListener {
 
         // load yaml config file
         DProps.yamlConfig = ConfigReader.loadProvidersYamlConfig(DProps.EVENTLOGGER_EVENT_RULES_CONFIG_FILE);
-        System.out.println("YAML: " + DProps.yamlConfig.toString());
 
     }
 

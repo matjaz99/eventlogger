@@ -16,6 +16,7 @@ services:
     environment:
       - TZ=${TZ}
       - SIMPLELOGGER_FILENAME=/opt/eventlogger/log/eventlogger.log
+      - EVENTLOGGER_EVENT_RULES_CONFIG_FILE=/opt/eventlogger/rules/event_rules.yml
       - EVENTLOGGER_DATA_RETENTION_DAYS=30
       - EVENTLOGGER_DB_POOL_SIZE=3
       # choose storage type: mongodb or memory
@@ -23,9 +24,10 @@ services:
       - EVENTLOGGER_MONGODB_CONNECTION_STRING=mongodb://admin:mongodbpassword@172.29.18.22:27017/?authSource=admin
       - EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC=5
       - EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC=30
-      - EVENTLOGGER_ALARM_DESTINATION=http://alertmonitor:8080/alerts
+      - EVENTLOGGER_ALARM_DESTINATION=http://alertmonitor:8080/alertmonitor/webhook/eventlogger
     volumes:
       - /var/log:/opt/eventlogger/log
+      - ./rules/event_rules.yml:/opt/eventlogger/rules/event_rules.yml
     deploy:
       mode: replicated
       replicas: 1

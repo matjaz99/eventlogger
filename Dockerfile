@@ -24,8 +24,10 @@ RUN apk add tzdata
 COPY --from=build  /home/app/target/eventlogger.war /usr/local/tomcat/webapps/eventlogger.war
 
 RUN mkdir -p /opt/eventlogger/log
+RUN mkdir -p /opt/eventlogger/rules
 COPY LICENSE /opt/eventlogger
 COPY README.md /opt/eventlogger
+COPY CHANGELOG.md /opt/eventlogger
 
 EXPOSE 8080
 

@@ -94,8 +94,6 @@ public class FluentdSyslogWebhook extends HttpServlet {
 			// this is a json (array of objects): [{},{},{}]
 		}
 
-
-
 		iDataManager.addEvents(eventList);
 		DataManagerFactory.getInstance().returnClient(iDataManager);
 
@@ -103,9 +101,9 @@ public class FluentdSyslogWebhook extends HttpServlet {
 
 	private void evaluateRules(DEvent event) {
 
-		long before = System.nanoTime();
+		if (DProps.yamlConfig == null) return;
 
-		// TODO check rules
+		long before = System.nanoTime();
 
 		for (DRule rule : DProps.yamlConfig.getRules()) {
 
@@ -125,10 +123,10 @@ public class FluentdSyslogWebhook extends HttpServlet {
 				Pattern pattern = Pattern.compile(rule.getPattern().get("expr"), Pattern.CASE_INSENSITIVE);
 				Matcher matcher = pattern.matcher(event.getMessage());
 				boolean matchFound = matcher.find();
-				if(matchFound) {
-					System.out.println("regex Match found");
+				if (matchFound) {
+//					System.out.println("regex Match found");
 				} else {
-					System.out.println("regex Match not found");
+//					System.out.println("regex Match not found");
 					continue;
 				}
 
@@ -140,14 +138,14 @@ public class FluentdSyslogWebhook extends HttpServlet {
 
 				final Grok grok = grokCompiler.compile(rule.getPattern().get("expr"));
 				Match gm = grok.match(event.getMessage());
-				System.out.println("GROK PATTERN: " + grok.getNamedRegex());
+//				System.out.println("GROK PATTERN: " + grok.getNamedRegex());
 				final Map<String, Object> capture = gm.capture();
 				if (capture.size() == 0) {
-					System.out.println("nothing found");
+//					System.out.println("nothing found");
 					continue;
 				}
 				for (String s : capture.keySet()) {
-					System.out.println("GROK RESULT: " + capture.get(s).toString());
+//					System.out.println("GROK RESULT: " + capture.get(s).toString());
 				}
 
 			} else {

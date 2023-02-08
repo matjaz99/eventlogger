@@ -18,6 +18,7 @@ package si.matjazcerkvenik.eventlogger.model.config;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
+import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
 import java.io.File;
@@ -40,6 +41,7 @@ public class ConfigReader {
             InputStream inputStream = new FileInputStream(f);
             YamlConfig config = yaml.load(inputStream);
             LogFactory.getLogger().info("event rules loaded: " + f.getAbsolutePath());
+            if (config == null) LogFactory.getLogger().debug("YAML config: " + config.toString());
             verifyConfigs(config.getRules());
             return config;
         } catch (FileNotFoundException e) {

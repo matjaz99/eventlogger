@@ -21,6 +21,7 @@ import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DFilter;
 import si.matjazcerkvenik.eventlogger.model.DRequest;
+import si.matjazcerkvenik.eventlogger.util.Formatter;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
 import javax.annotation.PostConstruct;
@@ -98,8 +99,16 @@ public class BackendBean {
 
             if (list == null) return "no data";
 
+            long now = System.currentTimeMillis();
+
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < list.size(); i++) {
+                long millisSince = now - list.get(i).getTimestamp();
+                if (millisSince < 4 * 3600 * 1000) {
+                    sb.append(Formatter.convertToDHMSFormat((int) millisSince / 1000)).append(" ago - ");
+                } else {
+                    sb.append(Formatter.getFormatedTimestamp(list.get(i).getTimestamp())).append(" - ");
+                }
                 sb.append(list.get(i).getHost()).append(" - ");
                 sb.append(list.get(i).getIdent()).append("[").append(list.get(i).getPid()).append("] - ");
                 sb.append(list.get(i).getMessage()).append("\n");

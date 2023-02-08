@@ -40,6 +40,13 @@ public class PrometheusMetricsServlet extends HttpServlet {
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
             throws IOException {
 
+        Runtime instance = Runtime.getRuntime();
+        DMetrics.eventlogger_memory_total_bytes.set(instance.totalMemory());
+        DMetrics.eventlogger_memory_free_bytes.set(instance.freeMemory());
+        DMetrics.eventlogger_memory_max_bytes.set(instance.maxMemory());
+        // used memory = total - free
+        DMetrics.eventlogger_available_processors.set(instance.availableProcessors());
+
         resp.setStatus(HttpServletResponse.SC_OK);
         resp.setContentType(TextFormat.CONTENT_TYPE_004);
 

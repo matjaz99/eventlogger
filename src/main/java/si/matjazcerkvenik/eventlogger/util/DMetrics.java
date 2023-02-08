@@ -78,4 +78,24 @@ public class DMetrics {
             .help("Histogram of rule evaluation duration")
             .register();
 
+    public static final Gauge eventlogger_memory_total_bytes = Gauge.build()
+            .name("eventlogger_memory_total_bytes")
+            .help("Total memory in bytes")
+            .register();
+
+    public static final Gauge eventlogger_memory_free_bytes = Gauge.build()
+            .name("eventlogger_memory_free_bytes")
+            .help("Free memory in bytes")
+            .register();
+
+    public static final Gauge eventlogger_memory_max_bytes = Gauge.build()
+            .name("eventlogger_memory_max_bytes")
+            .help("Max memory in bytes")
+            .register();
+
+    public static final Gauge eventlogger_available_processors = Gauge.build()
+            .name("eventlogger_available_processors")
+            .help("Number of available processors")
+            .register();
+
 }
