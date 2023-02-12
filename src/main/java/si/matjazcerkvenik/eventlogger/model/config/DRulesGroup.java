@@ -17,34 +17,44 @@ package si.matjazcerkvenik.eventlogger.model.config;
 
 import java.util.List;
 
-public class YamlConfig {
+public class DRulesGroup {
 
-    private String version;
+    private String name;
 
-    private List<DRulesGroup> groups;
+    private String endpoint;
 
+    private List<DRule> rules;
 
-    public String getVersion() {
-        return version;
+    public String getName() {
+        return name;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public List<DRulesGroup> getGroups() {
-        return groups;
+    public String getEndpoint() {
+        return endpoint;
     }
 
-    public void setGroups(List<DRulesGroup> groups) {
-        this.groups = groups;
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    public List<DRule> getRules() {
+        return rules;
+    }
+
+    public void setRules(List<DRule> rules) {
+        this.rules = rules;
     }
 
     @Override
     public String toString() {
-        return "YamlConfig{" +
-                "version='" + version + '\'' +
-                ", groups=" + groups +
+        return "DRulesGroup{" +
+                "name='" + name + '\'' +
+                ", endpoint='" + endpoint + '\'' +
+                ", rules=" + rules +
                 '}';
     }
 }

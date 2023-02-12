@@ -227,7 +227,7 @@ public class MongoDataManager implements IDataManager {
     @Override
     public void addEvents(List<DEvent> eventList) {
 
-        if (eventList.isEmpty()) return;
+        if (eventList == null || eventList.isEmpty()) return;
 
         logger.info(getClientName() + " addEvents: size=" + eventList.size());
 

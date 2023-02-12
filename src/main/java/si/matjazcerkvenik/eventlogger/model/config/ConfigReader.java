@@ -41,32 +41,42 @@ public class ConfigReader {
             InputStream inputStream = new FileInputStream(f);
             YamlConfig config = yaml.load(inputStream);
             LogFactory.getLogger().info("event rules loaded: " + f.getAbsolutePath());
-            if (config == null) LogFactory.getLogger().debug("YAML config: " + config.toString());
-            verifyConfigs(config.getRules());
+            if (config != null) LogFactory.getLogger().info("YAML config: " + config.toString());
+            verifyConfigs(config.getGroups());
             return config;
         } catch (FileNotFoundException e) {
-            LogFactory.getLogger().warn("ConfigReader: no file providers.yml found at " +  path);
+            LogFactory.getLogger().warn("ConfigReader: no rules file found at " +  path);
         } catch (ConfigException e) {
-            LogFactory.getLogger().error("ConfigReader: Exception loading providers.yml: " + e.getMessage());
+            LogFactory.getLogger().error("ConfigReader: Error loading rules file: " + e.getMessage());
         } catch (Exception e) {
-            LogFactory.getLogger().error("ConfigReader:", e);
+            LogFactory.getLogger().error("ConfigReader: ", e);
         }
         return null;
     }
 
     /**
      * Check all parameters if they suit the selected provider type and set default values where needed.
-     * @return true if config is valid
      */
-    public static void verifyConfigs(List<DRule> configs) throws ConfigException {
+    public static void verifyConfigs(List<DRulesGroup> rulesGroups) throws ConfigException {
 
-        if (configs == null) throw new ConfigException("config is null");
+        if (rulesGroups == null) throw new ConfigException("groups config is null");
 
-        for (DRule pc : configs) {
+        if (rulesGroups.isEmpty()) throw new ConfigException("groups config is empty");
 
-            // check mandatory parameters
-            LogFactory.getLogger().info("checking config: " + pc.getName());
-            if (pc.getName() == null) throw new ConfigException("missing name");
+        for (DRulesGroup g : rulesGroups) {
+
+            if (g.getRules() == null) throw new ConfigException("rules config is null");
+
+            if (g.getRules().isEmpty()) throw new ConfigException("rules config is empty");
+
+            LogFactory.getLogger().info("checking group: " + g.getName());
+
+            for (DRule r : g.getRules()) {
+                // check mandatory parameters
+                LogFactory.getLogger().info("checking rule: " + r.getName());
+                if (r.getName() == null) throw new ConfigException("missing rule name");
+                if (r.getPattern() == null) throw new ConfigException("missing rule pattern");
+            }
 
         }
 

@@ -22,6 +22,14 @@ to enable storing data in MongoDB. See configuration HERE.
 At the end, eventlogger is a proxy between an event sender and database and it relays on the configuration of the 
 sender (eg. fluentd configuration). See examples of fluentd configuration that is supported by eventlogger - HERE.
 
+## Webhooks
+
+Webhooks are http endpoints where data from various sources is sent from. Each webhook endpoint implements 
+specific parser and processing of the data. At the end, the data ends in normalized and uniform format in the
+database.
+
+
+
 ### Event model
 
 Each event in eventlogger consists of 3 basic fields:

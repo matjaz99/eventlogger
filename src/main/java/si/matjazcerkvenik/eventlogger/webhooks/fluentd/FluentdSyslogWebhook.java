@@ -87,7 +87,7 @@ public class FluentdSyslogWebhook extends HttpServlet {
 				LogFactory.getLogger().trace(e.toString());
 				DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
 
-				evaluateRules(e);
+				// evaluateRules(e);
 			}
 		}
 		if (req.getContentType().equalsIgnoreCase("application/json")) {
@@ -99,91 +99,91 @@ public class FluentdSyslogWebhook extends HttpServlet {
 
 	}
 
-	private void evaluateRules(DEvent event) {
-
-		if (DProps.yamlConfig == null) return;
-
-		long before = System.nanoTime();
-
-		for (DRule rule : DProps.yamlConfig.getRules()) {
-
-			// check filter
-			if (rule.getFilter() != null) {
-				if (rule.getFilter().containsKey("ident")) {
-					if (!rule.getFilter().get("ident").equalsIgnoreCase(event.getIdent())) {
-						continue;
-					}
-				}
-			}
-
-
-			// check expression
-			if (rule.getPattern().get("type").equalsIgnoreCase("regex")) {
-
-				Pattern pattern = Pattern.compile(rule.getPattern().get("expr"), Pattern.CASE_INSENSITIVE);
-				Matcher matcher = pattern.matcher(event.getMessage());
-				boolean matchFound = matcher.find();
-				if (matchFound) {
-//					System.out.println("regex Match found");
-				} else {
-//					System.out.println("regex Match not found");
-					continue;
-				}
-
-
-			} else if (rule.getPattern().get("type").equalsIgnoreCase("grok")) {
-
-				GrokCompiler grokCompiler = GrokCompiler.newInstance();
-				grokCompiler.registerDefaultPatterns();
-
-				final Grok grok = grokCompiler.compile(rule.getPattern().get("expr"));
-				Match gm = grok.match(event.getMessage());
-//				System.out.println("GROK PATTERN: " + grok.getNamedRegex());
-				final Map<String, Object> capture = gm.capture();
-				if (capture.size() == 0) {
-//					System.out.println("nothing found");
-					continue;
-				}
-				for (String s : capture.keySet()) {
-//					System.out.println("GROK RESULT: " + capture.get(s).toString());
-				}
-
-			} else {
-
-			}
-
-			// execute an action
-			if (rule.getAction().get("type").equalsIgnoreCase("alarm")) {
-
-				DAlarm a = new DAlarm(event.getHost(), rule.getName(),
-						DAlarmSeverity.MAJOR, event.getIdent(), "addInfo");
-				AlarmMananger.raiseAlarm(a);
-
-			} else if (rule.getAction().get("type").equalsIgnoreCase("count")) {
-
-				Counter counter;
-				if (DMetrics.customCounterMetrics.containsKey(rule.getAction().get("metricName"))) {
-					counter = DMetrics.customCounterMetrics.get(rule.getAction().get("metricName"));
-				} else {
-					counter = Counter.build()
-							.name(rule.getAction().get("metricName"))
-							.help(rule.getName())
-							.labelNames("host", "ident")
-							.register();
-				}
-
-				counter.labels(event.getHost(), event.getIdent()).inc();
-				DMetrics.customCounterMetrics.put(rule.getAction().get("metricName"), counter);
-
-			} else {
-				LogFactory.getLogger().info("no action");
-			}
-
-		}
-
-		double duration = (System.nanoTime() - before) * 1.0 / 1000000000;
-		DMetrics.eventlogger_rule_evaluation_seconds.observe(duration);
-
-	}
+//	private void evaluateRules(DEvent event) {
+//
+//		if (DProps.yamlConfig == null) return;
+//
+//		long before = System.nanoTime();
+//
+//		for (DRule rule : DProps.yamlConfig.getRules()) {
+//
+//			// check filter
+//			if (rule.getFilter() != null) {
+//				if (rule.getFilter().containsKey("ident")) {
+//					if (!rule.getFilter().get("ident").equalsIgnoreCase(event.getIdent())) {
+//						continue;
+//					}
+//				}
+//			}
+//
+//
+//			// check expression
+//			if (rule.getPattern().get("type").equalsIgnoreCase("regex")) {
+//
+//				Pattern pattern = Pattern.compile(rule.getPattern().get("expr"), Pattern.CASE_INSENSITIVE);
+//				Matcher matcher = pattern.matcher(event.getMessage());
+//				boolean matchFound = matcher.find();
+//				if (matchFound) {
+////					System.out.println("regex Match found");
+//				} else {
+////					System.out.println("regex Match not found");
+//					continue;
+//				}
+//
+//
+//			} else if (rule.getPattern().get("type").equalsIgnoreCase("grok")) {
+//
+//				GrokCompiler grokCompiler = GrokCompiler.newInstance();
+//				grokCompiler.registerDefaultPatterns();
+//
+//				final Grok grok = grokCompiler.compile(rule.getPattern().get("expr"));
+//				Match gm = grok.match(event.getMessage());
+////				System.out.println("GROK PATTERN: " + grok.getNamedRegex());
+//				final Map<String, Object> capture = gm.capture();
+//				if (capture.size() == 0) {
+////					System.out.println("nothing found");
+//					continue;
+//				}
+//				for (String s : capture.keySet()) {
+////					System.out.println("GROK RESULT: " + capture.get(s).toString());
+//				}
+//
+//			} else {
+//
+//			}
+//
+//			// execute an action
+//			if (rule.getAction().get("type").equalsIgnoreCase("alarm")) {
+//
+//				DAlarm a = new DAlarm(event.getHost(), rule.getName(),
+//						DAlarmSeverity.MAJOR, event.getIdent(), "addInfo");
+//				AlarmMananger.raiseAlarm(a);
+//
+//			} else if (rule.getAction().get("type").equalsIgnoreCase("count")) {
+//
+//				Counter counter;
+//				if (DMetrics.customCounterMetrics.containsKey(rule.getAction().get("metricName"))) {
+//					counter = DMetrics.customCounterMetrics.get(rule.getAction().get("metricName"));
+//				} else {
+//					counter = Counter.build()
+//							.name(rule.getAction().get("metricName"))
+//							.help(rule.getName())
+//							.labelNames("host", "ident")
+//							.register();
+//				}
+//
+//				counter.labels(event.getHost(), event.getIdent()).inc();
+//				DMetrics.customCounterMetrics.put(rule.getAction().get("metricName"), counter);
+//
+//			} else {
+//				LogFactory.getLogger().info("no action");
+//			}
+//
+//		}
+//
+//		double duration = (System.nanoTime() - before) * 1.0 / 1000000000;
+//		DMetrics.eventlogger_rule_evaluation_seconds.observe(duration);
+//
+//	}
 
 }

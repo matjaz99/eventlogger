@@ -1,4 +1,4 @@
-package si.matjazcerkvenik.eventlogger.web;
+package si.matjazcerkvenik.eventlogger.webhooks;
 
 import si.matjazcerkvenik.eventlogger.util.AlarmMananger;
 

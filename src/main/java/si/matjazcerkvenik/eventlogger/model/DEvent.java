@@ -21,13 +21,21 @@ public class DEvent {
     private long id;
     /** Runtime ID; uniqueness is guaranteed together with ID */
     private String runtimeId;
+    /** Unix timestamp in millis when the event was received */
     private long timestamp;
+    /** Hostname or IP of object which sent the original event */
     private String host;
+    /** Process name that generated original event */
     private String ident;
+    /** PID of the process that generated original event */
     private String pid;
+    /** Custom added tag */
     private String tag;
+    /** Main message body as it was received, could be plaintext or raw json format. */
     private String message;
     private String eventSource;
+    /** Eventlogger endpoint where event was received -> parser which processed the event */
+    private String endpoint;
 
     public long getId() {
         return id;
@@ -101,6 +109,14 @@ public class DEvent {
         this.eventSource = eventSource;
     }
 
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
     @Override
     public String toString() {
         return "DEvent{" +
@@ -108,8 +124,10 @@ public class DEvent {
                 ", host='" + host + '\'' +
                 ", ident='" + ident + '\'' +
                 ", pid='" + pid + '\'' +
+                ", tag='" + tag + '\'' +
                 ", message='" + message + '\'' +
                 ", eventSource='" + eventSource + '\'' +
+                ", endpoint='" + endpoint + '\'' +
                 '}';
     }
 }

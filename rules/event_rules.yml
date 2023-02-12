@@ -1,64 +1,72 @@
 version: 1
 
-rules:
-  - name: Counting errors
-    pattern:
-      expr: "(?i)error"
-      type: regex
-    action:
-      type: count
-      metricName: event_error_count
-  - name: Find user logins
-    pattern:
-      expr: "session opened for user root"
-      type: regex
-    filter:
-      host: elasticvm
-      ident: sshd
-    action:
-      type: alarm
-  - name: Count command not found
-    pattern:
-      expr: "command not found"
-      type: regex
-    action:
-      type: count
-      metricName: event_command_not_found_total
-  - name: Started Session
-    pattern:
-      expr: "Started Session \\d+ of user"
-      type: regex
-    filter:
-      ident: "systemd"
-    action:
-      type: count
-      metricName: event_session_started_total
-  - name: Connection closed by remote host
-    pattern:
-      expr: "Connection closed by remote host"
-      type: regex
-    filter:
-      ident: "sshd"
-    action:
-      type: count
-      metricName: event_connection_closed_total
-  - name: The swarm does not have a leader
-    pattern:
-      expr: "%{GREEDYDATA}error%{GREEDYDATA}The swarm does not have a leader%{GREEDYDATA}"
-      type: grok
-    filter:
-      ident: "dockerd"
-    action:
-      type: count
-      metricName: event_swarm_no_leader_total
-  - name: The swarm does not have a leader alarm
-    pattern:
-      expr: "%{GREEDYDATA}error%{GREEDYDATA}The swarm does not have a leader%{GREEDYDATA}"
-      type: grok
-    filter:
-      ident: "dockerd"
-    action:
-      type: alarm
+groups:
+  - name: syslog events
+    endpoint: /eventlogger/event/fluentd-syslog
+    rules:
+      - name: Counting errors
+        pattern:
+          expr: "(?i)error"
+          type: regex
+        action:
+          type: count
+          metricName: event_error_count
+      - name: Find user logins
+        pattern:
+          expr: "session opened for user root"
+          type: regex
+        filter:
+          host: elasticvm
+          ident: sshd
+        action:
+          type: alarm
+      - name: Count command not found
+        pattern:
+          expr: "command not found"
+          type: regex
+        action:
+          type: count
+          metricName: event_command_not_found_total
+      - name: Started Session
+        pattern:
+          expr: "Started Session \\d+ of user"
+          type: regex
+        filter:
+          ident: "systemd"
+        action:
+          type: count
+          metricName: event_session_started_total
+      - name: Connection closed by remote host
+        pattern:
+          expr: "Connection closed by remote host"
+          type: regex
+        filter:
+          ident: "sshd"
+        action:
+          type: count
+          metricName: event_connection_closed_total
+
+  - name: docker events
+    endpoint: /eventlogger/event/http
+    rules:
+      - name: The swarm does not have a leader
+        pattern:
+          expr: "%{GREEDYDATA}error%{GREEDYDATA}The swarm does not have a leader%{GREEDYDATA}"
+          type: grok
+        filter:
+          ident: "dockerd"
+        action:
+          type: count
+          metricName: event_swarm_no_leader_total
+      - name: The swarm does not have a leader alarm
+        pattern:
+          expr: "%{GREEDYDATA}error%{GREEDYDATA}The swarm does not have a leader%{GREEDYDATA}"
+          type: grok
+        filter:
+          ident: "dockerd"
+        action:
+          type: alarm
+
 
 # actions - ideas
 # alarm - send alarm

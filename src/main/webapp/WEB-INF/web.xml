@@ -24,33 +24,13 @@
 
     <!-- Define the servlet for webhook messages -->
     <servlet>
-        <servlet-name>Fluentd Syslog Webhook Servlet</servlet-name>
-        <servlet-class>si.matjazcerkvenik.eventlogger.webhooks.fluentd.FluentdSyslogWebhook</servlet-class>
+        <servlet-name>Webhook Servlet</servlet-name>
+        <servlet-class>si.matjazcerkvenik.eventlogger.webhooks.ReceiverServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Fluentd Syslog Webhook Servlet</servlet-name>
-        <url-pattern>/api/v1/fluentd-syslog/*</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>HTTP Webhook Servlet</servlet-name>
-        <servlet-class>si.matjazcerkvenik.eventlogger.webhooks.http.HttpWebhook</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>HTTP Webhook Servlet</servlet-name>
-        <url-pattern>/api/v1/http/*</url-pattern>
-    </servlet-mapping>
-
-    <!-- Define the servlet for metrics -->
-    <servlet>
-        <servlet-name>Metrics Servlet</servlet-name>
-        <servlet-class>si.matjazcerkvenik.eventlogger.web.PrometheusMetricsServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Metrics Servlet</servlet-name>
-        <url-pattern>/metrics</url-pattern>
+        <servlet-name>Webhook Servlet</servlet-name>
+        <url-pattern>/event/*</url-pattern>
     </servlet-mapping>
 
     <!-- Startup listener -->
