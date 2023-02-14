@@ -191,7 +191,7 @@ public class ReceiverServlet extends HttpServlet {
         try {
 
             if (m.getContentType().equalsIgnoreCase("application/json")) {
-                processApplicationJson(m, iDataManager);
+                return processApplicationJson(m);
             }
             if (m.getContentType().equalsIgnoreCase("text/plain")) {
             }
@@ -208,29 +208,8 @@ public class ReceiverServlet extends HttpServlet {
 
     }
 
-    private void processApplicationJson(DRequest m, IDataManager iDataManager) {
+    private List<DEvent> processApplicationJson(DRequest m) {
         // process body
-//		DEvent e = new DEvent();
-//		e.setId(DProps.eventsReceivedCount++);
-//		e.setRuntimeId(DProps.RUNTIME_ID);
-//		e.setTimestamp(System.currentTimeMillis());
-//		e.setHost(m.getRemoteHost());
-//		e.setIdent("eventlogger.http.post");
-//		e.setPid("0");
-//		if (m.getParameterMap().containsKey("ident")) {
-//			e.setIdent(m.getParameterMap().get("ident"));
-//		}
-//		if (m.getParameterMap().containsKey("pid")) {
-//			e.setPid(m.getParameterMap().get("pid"));
-//		}
-//		if (m.getParameterMap().containsKey("tag")) {
-//			e.setTag(m.getParameterMap().get("tag"));
-//		}
-//		e.setMessage(m.getBody());
-//		e.setEventSource("eventlogger.http.post");
-//		LogFactory.getLogger().trace(e.toString());
-//		DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), m.getRemoteHost(), e.getIdent()).inc();
-
         // TODO check if it is an array or just a json object
 
         GsonBuilder builder = new GsonBuilder();
@@ -264,13 +243,13 @@ public class ReceiverServlet extends HttpServlet {
         }
 
         if (elist != null && elist.size() > 0) {
-            iDataManager.addEvents(elist);
             DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), m.getRemoteHost(), ident).inc(elist.size());
-            return;
+            return elist;
         }
 
         DMetrics.eventlogger_events_ignored_total.labels(m.getRemoteHost(), m.getMethod()).inc();
         LogFactory.getLogger().warn("HttpWebhook: doPost: message is empty; event will be ignored");
+        return null;
     }
 
     private void evaluateRules(DEvent event) {
@@ -282,8 +261,6 @@ public class ReceiverServlet extends HttpServlet {
         for (DRulesGroup group : DProps.yamlConfig.getGroups()) {
 
             if (!group.getEndpoint().equalsIgnoreCase(event.getEndpoint())) continue;
-
-            System.out.println("EVALUATE RULES for group " + group.getEndpoint());
 
             for (DRule rule : group.getRules()) {
 
@@ -364,7 +341,7 @@ public class ReceiverServlet extends HttpServlet {
         }
 
         double duration = (System.nanoTime() - before) * 1.0 / 1000000000;
-        DMetrics.eventlogger_rule_evaluation_seconds.observe(duration);
+        DMetrics.eventlogger_rule_evaluation_seconds.labels(event.getEndpoint()).observe(duration);
 
     }
     
