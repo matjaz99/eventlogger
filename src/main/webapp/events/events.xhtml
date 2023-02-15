@@ -47,7 +47,7 @@
 
 				</p:panelGrid>
 
-				<p:commandLink onclick="PF('filterPanel').toggle();" value="Show more filter options" />
+				<p:commandLink onclick="PF('filterPanel').toggle();" value="More filter options" />
 				<p:panel id="filterPanel" widgetVar="filterPanel" closable="true" toggleSpeed="500" toggleable="true" collapsed="true">
 					<p:panelGrid columns="2">
 						<p:selectOneMenu id="option" value="#{backendBean.selectedSearchOption}">
@@ -57,13 +57,12 @@
 						</p:selectOneMenu>
 						<p:inputText size="80" placeholder="^[pattern]$" value="#{backendBean.selectedSearchPattern}"/>
 						<p:outputLabel value="Time range:"/>
-						<p:panel>
-							<h:panelGrid columns="1" style="margin-bottom: 10px">
-								<h:outputText id="displayRange" value="Between #{sliderView.timeRange1} and #{sliderView.timeRange2}" />
-								<p:slider for="txt6,txt7" display="displayRange" style="width: 400px" range="true" displayTemplate="Between {min} and {max}" />
-							</h:panelGrid>
-							<h:inputHidden id="txt6" value="#{backendBean.timeRange1}" />
-							<h:inputHidden id="txt7" value="#{backendBean.timeRange2}" />
+						<p:panel styleClass="ui-noborder">
+							<p:commandButton value="Last 1 hour" action="#{backendBean.confTimeRange('1h')}" update="msgForm" styleClass="ui-button-outlined ui-button-secondary" style="margin-right: 10px;" />
+							<p:commandButton value="Last 4 hours" action="#{backendBean.confTimeRange('4h')}" update="msgForm" styleClass="ui-button-outlined ui-button-secondary" style="margin-right: 10px;" />
+							<p:commandButton value="Last 24 hours" action="#{backendBean.confTimeRange('24h')}" update="msgForm" styleClass="ui-button-outlined ui-button-secondary" style="margin-right: 10px;" />
+							<p:commandButton value="Last 7 days" action="#{backendBean.confTimeRange('7d')}" update="msgForm" styleClass="ui-button-outlined ui-button-secondary" style="margin-right: 10px;" />
+							<p:commandButton value="Last 30 days" action="#{backendBean.confTimeRange('30d')}" update="msgForm" styleClass="ui-button-outlined ui-button-secondary" style="margin-right: 10px;" />
 						</p:panel>
 						<p:outputLabel value="Limit:"/>
 						<p:inputText value="#{backendBean.limit}"/>

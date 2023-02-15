@@ -69,11 +69,12 @@ groups:
 
 
 # actions - ideas
-# alarm - send alarm
+# alarm - send alarm and keep state until cleared
+# event - just send without expecting a clear anti-event
 # count - count occurrences and expose as Prometheus metric (counter)
 # extract - extract value and expose the value as Prometheus metric (gauge)
 # log - write event to separate log
+# list - show as separated list in gui
 # tag - add custom tags
 # ignore - ignore event
 
-# groups of rules, apply to webhook endpoint

@@ -29,6 +29,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -129,8 +131,8 @@ public class BackendBean {
         LogFactory.getLogger().info("BackendBean: composeFilter: selectedSearchPattern=" + selectedSearchPattern);
         LogFactory.getLogger().info("BackendBean: composeFilter: sortAscending=" + sortAscending);
         LogFactory.getLogger().info("BackendBean: composeFilter: limit=" + limit);
-        LogFactory.getLogger().info("BackendBean: composeFilter: timeRange1=" + timeRange1);
-        LogFactory.getLogger().info("BackendBean: composeFilter: timeRange2=" + timeRange2);
+        LogFactory.getLogger().info("BackendBean: composeFilter: startDate=" + startDate);
+        LogFactory.getLogger().info("BackendBean: composeFilter: endDate=" + endDate);
 
         DFilter filter = new DFilter();
         boolean filterIsAltered = false;
@@ -154,6 +156,8 @@ public class BackendBean {
             filter.setAscending(true);
             filterIsAltered = true;
         }
+        if (startDate != null) filter.setFromTimestamp(startDate.getTime());
+        if (endDate != null) filter.setToTimestamp(endDate.getTime());
         filter.setLimit(limit);
 
         LogFactory.getLogger().info("BackendBean: filter is altered: " + filterIsAltered);
@@ -286,24 +290,53 @@ public class BackendBean {
     /* * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
-    private int timeRange1 = 1;
-    private int timeRange2 = 20;
+    private Date startDate;
+    private Date endDate;
 
-    public int getTimeRange1() {
-        return timeRange1;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setTimeRange1(int timeRange1) {
-        this.timeRange1 = timeRange1;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
-    public int getTimeRange2() {
-        return timeRange2;
+    public Date getEndDate() {
+        return endDate;
     }
 
-    public void setTimeRange2(int timeRange2) {
-        this.timeRange2 = timeRange2;
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
+
+    public String confTimeRange(String s) {
+        if (startDate == null) startDate = new Date();
+        if (endDate == null) endDate = new Date();
+        long now = System.currentTimeMillis();
+        if (s.equals("1h")) {
+            startDate.setTime(now - 3600 * 1000);
+            endDate.setTime(now);
+        } else if (s.equals("4h")) {
+            startDate.setTime(now - 4 * 3600 * 1000);
+            endDate.setTime(now);
+        } else if (s.equals("24h")) {
+            startDate.setTime(now - 24 * 3600 * 1000);
+            endDate.setTime(now);
+        } else if (s.equals("7d")) {
+            startDate.setTime(now - 7 * 24 * 3600 * 1000);
+            endDate.setTime(now);
+        } else if (s.equals("30d")) {
+            Calendar c1 = Calendar.getInstance();
+            c1.set(Calendar.DAY_OF_YEAR, c1.get(Calendar.DAY_OF_YEAR) - 30);
+            c1.set(Calendar.HOUR_OF_DAY, 0);
+            c1.set(Calendar.MINUTE, 0);
+            c1.set(Calendar.SECOND, 0);
+            startDate.setTime(c1.getTimeInMillis());
+            endDate.setTime(now);
+        }
+        return "";
+    }
+
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * */
     /*                                                   */

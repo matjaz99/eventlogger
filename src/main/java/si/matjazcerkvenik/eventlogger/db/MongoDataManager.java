@@ -327,7 +327,7 @@ public class MongoDataManager implements IDataManager {
 
     public Bson prepareBsonFilter(DFilter filter) {
         Bson bsonFilter = null;
-        List<Bson> tempList = new ArrayList<>();
+        List<Bson> tempBsonList = new ArrayList<>();
         if (filter.getHosts() != null && filter.getHosts().length > 0) {
             Bson[] bArray = new Bson[filter.getHosts().length];
             for (int i = 0; i < filter.getHosts().length; i++) {
@@ -335,7 +335,7 @@ public class MongoDataManager implements IDataManager {
                 bArray[i] = b;
             }
             Bson hostsFilter = Filters.or(bArray);
-            tempList.add(hostsFilter);
+            tempBsonList.add(hostsFilter);
         }
         if (filter.getIdents() != null && filter.getIdents().length > 0) {
             Bson[] bArray = new Bson[filter.getIdents().length];
@@ -344,20 +344,26 @@ public class MongoDataManager implements IDataManager {
                 bArray[i] = b;
             }
             Bson identsFilter = Filters.or(bArray);
-            tempList.add(identsFilter);
+            tempBsonList.add(identsFilter);
         }
         if (filter.getSearchPattern() != null && filter.getSearchPattern().length() > 0) {
             Bson b = Filters.regex("message", filter.getSearchPattern());
-            tempList.add(b);
+            tempBsonList.add(b);
             // https://www.mongodb.com/docs/manual/reference/operator/query/regex/
             //https://www.mongodb.com/docs/manual/reference/operator/query/regex/#std-label-syntax-restrictions
         }
+        if (filter.getFromTimestamp() != 0 && filter.getToTimestamp() != 0) {
+            Bson b1 = Filters.gte("timestamp", filter.getFromTimestamp());
+            Bson b2 = Filters.lte("timestamp", filter.getToTimestamp());
+            tempBsonList.add(b1);
+            tempBsonList.add(b2);
+        }
 
-        if (tempList.isEmpty()) {
+        if (tempBsonList.isEmpty()) {
             return null;
         }
-        Bson[] barr = new Bson[tempList.size()];
-        tempList.toArray(barr);
+        Bson[] barr = new Bson[tempBsonList.size()];
+        tempBsonList.toArray(barr);
 
         bsonFilter = Filters.and(barr);
         logger.debug("prepareBsonFilter: " + bsonFilter.toString());

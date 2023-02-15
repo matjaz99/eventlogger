@@ -26,8 +26,8 @@ public class DFilter {
     private String[] idents;
     private String searchType;
     private String searchPattern;
-    private long fromDate;
-    private long toDate;
+    private long fromTimestamp;
+    private long toTimestamp;
 
 
     public String getSort() {
@@ -86,20 +86,20 @@ public class DFilter {
         this.searchPattern = searchPattern;
     }
 
-    public long getFromDate() {
-        return fromDate;
+    public long getFromTimestamp() {
+        return fromTimestamp;
     }
 
-    public void setFromDate(long fromDate) {
-        this.fromDate = fromDate;
+    public void setFromTimestamp(long fromTimestamp) {
+        this.fromTimestamp = fromTimestamp;
     }
 
-    public long getToDate() {
-        return toDate;
+    public long getToTimestamp() {
+        return toTimestamp;
     }
 
-    public void setToDate(long toDate) {
-        this.toDate = toDate;
+    public void setToTimestamp(long toTimestamp) {
+        this.toTimestamp = toTimestamp;
     }
 
     @Override
@@ -111,8 +111,8 @@ public class DFilter {
                 ", ident=[" + Arrays.toString(idents) + "]" +
                 ", searchType='" + searchType + '\'' +
                 ", searchPattern='" + searchPattern + '\'' +
-                ", fromDate=" + fromDate +
-                ", toDate=" + toDate +
+                ", fromTimestamp=" + fromTimestamp +
+                ", toTimestamp=" + toTimestamp +
                 '}';
     }
 }
