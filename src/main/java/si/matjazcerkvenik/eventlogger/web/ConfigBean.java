@@ -28,6 +28,8 @@ import javax.faces.bean.SessionScoped;
 @RequestScoped
 public class ConfigBean {
 
+    private String selectedLogLevel = "INFO";
+
     public Integer getDataRetention() {
         return DProps.EVENTLOGGER_DATA_RETENTION_DAYS;
     }
@@ -103,6 +105,29 @@ public class ConfigBean {
 
     public int getDbPoolSize() {
         return DProps.EVENTLOGGER_DB_POOL_SIZE;
+    }
+
+    public String getSelectedLogLevel() {
+        return selectedLogLevel;
+    }
+
+    public void setSelectedLogLevel(String selectedLogLevel) {
+        this.selectedLogLevel = selectedLogLevel;
+        if (selectedLogLevel.equalsIgnoreCase("trace")) {
+            LogFactory.getLogger().setLogLevel(1);
+        } else if (selectedLogLevel.equalsIgnoreCase("debug")) {
+            LogFactory.getLogger().setLogLevel(2);
+        } else if (selectedLogLevel.equalsIgnoreCase("info")) {
+            LogFactory.getLogger().setLogLevel(3);
+        } else if (selectedLogLevel.equalsIgnoreCase("warn")) {
+            LogFactory.getLogger().setLogLevel(4);
+        } else if (selectedLogLevel.equalsIgnoreCase("error")) {
+            LogFactory.getLogger().setLogLevel(5);
+        } else if (selectedLogLevel.equalsIgnoreCase("fatal")) {
+            LogFactory.getLogger().setLogLevel(6);
+        } else {
+            LogFactory.getLogger().setLogLevel(3);
+        }
     }
 
 }

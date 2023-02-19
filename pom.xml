@@ -22,6 +22,7 @@
 <!--        <prometheus.version>0.12.0</prometheus.version>-->
         <prometheus.version>0.16.0</prometheus.version>
         <mongodb-driver.version>3.11.3</mongodb-driver.version>
+        <logback.version>1.2.11</logback.version>
     </properties>
 
     <dependencies>
@@ -97,6 +98,12 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>${mongodb-driver.version}</version>
         </dependency>
+        <!-- enable logback if you need logs from mongodb -->
+<!--        <dependency>-->
+<!--            <groupId>ch.qos.logback</groupId>-->
+<!--            <artifactId>logback-classic</artifactId>-->
+<!--            <version>${logback.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>io.krakens</groupId>
             <artifactId>java-grok</artifactId>

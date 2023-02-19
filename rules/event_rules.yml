@@ -46,8 +46,8 @@ groups:
           type: count
           metricName: event_connection_closed_total
 
-  - name: docker events
-    endpoint: /eventlogger/event/http
+  - name: docker events in syslog
+    endpoint: /eventlogger/event/fluentd-syslog
     rules:
       - name: The swarm does not have a leader
         pattern:
@@ -67,6 +67,37 @@ groups:
         action:
           type: alarm
 
+  - name: tailing log files
+    endpoint: /eventlogger/event/fluentd-tail
+    rules:
+      - name: Error counter on fluentd-tail endpoint
+        pattern:
+          expr: "%{GREEDYDATA}(error|Error|ERROR|Exception)%{GREEDYDATA}"
+          type: grok
+        action:
+          type: count
+          metricName: event_fluentd_tail_endpoint_errors_total
+      - name: alertmonitor failed to synchronize alarms counter
+        pattern:
+          expr: "%{GREEDYDATA}SYNCTASK%{GREEDYDATA}failed to synchronize alarms%{GREEDYDATA}"
+          type: grok
+        filter:
+          ident: alertmonitor
+        action:
+          type: count
+          metricName: event_alertmonitor_failed_sync_total
+
+  - name: generic http events
+    endpoint: /eventlogger/event/http
+    rules:
+      - name: Error counter on http endpoint
+        pattern:
+          expr: "%{GREEDYDATA}(error|Error|ERROR|Exception)%{GREEDYDATA}"
+          type: grok
+        action:
+          type: count
+          metricName: event_http_endpoint_errors_total
+
 
 # actions - ideas
 # alarm - send alarm and keep state until cleared
@@ -77,4 +108,5 @@ groups:
 # list - show as separated list in gui
 # tag - add custom tags
 # ignore - ignore event
+# kafka - send to kafka topic
 

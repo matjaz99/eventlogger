@@ -30,6 +30,7 @@ import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DRequest;
 import si.matjazcerkvenik.eventlogger.model.config.DRule;
 import si.matjazcerkvenik.eventlogger.model.config.DRulesGroup;
+import si.matjazcerkvenik.eventlogger.parsers.*;
 import si.matjazcerkvenik.eventlogger.util.AlarmMananger;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
 import si.matjazcerkvenik.eventlogger.util.DProps;
@@ -56,30 +57,47 @@ public class ReceiverServlet extends HttpServlet {
     }
 
     @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "PUT method not allowed");
+    }
+
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        DRequest m = RequestProcessor.processIncomingRequest(req, DProps.requestsReceivedCount++);
+        DRequest dRequest = RequestProcessor.processIncomingRequest(req, DProps.requestsReceivedCount++);
 
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-        iDataManager.addHttpRequest(m);
-        DMetrics.eventlogger_http_requests_total.labels(m.getRemoteHost(), m.getMethod(), req.getRequestURI()).inc();
-        DMetrics.eventlogger_http_requests_size_total.labels(m.getRemoteHost(), m.getMethod(), req.getRequestURI()).inc(m.getContentLength());
+        iDataManager.addHttpRequest(dRequest);
 
-        List<DEvent> eventList = null;
 
-        if (m.getRequestUri().equalsIgnoreCase("/eventlogger/event/fluentd-syslog")) {
-            eventList = processFluentdSyslogRequest(m);
-        } else if (m.getRequestUri().equalsIgnoreCase("/eventlogger/event/http")
-                && m.getMethod().equalsIgnoreCase("GET")) {
-            eventList = processHttpGetRequest(m);
-        } else if (m.getRequestUri().equalsIgnoreCase("/eventlogger/event/http")
-                && m.getMethod().equalsIgnoreCase("POST")) {
-            eventList = processHttpPostRequest(m, iDataManager);
+        List<DEvent> eventList;
+        IEventParser parser = null;
+
+        if (dRequest.getRequestUri().equalsIgnoreCase("/eventlogger/event/fluentd-syslog")) {
+
+            parser = new FluentdSyslogParser();
+
+        } else if (dRequest.getRequestUri().equalsIgnoreCase("/eventlogger/event/fluentd-tail")) {
+
+            parser = new FluentdTailParser();
+
+        } else if (dRequest.getRequestUri().equalsIgnoreCase("/eventlogger/event/http")) {
+
+            if (dRequest.getMethod().equalsIgnoreCase("GET")) {
+                parser = new HttpGetParser();
+            } else if (dRequest.getMethod().equalsIgnoreCase("POST")) {
+                parser = new HttpPostParser();
+            }
+
         } else {
-            LogFactory.getLogger().warn("ReceiverServlet: doPost: endpoint not supported: " + m.getRequestUri());
+            LogFactory.getLogger().warn("ReceiverServlet: doPost: endpoint not supported: " + dRequest.getRequestUri());
         }
 
-        if (eventList != null) {
+        eventList = parser.parseRequest(dRequest);
+
+        if (eventList == null) {
+            LogFactory.getLogger().warn("ReceiverServlet: doPost: failed to parse: " + dRequest.toString());
+        } else {
             for (DEvent e : eventList) {
                 evaluateRules(e);
             }
@@ -90,168 +108,14 @@ public class ReceiverServlet extends HttpServlet {
 
     }
     
-    
-    private List<DEvent> processFluentdSyslogRequest(DRequest m) {
-
-        try {
-
-            // process body
-            List<DEvent> eventList = new ArrayList<>();
-
-            if (m.getContentType().equalsIgnoreCase("application/x-ndjson")) {
-                // this is a ndjson (objects separated by \n): {}{}{}
-                String body = m.getBody().replace("}{", "}\n{");
-                String[] msgArray = body.split("\n");
-
-                GsonBuilder builder = new GsonBuilder();
-                Gson gson = builder.create();
-                long now = System.currentTimeMillis();
-
-                for (int i = 0; i < msgArray.length; i++) {
-                    DEvent e = gson.fromJson(msgArray[i].trim(), DEvent.class);
-                    e.setId(DProps.eventsReceivedCount++);
-                    e.setRuntimeId(DProps.RUNTIME_ID);
-                    e.setTimestamp(now);
-                    e.setEventSource("fluentd.syslog");
-                    e.setEndpoint(m.getRequestUri());
-                    eventList.add(e);
-                    if (e.getHost() == null) e.setHost(m.getRemoteHost());
-                    if (e.getIdent() == null) e.setIdent("unknown");
-                    LogFactory.getLogger().trace(e.toString());
-                    DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
-
-                }
-            }
-            if (m.getContentType().equalsIgnoreCase("application/json")) {
-                // this is a json (array of objects): [{},{},{}]
-            }
-
-            return eventList;
-
-        } catch (Exception e) {
-            LogFactory.getLogger().warn("ReceiverServlet: processFluentdSyslogRequest: Exception: " + e.getMessage());
-        }
-
-        return null;
-
-    }
-
-    private List<DEvent> processHttpGetRequest(DRequest m) {
-
-        try {
-
-            // process body
-            DEvent e = new DEvent();
-            e.setId(DProps.eventsReceivedCount++);
-            e.setRuntimeId(DProps.RUNTIME_ID);
-            e.setTimestamp(System.currentTimeMillis());
-            e.setHost(m.getRemoteHost());
-            e.setIdent("eventlogger.http.get");
-            e.setPid("0");
-            if (m.getParameterMap().containsKey("ident")) {
-                e.setIdent(m.getParameterMap().get("ident"));
-            }
-            if (m.getParameterMap().containsKey("pid")) {
-                e.setPid(m.getParameterMap().get("pid"));
-            }
-            if (m.getParameterMap().containsKey("tag")) {
-                e.setTag(m.getParameterMap().get("tag"));
-            }
-            if (m.getParameterMap().containsKey("msg")) {
-                e.setMessage(m.getParameterMap().get("msg"));
-            } else if (m.getParameterMap().containsKey("message")) {
-                e.setMessage(m.getParameterMap().get("message"));
-            } else {
-                e.setMessage(null);
-            }
-            e.setEndpoint(m.getRequestUri());
-            e.setEventSource("eventlogger.http.get");
-            LogFactory.getLogger().trace(e.toString());
-            DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), e.getHost(), e.getIdent()).inc();
-
-            if (e.getMessage() != null && e.getMessage().trim().length() > 0) {
-                List<DEvent> eventList = new ArrayList<>();
-                eventList.add(e);
-                return eventList;
-            }
-
-            DMetrics.eventlogger_events_ignored_total.labels(m.getRemoteHost(), m.getMethod()).inc();
-            LogFactory.getLogger().warn("ReceiverServlet: processHttpRequest: message is empty; event will be ignored");
-
-        } catch (Exception e) {
-            LogFactory.getLogger().warn("ReceiverServlet: processHttpRequest: Exception: " + e.getMessage());
-        }
-
-        return null;
-
-    }
-
-    private List<DEvent> processHttpPostRequest(DRequest m, IDataManager iDataManager) {
-
-        try {
-
-            if (m.getContentType().equalsIgnoreCase("application/json")) {
-                return processApplicationJson(m);
-            }
-            if (m.getContentType().equalsIgnoreCase("text/plain")) {
-            }
-            if (m.getContentType().equalsIgnoreCase("application/xml")) {
-            }
 
 
 
-        } catch (Exception e) {
-            LogFactory.getLogger().warn("HttpWebhook: doPost: Exception: " + e.getMessage());
-        }
 
-        return null;
-
-    }
-
-    private List<DEvent> processApplicationJson(DRequest m) {
-        // process body
-        // TODO check if it is an array or just a json object
-
-        GsonBuilder builder = new GsonBuilder();
-        Gson gson = builder.create();
-        List<DEvent> elist = gson.fromJson(m.getBody().trim(), new TypeToken<List<DEvent>>(){}.getType());
-
-        String ident = "null";
-        long now = System.currentTimeMillis();
-
-        for (DEvent de : elist) {
-            de.setId(DProps.eventsReceivedCount++);
-            de.setRuntimeId(DProps.RUNTIME_ID);
-            de.setTimestamp(now);
-            de.setHost(m.getRemoteHost());
-            de.setEventSource(m.getRemoteHost());
-            de.setEndpoint(m.getRequestUri());
-            de.setIdent("eventlogger.http.post");
-            de.setPid("0");
-            if (m.getParameterMap().containsKey("ident")) {
-                ident = m.getParameterMap().get("ident");
-                de.setIdent(ident);
-            }
-            if (m.getParameterMap().containsKey("pid")) {
-                de.setPid(m.getParameterMap().get("pid"));
-            }
-            if (m.getParameterMap().containsKey("tag")) {
-                de.setTag(m.getParameterMap().get("tag"));
-            }
-            LogFactory.getLogger().trace(de.toString());
-//			System.out.println(de.toString());
-        }
-
-        if (elist != null && elist.size() > 0) {
-            DMetrics.eventlogger_events_total.labels(m.getRemoteHost(), m.getRemoteHost(), ident).inc(elist.size());
-            return elist;
-        }
-
-        DMetrics.eventlogger_events_ignored_total.labels(m.getRemoteHost(), m.getMethod()).inc();
-        LogFactory.getLogger().warn("HttpWebhook: doPost: message is empty; event will be ignored");
-        return null;
-    }
-
+    /**
+     * Compare each event against rule definition.
+     * @param event
+     */
     private void evaluateRules(DEvent event) {
 
         if (DProps.yamlConfig == null) return;

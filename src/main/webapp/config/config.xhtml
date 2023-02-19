@@ -1,9 +1,9 @@
 <ui:composition template="/templates/pageTemplate.xhtml"
 	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:am="http://alertmonitor.io/facelets">
+	xmlns:p="http://primefaces.org/ui">
 
 	<div id="contentFrame">
 		<ui:define name="contentFrame">
@@ -15,11 +15,19 @@
 
 				<p:panelGrid columns="2">
 
+					<p:outputLabel value="Log level: " class="boldtext"/>
+					<p:selectOneMenu id="selectedLogLevel" value="#{configBean.selectedLogLevel}" dynamic="true" onchange="submit()">
+						<f:selectItem itemLabel="ERROR" itemValue="ERROR"/>
+						<f:selectItem itemLabel="WARN" itemValue="WARN"/>
+						<f:selectItem itemLabel="INFO" itemValue="INFO"/>
+						<f:selectItem itemLabel="DEBUG" itemValue="DEBUG"/>
+						<f:selectItem itemLabel="TRACE" itemValue="TRACE"/>
+					</p:selectOneMenu>
 					<p:outputLabel value="Data retention (days): " class="boldtext"/>
 					<p:inplace editor="true">
 						<p:inputText value="#{configBean.dataRetention}" required="true" label="text"/>
 					</p:inplace>
-					<p:outputLabel value="Memory buffer size: " class="boldtext"/>
+					<p:outputLabel value="Events buffer size: " class="boldtext"/>
 					<p:inplace editor="true">
 						<p:inputText value="#{configBean.bufferSize}" required="true" label="text"/>
 					</p:inplace>

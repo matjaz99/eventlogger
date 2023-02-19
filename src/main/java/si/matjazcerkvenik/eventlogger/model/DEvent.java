@@ -15,26 +15,38 @@
  */
 package si.matjazcerkvenik.eventlogger.model;
 
+import org.bson.codecs.pojo.annotations.BsonProperty;
+
 public class DEvent {
 
     /** Just a counter; starts from zero on restart */
+    @BsonProperty(value = "id")
     private long id;
     /** Runtime ID; uniqueness is guaranteed together with ID */
+    @BsonProperty(value = "runtimeId")
     private String runtimeId;
     /** Unix timestamp in millis when the event was received */
+    @BsonProperty(value = "timestamp")
     private long timestamp;
     /** Hostname or IP of object which sent the original event */
+    @BsonProperty(value = "host")
     private String host;
     /** Process name that generated original event */
+    @BsonProperty(value = "ident")
     private String ident;
     /** PID of the process that generated original event */
+    @BsonProperty(value = "pid")
     private String pid;
     /** Custom added tag */
+    @BsonProperty(value = "tag")
     private String tag;
     /** Main message body as it was received, could be plaintext or raw json format. */
+    @BsonProperty(value = "message")
     private String message;
+    @BsonProperty(value = "eventSource")
     private String eventSource;
     /** Eventlogger endpoint where event was received -> parser which processed the event */
+    @BsonProperty(value = "endpoint")
     private String endpoint;
 
     public long getId() {

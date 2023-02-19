@@ -86,13 +86,33 @@ This is basic http webhook which receives any GET or POST http method with some 
 either from the body of the message (in post request) or from URL parameters in case of get request.
 
 
+### Fluentd-syslog endpoint
 
-### HTTP webhook
+
+### HTTP endpoint
 
 Eventlogger provides a generic webhook for receiving any kind of message. 
 
+GET /eventlogger/event/http
+
+Url params:
+- `ident` - name of the process
+- `tag` - custom tag
+- `msg` or `message` - body of message (string; regardless of format; no parsing)
+
+> Hint: Message in URL may not contain whitespaces. Replace them with %20.
 
 
+POST /eventlogger/event/http
 
+Url params:
+- `ident` - name of the process
+- `tag` - custom tag
 
+Message is encapsulated inside request body.
 
+Body formats (based on content-type):
+- `json` - application/json; could be object {} or array [{},{}]
+- `ndjson` - application/x-ndjson; new-line separator between objects {}\n{} (or no separator at all: {}{})
+- `plain-text` - text/plain; string; no parsing
+- `xml` - application/xml; who still uses xml??

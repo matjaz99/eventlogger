@@ -16,6 +16,7 @@
 package si.matjazcerkvenik.eventlogger.webhooks;
 
 import si.matjazcerkvenik.eventlogger.model.DRequest;
+import si.matjazcerkvenik.eventlogger.util.DMetrics;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
@@ -44,12 +45,12 @@ public class RequestProcessor {
         sb.append("contentType=").append(req.getContentType());
         sb.append("}");
 
-        LogFactory.getLogger().info("RequestProcessor: processIncomingRequest(): " + sb.toString());
+        LogFactory.getLogger().info("RequestProcessor: processIncomingRequest: " + sb.toString());
 
-        LogFactory.getLogger().debug("RequestProcessor: processIncomingRequest(): parameterMap: " + getReqParamsAsString(req));
-        LogFactory.getLogger().debug("RequestProcessor: processIncomingRequest(): headers: " + getReqHeadersAsString(req));
+        LogFactory.getLogger().debug("RequestProcessor: processIncomingRequest: parameterMap: " + getReqParamsAsString(req));
+        LogFactory.getLogger().debug("RequestProcessor: processIncomingRequest: headers: " + getReqHeadersAsString(req));
         String body = getReqBody(req);
-        LogFactory.getLogger().debug("RequestProcessor: processIncomingRequest(): body: " + body);
+        LogFactory.getLogger().trace("RequestProcessor: processIncomingRequest: body: " + body);
 
         DRequest m = new DRequest();
         m.setId(requestId);
@@ -66,6 +67,9 @@ public class RequestProcessor {
         m.setBody(body);
         m.setHeaderMap(generateHeaderMap(req));
         m.setParameterMap(generateParamMap(req));
+
+        DMetrics.eventlogger_http_requests_total.labels(m.getRemoteHost(), m.getMethod(), m.getRequestUri()).inc();
+        DMetrics.eventlogger_http_requests_size_total.labels(m.getRemoteHost(), m.getMethod(), m.getRequestUri()).inc(m.getContentLength());
 
         return m;
     }
