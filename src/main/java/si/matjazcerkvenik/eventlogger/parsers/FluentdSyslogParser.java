@@ -29,7 +29,7 @@ import java.util.List;
 public class FluentdSyslogParser implements IEventParser {
 
     @Override
-    public List<DEvent> parseRequest(DRequest request) {
+    public List<DEvent> parseRequest(DRequest request) throws EventParserException {
         try {
 
             List<DEvent> eventList = new ArrayList<>();
@@ -65,9 +65,8 @@ public class FluentdSyslogParser implements IEventParser {
             return eventList;
 
         } catch (Exception e) {
-            LogFactory.getLogger().warn("ReceiverServlet: processFluentdSyslogRequest: Exception: " + e.getMessage());
+            LogFactory.getLogger().warn("FluentdSyslogParser: parseRequest: Exception: " + e.getMessage());
+            throw new EventParserException("fluentd-syslog parser failed");
         }
-
-        return null;
     }
 }

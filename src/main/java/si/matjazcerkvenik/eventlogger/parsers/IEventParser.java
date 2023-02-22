@@ -22,5 +22,5 @@ import java.util.List;
 
 public interface IEventParser {
 
-    public List<DEvent> parseRequest(DRequest dRequest);
+    public List<DEvent> parseRequest(DRequest dRequest) throws EventParserException;
 }

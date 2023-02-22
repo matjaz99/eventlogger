@@ -27,7 +27,7 @@ import java.util.List;
 public class HttpPostParser implements IEventParser {
 
     @Override
-    public List<DEvent> parseRequest(DRequest dRequest) {
+    public List<DEvent> parseRequest(DRequest dRequest) throws EventParserException {
         try {
 
             if (dRequest.getContentType().equalsIgnoreCase("application/json")) {
@@ -45,6 +45,7 @@ public class HttpPostParser implements IEventParser {
 
         } catch (Exception e) {
             LogFactory.getLogger().warn("HttpPostParser: parseRequest: Exception: " + e.getMessage());
+            throw new EventParserException("generic-post parser failed");
         }
 
         return null;

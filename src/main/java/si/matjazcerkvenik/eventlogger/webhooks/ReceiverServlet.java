@@ -70,30 +70,47 @@ public class ReceiverServlet extends HttpServlet {
         iDataManager.addHttpRequest(dRequest);
 
 
-        List<DEvent> eventList;
+        List<DEvent> eventList = null;
         IEventParser parser = null;
 
-        if (dRequest.getRequestUri().equalsIgnoreCase("/eventlogger/event/fluentd-syslog")) {
+        try {
 
-            parser = new FluentdSyslogParser();
+            if (dRequest.getRequestUri().equalsIgnoreCase("/eventlogger/event/fluentd-syslog")) {
 
-        } else if (dRequest.getRequestUri().equalsIgnoreCase("/eventlogger/event/fluentd-tail")) {
+                parser = new FluentdSyslogParser();
 
-            parser = new FluentdTailParser();
+            } else if (dRequest.getRequestUri().equalsIgnoreCase("/eventlogger/event/fluentd-tail")) {
 
-        } else if (dRequest.getRequestUri().equalsIgnoreCase("/eventlogger/event/http")) {
+                parser = new FluentdTailParser();
 
-            if (dRequest.getMethod().equalsIgnoreCase("GET")) {
-                parser = new HttpGetParser();
-            } else if (dRequest.getMethod().equalsIgnoreCase("POST")) {
+            } else if (dRequest.getRequestUri().equalsIgnoreCase("/eventlogger/event/http")) {
+
+                if (dRequest.getMethod().equalsIgnoreCase("GET")) {
+                    parser = new HttpGetParser();
+                } else if (dRequest.getMethod().equalsIgnoreCase("POST")) {
+                    parser = new HttpPostParser();
+                }
+
+            } else {
+                LogFactory.getLogger().warn("ReceiverServlet: doPost: endpoint not supported: " + dRequest.getRequestUri());
                 parser = new HttpPostParser();
             }
 
-        } else {
-            LogFactory.getLogger().warn("ReceiverServlet: doPost: endpoint not supported: " + dRequest.getRequestUri());
+            eventList = parser.parseRequest(dRequest);
+
+        } catch (EventParserException e) {
+            LogFactory.getLogger().warn("ReceiverServlet: doPost: fallback to generic parser");
+            parser = new HttpPostParser();
+            try {
+                eventList = parser.parseRequest(dRequest);
+            } catch (EventParserException ex) {
+                LogFactory.getLogger().warn("ReceiverServlet: doPost: EventParserException: no suitable parser");
+            }
         }
 
-        eventList = parser.parseRequest(dRequest);
+
+
+
 
         if (eventList == null) {
             LogFactory.getLogger().warn("ReceiverServlet: doPost: failed to parse: " + dRequest.toString());

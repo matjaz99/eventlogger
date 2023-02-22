@@ -15,7 +15,6 @@
  */
 package si.matjazcerkvenik.eventlogger.db;
 
-import com.google.gson.Gson;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.*;
@@ -31,7 +30,6 @@ import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
 import si.matjazcerkvenik.eventlogger.model.*;
 import si.matjazcerkvenik.eventlogger.util.AlarmMananger;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;

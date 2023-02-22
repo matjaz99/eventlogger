@@ -30,7 +30,7 @@ import java.util.List;
 public class HttpGetParser implements IEventParser {
 
     @Override
-    public List<DEvent> parseRequest(DRequest dRequest) {
+    public List<DEvent> parseRequest(DRequest dRequest) throws EventParserException {
         try {
 
             DEvent e = new DEvent();
@@ -68,10 +68,11 @@ public class HttpGetParser implements IEventParser {
             }
 
             DMetrics.eventlogger_events_ignored_total.labels(dRequest.getRemoteHost(), dRequest.getMethod()).inc();
-            LogFactory.getLogger().warn("ReceiverServlet: processHttpRequest: message is empty; event will be ignored");
+            LogFactory.getLogger().warn("HttpGetParser: parseRequest: message is empty; event will be ignored");
 
         } catch (Exception e) {
-            LogFactory.getLogger().warn("ReceiverServlet: processHttpRequest: Exception: " + e.getMessage());
+            LogFactory.getLogger().warn("HttpGetParser: parseRequest: Exception: " + e.getMessage());
+            throw new EventParserException("generic-get parser failed");
         }
 
         return null;

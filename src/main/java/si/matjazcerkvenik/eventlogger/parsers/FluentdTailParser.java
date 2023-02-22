@@ -30,46 +30,56 @@ import java.util.List;
 public class FluentdTailParser implements IEventParser {
 
     @Override
-    public List<DEvent> parseRequest(DRequest dRequest) {
-        // TODO check if it is an array or just a json object
+    public List<DEvent> parseRequest(DRequest dRequest) throws EventParserException {
 
-        GsonBuilder builder = new GsonBuilder();
-        Gson gson = builder.create();
-        List<DEvent> elist = gson.fromJson(dRequest.getBody().trim(), new TypeToken<List<DEvent>>(){}.getType());
+        try {
 
-        String ident = "null";
-        long now = System.currentTimeMillis();
+            // TODO check if it is an array or just a json object
 
-        for (DEvent de : elist) {
-            de.setId(DProps.eventsReceivedCount++);
-            de.setRuntimeId(DProps.RUNTIME_ID);
-            de.setTimestamp(now);
-            de.setHost(dRequest.getRemoteHost());
-            de.setEventSource(dRequest.getRemoteHost());
-            de.setEndpoint(dRequest.getRequestUri());
-            de.setIdent("eventlogger.http.post");
-            de.setPid("0");
-            if (dRequest.getParameterMap().containsKey("ident")) {
-                ident = dRequest.getParameterMap().get("ident");
-                de.setIdent(ident);
-            }
-            if (dRequest.getParameterMap().containsKey("pid")) {
-                de.setPid(dRequest.getParameterMap().get("pid"));
-            }
-            if (dRequest.getParameterMap().containsKey("tag")) {
-                de.setTag(dRequest.getParameterMap().get("tag"));
-            }
-            LogFactory.getLogger().trace(de.toString());
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+            List<DEvent> elist = gson.fromJson(dRequest.getBody().trim(), new TypeToken<List<DEvent>>(){}.getType());
+
+            String ident = "null";
+            long now = System.currentTimeMillis();
+
+            for (DEvent de : elist) {
+                de.setId(DProps.eventsReceivedCount++);
+                de.setRuntimeId(DProps.RUNTIME_ID);
+                de.setTimestamp(now);
+                de.setHost(dRequest.getRemoteHost());
+                de.setEventSource(dRequest.getRemoteHost());
+                de.setEndpoint(dRequest.getRequestUri());
+                de.setIdent("eventlogger.http.post");
+                de.setPid("0");
+                if (dRequest.getParameterMap().containsKey("ident")) {
+                    ident = dRequest.getParameterMap().get("ident");
+                    de.setIdent(ident);
+                }
+                if (dRequest.getParameterMap().containsKey("pid")) {
+                    de.setPid(dRequest.getParameterMap().get("pid"));
+                }
+                if (dRequest.getParameterMap().containsKey("tag")) {
+                    de.setTag(dRequest.getParameterMap().get("tag"));
+                }
+                LogFactory.getLogger().trace(de.toString());
 //			System.out.println(de.toString());
+            }
+
+            if (elist != null && elist.size() > 0) {
+                DMetrics.eventlogger_events_total.labels(dRequest.getRemoteHost(), dRequest.getRemoteHost(), ident).inc(elist.size());
+                return elist;
+            }
+
+            DMetrics.eventlogger_events_ignored_total.labels(dRequest.getRemoteHost(), dRequest.getMethod()).inc();
+            LogFactory.getLogger().warn("HttpWebhook: doPost: message is empty; event will be ignored");
+            return null;
+
+        } catch (Exception e) {
+            LogFactory.getLogger().warn("FluentdTailParser: parseRequest: Exception: " + e.getMessage());
+            throw new EventParserException("fluentd-tail parser failed");
         }
 
-        if (elist != null && elist.size() > 0) {
-            DMetrics.eventlogger_events_total.labels(dRequest.getRemoteHost(), dRequest.getRemoteHost(), ident).inc(elist.size());
-            return elist;
-        }
 
-        DMetrics.eventlogger_events_ignored_total.labels(dRequest.getRemoteHost(), dRequest.getMethod()).inc();
-        LogFactory.getLogger().warn("HttpWebhook: doPost: message is empty; event will be ignored");
-        return null;
     }
 }
