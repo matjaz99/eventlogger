@@ -11,15 +11,15 @@ groups:
         action:
           type: count
           metricName: event_error_count
-      - name: Find user logins
+      - name: Count user SSH logins
         pattern:
-          expr: "session opened for user root"
+          expr: "session opened for user"
           type: regex
         filter:
           host: elasticvm
           ident: sshd
         action:
-          type: alarm
+          type: event
       - name: Count command not found
         pattern:
           expr: "command not found"

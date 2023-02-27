@@ -53,11 +53,22 @@ public class AlarmMananger {
         alarm.setTimestamp(0);
     }
 
-    private static void push(String body, String severity) {
+    public static void sendEvent(DAlarm alarm) {
+        if (alarm.getTimestamp() == 0) alarm.setTimestamp(System.currentTimeMillis());
+        String body = toJsonString(alarm);
+        push(body, "EVENT");
+    }
+
+    /**
+     * Execute http post to send the event to destination.
+     * @param body json formatted alarm
+     * @param eventType could be ALARM, CLEAR or EVENT
+     */
+    private static void push(String body, String eventType) {
 
         if (DProps.EVENTLOGGER_ALARM_DESTINATION == null) return;
 
-        logger.info("AlarmMananger: push(): sending " + severity + ": " + body);
+        logger.info("AlarmMananger: push(): sending " + eventType + ": " + body);
 
         OkHttpClient httpClient = new OkHttpClient();
         MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");

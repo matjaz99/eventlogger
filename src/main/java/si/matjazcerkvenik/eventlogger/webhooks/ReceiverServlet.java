@@ -69,7 +69,6 @@ public class ReceiverServlet extends HttpServlet {
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
         iDataManager.addHttpRequest(dRequest);
 
-
         List<DEvent> eventList = null;
         IEventParser parser = null;
 
@@ -93,23 +92,20 @@ public class ReceiverServlet extends HttpServlet {
 
             } else {
                 LogFactory.getLogger().warn("ReceiverServlet: doPost: endpoint not supported: " + dRequest.getRequestUri());
-                parser = new HttpPostParser();
+                parser = new GenericPostParser();
             }
 
             eventList = parser.parseRequest(dRequest);
 
         } catch (EventParserException e) {
             LogFactory.getLogger().warn("ReceiverServlet: doPost: fallback to generic parser");
-            parser = new HttpPostParser();
+            parser = new GenericPostParser();
             try {
                 eventList = parser.parseRequest(dRequest);
             } catch (EventParserException ex) {
                 LogFactory.getLogger().warn("ReceiverServlet: doPost: EventParserException: no suitable parser");
             }
         }
-
-
-
 
 
         if (eventList == null) {
@@ -190,12 +186,23 @@ public class ReceiverServlet extends HttpServlet {
 
                 }
 
+
                 // execute an action
                 if (rule.getAction().get("type").equalsIgnoreCase("alarm")) {
 
                     DAlarm a = new DAlarm(event.getHost(), rule.getName(),
                             DAlarmSeverity.MAJOR, event.getIdent(), "addInfo");
                     AlarmMananger.raiseAlarm(a);
+
+                    DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
+
+                } else if (rule.getAction().get("type").equalsIgnoreCase("event")) {
+
+                    DAlarm a = new DAlarm(event.getHost(), rule.getName(),
+                            DAlarmSeverity.INFORMATIONAL, event.getIdent(), "addInfo");
+                    AlarmMananger.sendEvent(a);
+
+                    DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
 
                 } else if (rule.getAction().get("type").equalsIgnoreCase("count")) {
 
@@ -212,6 +219,8 @@ public class ReceiverServlet extends HttpServlet {
 
                     counter.labels(event.getHost(), event.getIdent()).inc();
                     DMetrics.customCounterMetrics.put(rule.getAction().get("metricName"), counter);
+
+                    DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
 
                 } else {
                     LogFactory.getLogger().info("no action");

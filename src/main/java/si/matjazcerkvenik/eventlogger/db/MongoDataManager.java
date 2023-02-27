@@ -54,9 +54,10 @@ public class MongoDataManager implements IDataManager {
     private MongoClient mongoClient;
     private int clientId = 0;
     private String clientName;
+    /** Temporary flag indicating that index was already created (at startup of eventlogger). */
     private static boolean dbIndexCreated = false;
 
-    private static DAlarm mongoAlarm = new DAlarm("eventlogger", "MongoDB down",
+    private static DAlarm mongoDownAlarm = new DAlarm("eventlogger", "MongoDB down",
             DAlarmSeverity.CRITICAL,
             DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING,
             "Cannot connect to MongoDB");
@@ -108,9 +109,9 @@ public class MongoDataManager implements IDataManager {
                 dbIndexCreated = true;
                 logger.info(getClientName() + " database initialized");
                 logger.info(getClientName() + " client ready");
-                AlarmMananger.clearAlarm(mongoAlarm);
+                AlarmMananger.clearAlarm(mongoDownAlarm);
             } catch (Exception e) {
-                AlarmMananger.raiseAlarm(mongoAlarm);
+                AlarmMananger.raiseAlarm(mongoDownAlarm);
                 logger.error(getClientName() + " error initializing database: " + e.getMessage());
             }
         }
@@ -131,33 +132,14 @@ public class MongoDataManager implements IDataManager {
 
         try {
             MongoDatabase db = mongoClient.getDatabase(dbName);
-//            MongoCollection<Document> collection = db.getCollection(dbCollectionRequests);
-//
-////            Document doc = Document.parse(new Gson().toJson(message));
-//            Document doc = new Document("_id", new ObjectId());
-//            doc.append("id", dRequest.getId())
-//                    .append("runtimeId", dRequest.getRuntimeId())
-//                    .append("timestamp", dRequest.getTimestamp())
-//                    .append("contentLength", dRequest.getContentLength())
-//                    .append("contentType", dRequest.getContentType())
-//                    .append("method", dRequest.getMethod())
-//                    .append("protocol", dRequest.getProtocol())
-//                    .append("remoteHost", dRequest.getRemoteHost())
-//                    .append("remotePort", dRequest.getRemotePort())
-//                    .append("requestUri", dRequest.getRequestUri())
-//                    .append("headerMap", dRequest.getHeaderMap())
-//                    .append("headerMapString", dRequest.getHeaderMapString())
-//                    .append("parameterMap", dRequest.getParameterMap())
-//                    .append("parameterMapString", dRequest.getParameterMapString())
-//                    .append("body", dRequest.getBody());
-
             MongoCollection<DRequest> collection = db.getCollection(dbCollectionRequests, DRequest.class);
+
             collection.insertOne(dRequest);
 
-            AlarmMananger.clearAlarm(mongoAlarm);
+            AlarmMananger.clearAlarm(mongoDownAlarm);
 
         } catch (Exception e) {
-            AlarmMananger.raiseAlarm(mongoAlarm);
+            AlarmMananger.raiseAlarm(mongoDownAlarm);
             logger.error(getClientName() + " addHttpRequest: Exception: " + e.getMessage());
             DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionRequests, "insert").inc();
         } finally {
@@ -175,7 +157,6 @@ public class MongoDataManager implements IDataManager {
         long before = System.currentTimeMillis();
         try {
             MongoDatabase db = mongoClient.getDatabase(dbName);
-//            MongoCollection<Document> collection = db.getCollection(dbCollectionRequests);
             MongoCollection<DRequest> collection = db.getCollection(dbCollectionRequests, DRequest.class);
 
             List<DRequest> docsResultList = collection.find(Filters.eq("runtimeId", DProps.RUNTIME_ID))
@@ -185,43 +166,12 @@ public class MongoDataManager implements IDataManager {
 
             logger.info(getClientName() + " docsResultList size=" + docsResultList.size());
 
-//            List<DRequest> dRequestList = new ArrayList<>();
-//
-////            GsonBuilder builder = new GsonBuilder();
-////            Gson gson = builder.create();
-//
-//            for (Document doc : docsResultList) {
-//                // document: {"_id": {"$oid": "62044887878b4423baf8d9c7"}, "id": 46, "timestamp": {"$numberLong": "1644447879359"}, "contentLength": 1952, "contentType": "application/json", "method": "POST", "protocol": "HTTP/1.1", "remoteHost": "192.168.0.123", "remotePort": 36312, "requestUri": "/alertmonitor/webhook", "body": "{\"receiver\":\"alertmonitor\",\"status\":\"firing\",\"alerts\":[{\"status\":\"firing\",\"labels\":{\"alarmcode\":\"300070\",\"alertname\":\"SSH Not Responding\",\"cluster\":\"monis-cluster\",\"info\":\"SSH on gitlab.iskratel.si:22 has been down for more than 10 minutes.\",\"instance\":\"gitlab.iskratel.si:22\",\"job\":\"blackbox-ssh\",\"monitor\":\"monis\",\"region\":\"si-home\",\"severity\":\"minor\",\"tags\":\"ssh\"},\"annotations\":{\"description\":\"SSH on gitlab.iskratel.si:22 has been down for more than 10 minutes.\",\"summary\":\"SSH on gitlab.iskratel.si:22 is down\"},\"startsAt\":\"2022-02-09T18:54:10.322Z\",\"endsAt\":\"0001-01-01T00:00:00Z\",\"generatorURL\":\"http://promvm.home.net/prometheus/graph?g0.expr=probe_success%7Bjob%3D%22blackbox-ssh%22%7D+%3D%3D+0\\u0026g0.tab=1\",\"fingerprint\":\"6a7e625056f7fa79\"},{\"status\":\"firing\",\"labels\":{\"alarmcode\":\"300070\",\"alertname\":\"SSH Not Responding\",\"cluster\":\"monis-cluster\",\"info\":\"SSH on prom.devops.iskratel.cloud:22 has been down for more than 10 minutes.\",\"instance\":\"prom.devops.iskratel.cloud:22\",\"job\":\"blackbox-ssh\",\"monitor\":\"monis\",\"region\":\"si-home\",\"severity\":\"minor\",\"tags\":\"ssh\"},\"annotations\":{\"description\":\"SSH on prom.devops.iskratel.cloud:22 has been down for more than 10 minutes.\",\"summary\":\"SSH on prom.devops.iskratel.cloud:22 is down\"},\"startsAt\":\"2022-02-09T18:54:25.322Z\",\"endsAt\":\"0001-01-01T00:00:00Z\",\"generatorURL\":\"http://promvm.home.net/prometheus/graph?g0.expr=probe_success%7Bjob%3D%22blackbox-ssh%22%7D+%3D%3D+0\\u0026g0.tab=1\",\"fingerprint\":\"22e2e031457e143b\"}],\"groupLabels\":{\"alertname\":\"SSH Not Responding\"},\"commonLabels\":{\"alarmcode\":\"300070\",\"alertname\":\"SSH Not Responding\",\"cluster\":\"monis-cluster\",\"job\":\"blackbox-ssh\",\"monitor\":\"monis\",\"region\":\"si-home\",\"severity\":\"minor\",\"tags\":\"ssh\"},\"commonAnnotations\":{},\"externalURL\":\"http://promvm.home.net:9093\",\"version\":\"4\",\"groupKey\":\"{}/{severity=~\\\"^(critical|major|minor|warning|informational|indeterminate)$\\\"}:{alertname=\\\"SSH Not Responding\\\"}\",\"truncatedAlerts\":0}", "parameterMap": {}, "headerMap": {"content-length": "1952", "host": "192.168.0.16:8080", "content-type": "application/json", "user-agent": "Alertmanager/0.23.0"}}
-////                System.out.println("document: " + doc.toJson());
-////                WebhookMessage am = gson.fromJson(doc.toJson(), WebhookMessage.class);
-////                System.out.println("converted back: " + am.toString());
-//                DRequest m = new DRequest();
-//                m.setId(((Number) doc.get("id")).longValue());
-//                m.setRuntimeId(doc.getString("runtimeId"));
-//                m.setTimestamp(((Number) doc.get("timestamp")).longValue());
-//                m.setContentLength(doc.getInteger("contentLength"));
-//                m.setContentType(doc.getString("contentType"));
-//                m.setMethod(doc.getString("method"));
-//                m.setProtocol(doc.getString("protocol"));
-//                m.setRemoteHost(doc.getString("remoteHost"));
-//                m.setRemotePort(doc.getInteger("remotePort"));
-//                m.setRequestUri(doc.getString("requestUri"));
-//                m.setBody(doc.getString("body"));
-//                m.setHeaderMapString(doc.getString("headerMapString"));
-//                m.setParameterMapString(doc.getString("parameterMapString"));
-//
-//                // there are exceptions thrown if document.getString(xx) does not exist
-//
-//                dRequestList.add(m);
-//            }
+            AlarmMananger.clearAlarm(mongoDownAlarm);
 
-            AlarmMananger.clearAlarm(mongoAlarm);
-
-//            return dRequestList;
             return docsResultList;
 
         } catch (Exception e) {
-            AlarmMananger.raiseAlarm(mongoAlarm);
+            AlarmMananger.raiseAlarm(mongoDownAlarm);
             logger.error(getClientName() + " getHttpRequests: Exception: ", e);
             DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionRequests, "query").inc();
         } finally {
@@ -256,10 +206,10 @@ public class MongoDataManager implements IDataManager {
             MongoCollection<DEvent> collection = db.getCollection(dbCollectionEvents, DEvent.class);
             collection.insertMany(eventList, new InsertManyOptions().ordered(true));
 
-            AlarmMananger.clearAlarm(mongoAlarm);
+            AlarmMananger.clearAlarm(mongoDownAlarm);
 
         } catch (Exception e) {
-            AlarmMananger.raiseAlarm(mongoAlarm);
+            AlarmMananger.raiseAlarm(mongoDownAlarm);
             logger.error(getClientName() + " addEvents: Exception: " + e.getMessage());
             DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionEvents, "insert").inc();
         } finally {
@@ -277,10 +227,8 @@ public class MongoDataManager implements IDataManager {
 
         try {
             MongoDatabase db = mongoClient.getDatabase(dbName);
-//            MongoCollection<Document> collection = db.getCollection(dbCollectionEvents);
             MongoCollection<DEvent> collection = db.getCollection(dbCollectionEvents, DEvent.class);
 
-//            List<Document> docsResultList = null;
             List<DEvent> docsResultList = null;
 
             if (filter == null) {
@@ -304,30 +252,12 @@ public class MongoDataManager implements IDataManager {
 
             logger.info(getClientName() + " docsResultList size=" + docsResultList.size());
 
-//            List<DEvent> eventList = new ArrayList<>();
-//
-//            for (Document doc : docsResultList) {
-//                logger.trace(getClientName() + " doc=" + doc.toJson());
-//                DEvent event = new DEvent();
-//                event.setId(((Number) doc.get("id")).longValue());
-//                event.setRuntimeId(doc.getString("runtimeId"));
-//                event.setTimestamp(((Number) doc.get("timestamp", 0)).longValue());
-//                event.setHost(doc.getString("host"));
-//                event.setIdent(doc.getString("ident"));
-//                event.setPid(doc.getString("pid"));
-//                event.setTag(doc.getString("tag"));
-//                event.setMessage(doc.getString("message"));
-//                event.setEventSource(doc.get("eventSource", "null"));
-//                eventList.add(event);
-//            }
+            AlarmMananger.clearAlarm(mongoDownAlarm);
 
-            AlarmMananger.clearAlarm(mongoAlarm);
-
-//            return eventList;
             return docsResultList;
 
         } catch (Exception e) {
-            AlarmMananger.raiseAlarm(mongoAlarm);
+            AlarmMananger.raiseAlarm(mongoDownAlarm);
             logger.error(getClientName() + " getEvents: Exception: " + e.getMessage());
             DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionEvents, "query").inc();
         } finally {
@@ -338,7 +268,7 @@ public class MongoDataManager implements IDataManager {
     }
 
     public Bson prepareBsonFilter(DFilter filter) {
-        Bson bsonFilter = null;
+        Bson bsonFilter;
         List<Bson> tempBsonList = new ArrayList<>();
         if (filter.getHosts() != null && filter.getHosts().length > 0) {
             Bson[] bArray = new Bson[filter.getHosts().length];
@@ -403,12 +333,12 @@ public class MongoDataManager implements IDataManager {
 
             logger.info(getClientName() + " getDistinctKeys: for=" + key + ", size=" + resultList.size());
 
-            AlarmMananger.clearAlarm(mongoAlarm);
+            AlarmMananger.clearAlarm(mongoDownAlarm);
 
             return resultList;
 
         } catch (Exception e) {
-            AlarmMananger.raiseAlarm(mongoAlarm);
+            AlarmMananger.raiseAlarm(mongoDownAlarm);
             logger.error(getClientName() + " getDistinctKeys: Exception: " + e.getMessage());
             DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionEvents, "query").inc();
         } finally {
@@ -439,10 +369,10 @@ public class MongoDataManager implements IDataManager {
             DeleteResult resultDeleteMany2 = collection2.deleteMany(filter);
             logger.info( getClientName() + " cleanDB [events]: size=" + resultDeleteMany2.getDeletedCount());
 
-            AlarmMananger.clearAlarm(mongoAlarm);
+            AlarmMananger.clearAlarm(mongoDownAlarm);
 
         } catch (Exception e) {
-            AlarmMananger.raiseAlarm(mongoAlarm);
+            AlarmMananger.raiseAlarm(mongoDownAlarm);
             logger.error( getClientName() + " cleanDB: Exception: " + e.getMessage());
             DMetrics.eventlogger_db_errors_total.labels(dbName, "/", "delete").inc();
         } finally {
