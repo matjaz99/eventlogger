@@ -126,8 +126,6 @@ public class MongoDataManager implements IDataManager {
     @Override
     public void addHttpRequest(DRequest dRequest) {
 
-        logger.info(getClientName() + " addHttpRequest");
-
         long before = System.currentTimeMillis();
 
         try {

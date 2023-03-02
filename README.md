@@ -95,7 +95,7 @@ Eventlogger provides a generic webhook for receiving any kind of message.
 
 GET /eventlogger/event/http
 
-Url params:
+Expected URL params:
 - `ident` - name of the process
 - `tag` - custom tag
 - `msg` or `message` - body of message (string; regardless of format; no parsing)
@@ -105,7 +105,7 @@ Url params:
 
 POST /eventlogger/event/http
 
-Url params:
+Expected URL params:
 - `ident` - name of the process
 - `tag` - custom tag
 
@@ -115,4 +115,74 @@ Body formats (based on content-type):
 - `json` - application/json; could be object {} or array [{},{}]
 - `ndjson` - application/x-ndjson; new-line separator between objects {}\n{} (or no separator at all: {}{})
 - `plain-text` - text/plain; string; no parsing
-- `xml` - application/xml; who still uses xml??
+- `xml` - application/xml; string; no parsing
+
+
+## Rules
+
+Rules are powerful and efficient way to check the contents of event message and act upon it. Rule specifies 
+a search pattern and an action that must be executed when event matches that search pattern.
+
+Rules file is in yaml format.
+
+Rules are grouped into groups. Each group has a `name`, `endpoint` and a list of `rules`. 
+The `endpoint` will limit the processing of rules only to events received on specified endpoint. 
+See above for supported endpoints.
+
+Each rule consists of `name`, `filter`, `pattern` and `action`. 
+
+With `filter` it is possible to limit the rule to process only events that come from specific `host` or 
+from a specific process (ie. `ident`). Using `filter` is optional.
+
+A `pattern` requires an expression `expr` and the `type` of expression. Type could be either `regex` or `grok`. 
+`regex` is a normal regular expression, while `grok` is the grok pattern which is *regex on steroids*. 
+
+See here[link] for grok patterns.
+
+The `action` element is mandatory and defines what action will be undertaken if event matches the specified 
+expression and filter.
+Possible values of `action` are:
+- `count` - count events that match with the rule conditions and will be exposed as Prometheus metric (see metrics). 
+Requires additional parameter `metricName`.
+- `event` - forward event to another http endpoint (see alarms).
+- `alarm` - send event as alarm to another http endpoint (see alarms). TODO: define what is clear
+
+
+## Alarms
+
+When event rule is matched, alarm is sent and added to the list of currently active alarms. 
+
+Eventlogger keeps current state of active alarms. Active alarms can be retrieved from eventlogger
+on `/eventlogger/alarms` endpoint.
+
+Events on the other side are sent every time when conditions in the event rule are met. Events are 
+not added to the list of active alarms and cannot be retrieved from the /alarms endpoint.
+
+Destination URL where alarms and events will be sent to is configurable via environment variable 
+`EVENTLOGGER_ALARM_DESTINATION`. Default destination url for Eventlogger alarms is **Alertmonitor** 
+on URL: `http://alertmonitor:8080/alertmonitor/webhook/eventlogger`. 
+
+Webhook for Eventlogger must be configured in Alertmonitor to be able to receive alarms. 
+Read more about Alertmonitor project here [link].
+
+
+## Metrics
+
+Eventlogger contains in-built exporter for exposing metric in Prometheus format.
+
+Supported metrics:
+- `eventlogger_build_info` (gauge)
+- `eventlogger_http_requests_total` (counter)
+- `eventlogger_http_requests_size_total` (counter)
+- `eventlogger_events_total` (counter)
+- `eventlogger_events_ignored_total` (counter)
+- `eventlogger_db_duration_seconds` (histogram)
+- `eventlogger_db_errors_total` (counter)
+- `eventlogger_rule_actions_total` (counter)
+- `eventlogger_rule_evaluation_seconds` (histogram)
+- `eventlogger_memory_total_bytes` (gauge)
+- `eventlogger_memory_free_bytes` (gauge)
+- `eventlogger_memory_max_bytes` (gauge)
+- `eventlogger_available_processors` (gauge)
+
+Additional metrics can be defined through actions in the event rules.

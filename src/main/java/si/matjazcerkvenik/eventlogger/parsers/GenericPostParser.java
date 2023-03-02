@@ -33,7 +33,7 @@ public class GenericPostParser implements IEventParser {
             return parsePlainText(dRequest);
 
         } catch (Exception e) {
-            LogFactory.getLogger().warn("GenericPostParser: parseRequest: Exception: " + e.getMessage());
+            LogFactory.getLogger().error("GenericPostParser: parseRequest: Exception: " + e.getMessage());
             throw new EventParserException("generic-post parser failed");
         }
     }
@@ -73,7 +73,7 @@ public class GenericPostParser implements IEventParser {
             LogFactory.getLogger().warn("GenericPostParser: parsePlainText: message is empty; event will be ignored");
 
         } catch (Exception e) {
-            LogFactory.getLogger().warn("HttpPostParser: parsePlainText: Exception: " + e.getMessage());
+            LogFactory.getLogger().error("HttpPostParser: parsePlainText: Exception: " + e.getMessage());
         }
         return null;
     }

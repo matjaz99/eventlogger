@@ -29,7 +29,7 @@ import java.util.Map;
 
 public class RequestProcessor {
 
-    public static DRequest processIncomingRequest(HttpServletRequest req, long requestId) throws IOException {
+    public static DRequest incomingRequest(HttpServletRequest req, long requestId) throws IOException {
 
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -45,12 +45,12 @@ public class RequestProcessor {
         sb.append("contentType=").append(req.getContentType());
         sb.append("}");
 
-        LogFactory.getLogger().info("RequestProcessor: processIncomingRequest: " + sb.toString());
+        LogFactory.getLogger().info("RequestProcessor: incomingRequest: " + sb.toString());
 
-        LogFactory.getLogger().debug("RequestProcessor: processIncomingRequest: parameterMap: " + getReqParamsAsString(req));
-        LogFactory.getLogger().debug("RequestProcessor: processIncomingRequest: headers: " + getReqHeadersAsString(req));
+        LogFactory.getLogger().debug("RequestProcessor: incomingRequest: parameterMap: " + getReqParamsAsString(req));
+        LogFactory.getLogger().debug("RequestProcessor: incomingRequest: headers: " + getReqHeadersAsString(req));
         String body = getReqBody(req);
-        LogFactory.getLogger().trace("RequestProcessor: processIncomingRequest: body: " + body);
+        LogFactory.getLogger().trace("RequestProcessor: incomingRequest: body: " + body);
 
         DRequest m = new DRequest();
         m.setId(requestId);

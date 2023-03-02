@@ -31,24 +31,21 @@ public class HttpPostParser implements IEventParser {
         try {
 
             if (dRequest.getContentType().equalsIgnoreCase("application/json")) {
+                // TODO check if object or array and cut to pieces
                 return parsePlainText(dRequest);
-            }
-            if (dRequest.getContentType().equalsIgnoreCase("application/x-ndjson")) {
+            } else if (dRequest.getContentType().equalsIgnoreCase("application/x-ndjson")) {
+                // TODO check if ndjson and cut to pieces
                 return parsePlainText(dRequest);
-            }
-            if (dRequest.getContentType().equalsIgnoreCase("text/plain")) {
-                return parsePlainText(dRequest);
-            }
-            if (dRequest.getContentType().equalsIgnoreCase("application/xml")) {
+            } else {
+                // text/plain or application/xml or anything else
                 return parsePlainText(dRequest);
             }
 
         } catch (Exception e) {
-            LogFactory.getLogger().warn("HttpPostParser: parseRequest: Exception: " + e.getMessage());
+            LogFactory.getLogger().error("HttpPostParser: parseRequest: Exception: " + e.getMessage());
             throw new EventParserException("generic-post parser failed");
         }
 
-        return null;
     }
 
     public List<DEvent> parseJsonObject(DRequest dRequest) {
@@ -98,7 +95,7 @@ public class HttpPostParser implements IEventParser {
             LogFactory.getLogger().warn("HttpPostParser: parsePlainText: message is empty; event will be ignored");
 
         } catch (Exception e) {
-            LogFactory.getLogger().warn("HttpPostParser: parsePlainText: Exception: " + e.getMessage());
+            LogFactory.getLogger().error("HttpPostParser: parsePlainText: Exception: " + e.getMessage());
         }
         return null;
     }

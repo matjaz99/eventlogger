@@ -65,7 +65,7 @@ public class FluentdSyslogParser implements IEventParser {
             return eventList;
 
         } catch (Exception e) {
-            LogFactory.getLogger().warn("FluentdSyslogParser: parseRequest: Exception: " + e.getMessage());
+            LogFactory.getLogger().error("FluentdSyslogParser: parseRequest: Exception: " + e.getMessage());
             throw new EventParserException("fluentd-syslog parser failed");
         }
     }

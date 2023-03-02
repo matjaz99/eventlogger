@@ -15,9 +15,6 @@
  */
 package si.matjazcerkvenik.eventlogger.webhooks;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import io.krakens.grok.api.Grok;
 import io.krakens.grok.api.GrokCompiler;
 import io.krakens.grok.api.Match;
@@ -41,7 +38,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -64,7 +60,7 @@ public class ReceiverServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        DRequest dRequest = RequestProcessor.processIncomingRequest(req, DProps.requestsReceivedCount++);
+        DRequest dRequest = RequestProcessor.incomingRequest(req, DProps.requestsReceivedCount++);
 
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
         iDataManager.addHttpRequest(dRequest);
@@ -114,6 +110,11 @@ public class ReceiverServlet extends HttpServlet {
             for (DEvent e : eventList) {
                 evaluateRules(e);
             }
+//            for (Iterator<DEvent> it = eventList.iterator(); it.hasNext();) {
+//                DEvent e = it.next();
+//                e = evaluateRules(e);
+//                if (e == null) it.remove();
+//            }
         }
 
         iDataManager.addEvents(eventList);
@@ -127,7 +128,6 @@ public class ReceiverServlet extends HttpServlet {
 
     /**
      * Compare each event against rule definition.
-     * @param event
      */
     private void evaluateRules(DEvent event) {
 

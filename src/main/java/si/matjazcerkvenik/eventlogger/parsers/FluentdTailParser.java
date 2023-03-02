@@ -76,7 +76,7 @@ public class FluentdTailParser implements IEventParser {
             return null;
 
         } catch (Exception e) {
-            LogFactory.getLogger().warn("FluentdTailParser: parseRequest: Exception: " + e.getMessage());
+            LogFactory.getLogger().error("FluentdTailParser: parseRequest: Exception: " + e.getMessage());
             throw new EventParserException("fluentd-tail parser failed");
         }
 

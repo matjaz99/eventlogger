@@ -71,7 +71,7 @@ public class HttpGetParser implements IEventParser {
             LogFactory.getLogger().warn("HttpGetParser: parseRequest: message is empty; event will be ignored");
 
         } catch (Exception e) {
-            LogFactory.getLogger().warn("HttpGetParser: parseRequest: Exception: " + e.getMessage());
+            LogFactory.getLogger().error("HttpGetParser: parseRequest: Exception: " + e.getMessage());
             throw new EventParserException("generic-get parser failed");
         }
 
