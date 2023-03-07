@@ -77,25 +77,16 @@ public class BackendBean {
         return list;
     }
 
+    /**
+     * This method actually prepares the whole output for the GUI.
+     * @return
+     */
     public String getConcatenatedEvents() {
 
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
         List<DEvent> list = null;
 
         try {
-
-//            if ((selectedHosts == null || selectedHosts.length == 0)
-//                    && (selectedIdents == null || selectedIdents.length == 0)) {
-//                // no filter
-//                LogFactory.getLogger().info("BackendBean: getConcatenatedEvents: no filter");
-//                list = iDataManager.getEvents(null);
-//            } else {
-//                DFilter filter = new DFilter();
-//                filter.setHosts(selectedHosts);
-//                filter.setIdents(selectedIdents);
-//                LogFactory.getLogger().info("BackendBean: getConcatenatedEvents: apply filter " + filter.toString());
-//                list = iDataManager.getEvents(filter);
-//            }
 
             list = iDataManager.getEvents(composeFilter());
 
@@ -174,13 +165,78 @@ public class BackendBean {
         LogFactory.getLogger().info(">>> BackendBean: resetFilter");
         selectedSearchPattern = null;
         selectedSearchOption = null;
+        selectedPredefinedTimeRange = null;
+        startDate = null;
+        endDate = null;
         sortAscending = false;
         limit = 1000;
     }
 
     public void applyFilterAction() {
         LogFactory.getLogger().info(">>> BackendBean: applyFilterAction: " + selectedSearchPattern);
+        LogFactory.getLogger().info(">>> BackendBean: applyFilterAction: " + selectedPredefinedTimeRange);
+
+        if (!selectedPredefinedTimeRange.equals("no-value")) {
+            if (startDate == null) startDate = new Date();
+            if (endDate == null) endDate = new Date();
+            long now = System.currentTimeMillis();
+            if (selectedPredefinedTimeRange.equals("last1h")) {
+                startDate.setTime(now - 3600 * 1000);
+                endDate.setTime(now);
+            } else if (selectedPredefinedTimeRange.equals("last4h")) {
+                startDate.setTime(now - 4 * 3600 * 1000);
+                endDate.setTime(now);
+            } else if (selectedPredefinedTimeRange.equals("last24h")) {
+                startDate.setTime(now - 24 * 3600 * 1000);
+                endDate.setTime(now);
+            } else if (selectedPredefinedTimeRange.equals("last7d")) {
+                startDate.setTime(now - 7 * 24 * 3600 * 1000);
+                endDate.setTime(now);
+            } else if (selectedPredefinedTimeRange.equals("last30d")) {
+                Calendar c1 = Calendar.getInstance();
+                c1.set(Calendar.DAY_OF_YEAR, c1.get(Calendar.DAY_OF_YEAR) - 30);
+                c1.set(Calendar.HOUR_OF_DAY, 0);
+                c1.set(Calendar.MINUTE, 0);
+                c1.set(Calendar.SECOND, 0);
+                startDate.setTime(c1.getTimeInMillis());
+                endDate.setTime(now);
+            }
+        } else {
+
+        }
+
     }
+
+    public String confTimeRange(String s) {
+        startDate = new Date();
+        endDate = new Date();
+        long now = System.currentTimeMillis();
+        if (selectedPredefinedTimeRange.equals("last1h")) {
+            startDate.setTime(now - 3600 * 1000);
+            endDate.setTime(now);
+        } else if (selectedPredefinedTimeRange.equals("last4h")) {
+            startDate.setTime(now - 4 * 3600 * 1000);
+            endDate.setTime(now);
+        } else if (selectedPredefinedTimeRange.equals("last24h")) {
+            startDate.setTime(now - 24 * 3600 * 1000);
+            endDate.setTime(now);
+        } else if (selectedPredefinedTimeRange.equals("last7d")) {
+            startDate.setTime(now - 7 * 24 * 3600 * 1000);
+            endDate.setTime(now);
+        } else if (selectedPredefinedTimeRange.equals("last30d")) {
+            Calendar c1 = Calendar.getInstance();
+            c1.set(Calendar.DAY_OF_YEAR, c1.get(Calendar.DAY_OF_YEAR) - 30);
+            c1.set(Calendar.HOUR_OF_DAY, 0);
+            c1.set(Calendar.MINUTE, 0);
+            c1.set(Calendar.SECOND, 0);
+            startDate.setTime(c1.getTimeInMillis());
+            endDate.setTime(now);
+        }
+        LogFactory.getLogger().info(">>> BackendBean: confTimeRange: " + s + " ---> startDate: " + startDate + " endDate: " + endDate);
+        return "";
+    }
+
+
 
 
 
@@ -309,33 +365,19 @@ public class BackendBean {
         this.endDate = endDate;
     }
 
-    public String confTimeRange(String s) {
-        if (startDate == null) startDate = new Date();
-        if (endDate == null) endDate = new Date();
-        long now = System.currentTimeMillis();
-        if (s.equals("1h")) {
-            startDate.setTime(now - 3600 * 1000);
-            endDate.setTime(now);
-        } else if (s.equals("4h")) {
-            startDate.setTime(now - 4 * 3600 * 1000);
-            endDate.setTime(now);
-        } else if (s.equals("24h")) {
-            startDate.setTime(now - 24 * 3600 * 1000);
-            endDate.setTime(now);
-        } else if (s.equals("7d")) {
-            startDate.setTime(now - 7 * 24 * 3600 * 1000);
-            endDate.setTime(now);
-        } else if (s.equals("30d")) {
-            Calendar c1 = Calendar.getInstance();
-            c1.set(Calendar.DAY_OF_YEAR, c1.get(Calendar.DAY_OF_YEAR) - 30);
-            c1.set(Calendar.HOUR_OF_DAY, 0);
-            c1.set(Calendar.MINUTE, 0);
-            c1.set(Calendar.SECOND, 0);
-            startDate.setTime(c1.getTimeInMillis());
-            endDate.setTime(now);
-        }
-        return "";
+    public String selectedPredefinedTimeRange;
+
+    public String getSelectedPredefinedTimeRange() {
+        return selectedPredefinedTimeRange;
     }
+
+    public void setSelectedPredefinedTimeRange(String selectedPredefinedTimeRange) {
+        this.selectedPredefinedTimeRange = selectedPredefinedTimeRange;
+        confTimeRange(selectedPredefinedTimeRange);
+    }
+
+
+
 
 
     /* * * * * * * * * * * * * * * * * * * * * * * * * * */

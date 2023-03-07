@@ -10,90 +10,114 @@
 
 			<h:form id="msgForm">
 
-				<p:panelGrid columns="2">
+				<p:tabView>
+					<p:tab title="Hostname and Ident">
+						<p:panelGrid columns="2">
 
-					<p:outputLabel value="Host: " class="boldtext"/>
-					<p:selectCheckboxMenu id="multipleHosts"
-										  value="#{backendBean.selectedHosts}"
-										  valueChangeListener="#{backendBean.selectedHostsChangeEvent}"
-										  label="Hosts"
-										  style="min-width: 15rem"
-										  multiple="true"
-										  filter="true"
-										  filterMatchMode="contains"
-										  panelStyle="width: 30rem"
-										  scrollHeight="250">
+							<p:outputLabel value="Host: " class="boldtext"/>
+							<p:selectCheckboxMenu id="multipleHosts"
+												  value="#{backendBean.selectedHosts}"
+												  valueChangeListener="#{backendBean.selectedHostsChangeEvent}"
+												  label="Hosts"
+												  style="min-width: 15rem"
+												  multiple="true"
+												  filter="true"
+												  filterMatchMode="contains"
+												  panelStyle="width: 30rem"
+												  scrollHeight="250">
 
-						<p:ajax update="msgForm"/>
-						<f:selectItems value="#{backendBean.availableHosts}"/>
-					</p:selectCheckboxMenu>
+								<p:ajax update="msgForm, eventPanel"/>
+								<f:selectItems value="#{backendBean.availableHosts}"/>
+							</p:selectCheckboxMenu>
 
-					<p:outputLabel value="Ident: " class="boldtext"/>
-					<p:selectCheckboxMenu id="multipleIdents"
-										  value="#{backendBean.selectedIdents}"
-										  valueChangeListener="#{backendBean.selectedIdentsChangeEvent}"
-										  label="Idents"
-										  style="min-width: 15rem"
-										  multiple="true"
-										  filter="true"
-										  filterMatchMode="contains"
-										  panelStyle="width: 30rem"
-										  scrollHeight="250">
+							<p:outputLabel value="Ident: " class="boldtext"/>
+							<p:selectCheckboxMenu id="multipleIdents"
+												  value="#{backendBean.selectedIdents}"
+												  valueChangeListener="#{backendBean.selectedIdentsChangeEvent}"
+												  label="Idents"
+												  style="min-width: 15rem"
+												  multiple="true"
+												  filter="true"
+												  filterMatchMode="contains"
+												  panelStyle="width: 30rem"
+												  scrollHeight="250">
 
-						<p:ajax update="msgForm"/>
-						<f:param name="filter" value="asdf" />
-						<f:selectItems value="#{backendBean.availableIdents}"/>
-					</p:selectCheckboxMenu>
+								<p:ajax update="msgForm, eventPanel"/>
+								<f:param name="filter" value="asdf" />
+								<f:selectItems value="#{backendBean.availableIdents}"/>
+							</p:selectCheckboxMenu>
 
-				</p:panelGrid>
+						</p:panelGrid>
+					</p:tab>
 
-				<p:commandLink onclick="PF('filterPanel').toggle();" value="More filter options" />
-				<p:panel id="filterPanel" widgetVar="filterPanel" closable="true" toggleSpeed="500" toggleable="true" collapsed="true">
-					<p:panelGrid columns="2">
-						<p:selectOneMenu id="option" value="#{backendBean.selectedSearchOption}">
-<!--							<f:selectItem itemLabel="Contains" itemValue="CONTAINS"/>-->
-							<f:selectItem itemLabel="RegEx" itemValue="REGEX"/>
-							<f:selectItem itemLabel="Grok" itemValue="GROK"/>
-						</p:selectOneMenu>
-						<p:inputText size="80" placeholder="^[pattern]$" value="#{backendBean.selectedSearchPattern}"/>
-						<p:outputLabel value="Time range:"/>
-						<p:panel styleClass="ui-noborder">
-							<p:commandButton value="Last 1 hour" action="#{backendBean.confTimeRange('1h')}" update="msgForm" styleClass="ui-button-outlined ui-button-secondary" style="margin-right: 10px;" />
-							<p:commandButton value="Last 4 hours" action="#{backendBean.confTimeRange('4h')}" update="msgForm" styleClass="ui-button-outlined ui-button-secondary" style="margin-right: 10px;" />
-							<p:commandButton value="Last 24 hours" action="#{backendBean.confTimeRange('24h')}" update="msgForm" styleClass="ui-button-outlined ui-button-secondary" style="margin-right: 10px;" />
-							<p:commandButton value="Last 7 days" action="#{backendBean.confTimeRange('7d')}" update="msgForm" styleClass="ui-button-outlined ui-button-secondary" style="margin-right: 10px;" />
-							<p:commandButton value="Last 30 days" action="#{backendBean.confTimeRange('30d')}" update="msgForm" styleClass="ui-button-outlined ui-button-secondary" style="margin-right: 10px;" />
-						</p:panel>
-						<p:outputLabel value="Limit:"/>
-						<p:inputText value="#{backendBean.limit}"/>
-						<p:outputLabel value="Sort ascending:"/>
-						<p:toggleSwitch value="#{backendBean.sortAscending}">
-							<p:ajax listener="#{backendBean.applyFilterAction}" update="msgForm"/>
-						</p:toggleSwitch>
-						<p:commandButton type="submit" value="Reset"
-										 styleClass="ui-button-outlined ui-button-secondary"
-										 style="width: 6rem;"
-										 action="#{backendBean.resetFilter}"
-										 update="msgForm"/>
-						<p:commandButton type="submit" value="Apply"
-										 styleClass="ui-button-outlined"
-										 style="width: 6rem;"
-										 action="#{backendBean.applyFilterAction}"
-										 update="msgForm" />
-					</p:panelGrid>
-				</p:panel>
+					<p:tab title="Search pattern">
+						<p:panelGrid columns="2">
+							<p:selectOneMenu id="option" value="#{backendBean.selectedSearchOption}">
+								<!--							<f:selectItem itemLabel="Contains" itemValue="CONTAINS"/>-->
+								<f:selectItem itemLabel="RegEx" itemValue="REGEX"/>
+								<f:selectItem itemLabel="Grok" itemValue="GROK"/>
+							</p:selectOneMenu>
+							<p:inputText size="100" placeholder="^[pattern]$" value="#{backendBean.selectedSearchPattern}"/>
+						</p:panelGrid>
+					</p:tab>
 
-				<p:outputPanel id="eventPanel">
+					<p:tab title="Time range">
+						<p:panelGrid columns="2">
+							<p:outputLabel value="Time range:"/>
+							<p:panel id="timeRangePanel" styleClass="ui-noborder">
+								<p:selectOneMenu id="selectedTimeRange"
+												 value="#{backendBean.selectedPredefinedTimeRange}">
+									<f:selectItem itemLabel="Quick select" itemValue="no-value"/>
+									<f:selectItem itemLabel="Last 1 hour" itemValue="last1h" update="startDateButton, endDateButton"/>
+									<f:selectItem itemLabel="Last 4 hours" itemValue="last4h" action="#{backendBean.confTimeRange('last4h')}" update="timeRangePanel"/>
+									<f:selectItem itemLabel="Last 24 hours" itemValue="last24h"/>
+									<f:selectItem itemLabel="Last 7 days" itemValue="last7d"/>
+									<f:selectItem itemLabel="Last 30 days" itemValue="last30d"/>
+								</p:selectOneMenu>
+								<p:outputLabel value="OR" style="font-weight: bold; margin-left: 20px; margin-right: 20px;"/>
+								<p:outputLabel for="startDateButton" value="From:" style="margin-right: 10px;"/>
+								<p:datePicker id="startDateButton" value="#{backendBean.startDate}" showTime="true" showIcon="true"/>
+								<p:outputLabel for="endDateButton" value="To:" style="margin-left: 20px; margin-right: 10px;"/>
+								<p:datePicker id="endDateButton" value="#{backendBean.endDate}" showTime="true" showIcon="true"/>
+							</p:panel>
+						</p:panelGrid>
+					</p:tab>
+
+					<p:tab title="Sort and limit">
+						<p:panelGrid columns="2">
+							<p:outputLabel value="Limit:"/>
+							<p:inputText value="#{backendBean.limit}"/>
+							<p:outputLabel value="Sort ascending:"/>
+							<p:toggleSwitch value="#{backendBean.sortAscending}">
+							</p:toggleSwitch>
+						</p:panelGrid>
+					</p:tab>
+				</p:tabView>
+
+				<p:commandButton type="submit" value="Reset"
+								 styleClass="ui-button-outlined ui-button-secondary"
+								 style="width: 6rem;"
+								 action="#{backendBean.resetFilter}"
+								 update="msgForm, eventPanel"/>
+				<p:commandButton type="submit" value="Apply"
+								 styleClass="ui-button-outlined"
+								 style="width: 6rem;"
+								 action="#{backendBean.applyFilterAction}"
+								 update="msgForm, eventPanel" />
+
+
+
+			</h:form>
+
+			<h:form id="eventPanel">
+				<p:outputPanel>
 					<div class="card">
 						<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
 							<pre style="font-size: 12px;">#{backendBean.concatenatedEvents}</pre>
 						</p:outputPanel>
 					</div>
 				</p:outputPanel>
-
 			</h:form>
-
-			<!--			<p:poll interval="10" update="msgForm" />-->
 
 
 		</ui:define>
