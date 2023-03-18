@@ -16,6 +16,7 @@
 package si.matjazcerkvenik.eventlogger.web;
 
 
+import org.primefaces.event.SelectEvent;
 import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
@@ -46,6 +47,8 @@ public class BackendBean {
                 getExternalContext().getRequestParameterMap();
         String parameterOne = params.get("filter");
         LogFactory.getLogger().info("BackendBean: PostConstruct filter=" + parameterOne);
+
+        confTimeRange("last1h");
     }
 
     public List<DRequest> getRequests() {
@@ -88,7 +91,7 @@ public class BackendBean {
 
         try {
 
-            list = iDataManager.getEvents(composeFilter());
+            list = iDataManager.getEvents(composeDFilter());
 
             if (list == null) return "no data";
 
@@ -114,47 +117,28 @@ public class BackendBean {
 
     }
 
-    public DFilter composeFilter() {
+    public DFilter composeDFilter() {
 
-        LogFactory.getLogger().info("BackendBean: composeFilter: selectedHosts=" + selectedHosts);
-        LogFactory.getLogger().info("BackendBean: composeFilter: selectedIdents=" + selectedIdents);
-        LogFactory.getLogger().info("BackendBean: composeFilter: selectedSearchOption=" + selectedSearchOption);
-        LogFactory.getLogger().info("BackendBean: composeFilter: selectedSearchPattern=" + selectedSearchPattern);
-        LogFactory.getLogger().info("BackendBean: composeFilter: sortAscending=" + sortAscending);
-        LogFactory.getLogger().info("BackendBean: composeFilter: limit=" + limit);
-        LogFactory.getLogger().info("BackendBean: composeFilter: startDate=" + startDate);
-        LogFactory.getLogger().info("BackendBean: composeFilter: endDate=" + endDate);
+//        LogFactory.getLogger().info("BackendBean: composeDFilter: selectedHosts=" + selectedHosts);
+//        LogFactory.getLogger().info("BackendBean: composeDFilter: selectedIdents=" + selectedIdents);
+//        LogFactory.getLogger().info("BackendBean: composeDFilter: selectedSearchOption=" + selectedSearchOption);
+//        LogFactory.getLogger().info("BackendBean: composeDFilter: selectedSearchPattern=" + selectedSearchPattern);
+//        LogFactory.getLogger().info("BackendBean: composeDFilter: selectedSortType=" + selectedSortType);
+//        LogFactory.getLogger().info("BackendBean: composeDFilter: limit=" + limit);
+//        LogFactory.getLogger().info("BackendBean: composeDFilter: startDate=" + startDate);
+//        LogFactory.getLogger().info("BackendBean: composeDFilter: endDate=" + endDate);
 
         DFilter filter = new DFilter();
-        boolean filterIsAltered = false;
-
-        if (selectedHosts != null && selectedHosts.length > 0) {
-            filter.setHosts(selectedHosts);
-            filterIsAltered = true;
-        }
-        if (selectedIdents != null && selectedIdents.length > 0) {
-            filter.setIdents(selectedIdents);
-            filterIsAltered = true;
-        }
-        if (selectedSearchOption != null && selectedSearchOption.length() > 0) {
-            filter.setSearchType(selectedSearchOption);
-        }
-        if (selectedSearchPattern != null && selectedSearchPattern.length() > 0) {
-            filter.setSearchPattern(selectedSearchPattern);
-            filterIsAltered = true;
-        }
-        if (sortAscending) {
-            filter.setAscending(true);
-            filterIsAltered = true;
-        }
+        filter.setHosts(selectedHosts);
+        filter.setIdents(selectedIdents);
+        filter.setSearchPatternType(selectedSearchOption);
+        filter.setSearchPattern(selectedSearchPattern);
         if (startDate != null) filter.setFromTimestamp(startDate.getTime());
         if (endDate != null) filter.setToTimestamp(endDate.getTime());
         filter.setLimit(limit);
-
-        LogFactory.getLogger().info("BackendBean: filter is altered: " + filterIsAltered);
-
-        // if nothing is set, return null
-        if (!filterIsAltered) return null;
+        if (selectedSortType.equalsIgnoreCase("ascending")) {
+            filter.setAscending(true);
+        }
 
         LogFactory.getLogger().info("BackendBean: composeFilter: " + filter.toString());
 
@@ -162,79 +146,21 @@ public class BackendBean {
     }
 
     public void resetFilter() {
-        LogFactory.getLogger().info(">>> BackendBean: resetFilter");
+        selectedIdents = null;
+        selectedHosts = null;
         selectedSearchPattern = null;
         selectedSearchOption = null;
         selectedPredefinedTimeRange = null;
         startDate = null;
         endDate = null;
-        sortAscending = false;
+        selectedSortType = "descending";
         limit = 1000;
     }
 
     public void applyFilterAction() {
-        LogFactory.getLogger().info(">>> BackendBean: applyFilterAction: " + selectedSearchPattern);
-        LogFactory.getLogger().info(">>> BackendBean: applyFilterAction: " + selectedPredefinedTimeRange);
-
-        if (!selectedPredefinedTimeRange.equals("no-value")) {
-            if (startDate == null) startDate = new Date();
-            if (endDate == null) endDate = new Date();
-            long now = System.currentTimeMillis();
-            if (selectedPredefinedTimeRange.equals("last1h")) {
-                startDate.setTime(now - 3600 * 1000);
-                endDate.setTime(now);
-            } else if (selectedPredefinedTimeRange.equals("last4h")) {
-                startDate.setTime(now - 4 * 3600 * 1000);
-                endDate.setTime(now);
-            } else if (selectedPredefinedTimeRange.equals("last24h")) {
-                startDate.setTime(now - 24 * 3600 * 1000);
-                endDate.setTime(now);
-            } else if (selectedPredefinedTimeRange.equals("last7d")) {
-                startDate.setTime(now - 7 * 24 * 3600 * 1000);
-                endDate.setTime(now);
-            } else if (selectedPredefinedTimeRange.equals("last30d")) {
-                Calendar c1 = Calendar.getInstance();
-                c1.set(Calendar.DAY_OF_YEAR, c1.get(Calendar.DAY_OF_YEAR) - 30);
-                c1.set(Calendar.HOUR_OF_DAY, 0);
-                c1.set(Calendar.MINUTE, 0);
-                c1.set(Calendar.SECOND, 0);
-                startDate.setTime(c1.getTimeInMillis());
-                endDate.setTime(now);
-            }
-        } else {
-
-        }
-
+        // nothing to do here, filter is actually applied in getConcatenatedEvents method
     }
 
-    public String confTimeRange(String s) {
-        startDate = new Date();
-        endDate = new Date();
-        long now = System.currentTimeMillis();
-        if (selectedPredefinedTimeRange.equals("last1h")) {
-            startDate.setTime(now - 3600 * 1000);
-            endDate.setTime(now);
-        } else if (selectedPredefinedTimeRange.equals("last4h")) {
-            startDate.setTime(now - 4 * 3600 * 1000);
-            endDate.setTime(now);
-        } else if (selectedPredefinedTimeRange.equals("last24h")) {
-            startDate.setTime(now - 24 * 3600 * 1000);
-            endDate.setTime(now);
-        } else if (selectedPredefinedTimeRange.equals("last7d")) {
-            startDate.setTime(now - 7 * 24 * 3600 * 1000);
-            endDate.setTime(now);
-        } else if (selectedPredefinedTimeRange.equals("last30d")) {
-            Calendar c1 = Calendar.getInstance();
-            c1.set(Calendar.DAY_OF_YEAR, c1.get(Calendar.DAY_OF_YEAR) - 30);
-            c1.set(Calendar.HOUR_OF_DAY, 0);
-            c1.set(Calendar.MINUTE, 0);
-            c1.set(Calendar.SECOND, 0);
-            startDate.setTime(c1.getTimeInMillis());
-            endDate.setTime(now);
-        }
-        LogFactory.getLogger().info(">>> BackendBean: confTimeRange: " + s + " ---> startDate: " + startDate + " endDate: " + endDate);
-        return "";
-    }
 
 
 
@@ -365,7 +291,7 @@ public class BackendBean {
         this.endDate = endDate;
     }
 
-    public String selectedPredefinedTimeRange;
+    public String selectedPredefinedTimeRange = "last1h";
 
     public String getSelectedPredefinedTimeRange() {
         return selectedPredefinedTimeRange;
@@ -374,6 +300,46 @@ public class BackendBean {
     public void setSelectedPredefinedTimeRange(String selectedPredefinedTimeRange) {
         this.selectedPredefinedTimeRange = selectedPredefinedTimeRange;
         confTimeRange(selectedPredefinedTimeRange);
+    }
+
+    private String confTimeRange(String s) {
+        startDate = new Date();
+        endDate = new Date();
+        long now = System.currentTimeMillis();
+        if (selectedPredefinedTimeRange.equals("last1h")) {
+            startDate.setTime(now - 3600 * 1000);
+            endDate.setTime(now);
+        } else if (selectedPredefinedTimeRange.equals("last4h")) {
+            startDate.setTime(now - 4 * 3600 * 1000);
+            endDate.setTime(now);
+        } else if (selectedPredefinedTimeRange.equals("last24h")) {
+            startDate.setTime(now - 24 * 3600 * 1000);
+            endDate.setTime(now);
+        } else if (selectedPredefinedTimeRange.equals("last7d")) {
+            startDate.setTime(now - 7 * 24 * 3600 * 1000);
+            endDate.setTime(now);
+        } else if (selectedPredefinedTimeRange.equals("last30d")) {
+            Calendar c1 = Calendar.getInstance();
+            c1.set(Calendar.DAY_OF_YEAR, c1.get(Calendar.DAY_OF_YEAR) - 30);
+            c1.set(Calendar.HOUR_OF_DAY, 0);
+            c1.set(Calendar.MINUTE, 0);
+            c1.set(Calendar.SECOND, 0);
+            startDate.setTime(c1.getTimeInMillis());
+            endDate.setTime(now);
+        }
+        return "";
+    }
+
+    public void handlePredefinedTimeRangeChange() {
+        // nothing to do
+    }
+
+    public void handleStartDateChange(SelectEvent<Date> event) {
+        selectedPredefinedTimeRange = "custom";
+    }
+
+    public void handleEndDateChange(SelectEvent<Date> event) {
+        selectedPredefinedTimeRange = "custom";
     }
 
 
@@ -389,7 +355,7 @@ public class BackendBean {
 
 
     private int limit = 1000;
-    private boolean sortAscending;
+    private String selectedSortType = "descending";
 
     public int getLimit() {
         return limit;
@@ -399,11 +365,11 @@ public class BackendBean {
         this.limit = limit;
     }
 
-    public boolean isSortAscending() {
-        return sortAscending;
+    public String getSelectedSortType() {
+        return selectedSortType;
     }
 
-    public void setSortAscending(boolean sortAscending) {
-        this.sortAscending = sortAscending;
+    public void setSelectedSortType(String selectedSortType) {
+        this.selectedSortType = selectedSortType;
     }
 }

@@ -219,7 +219,7 @@ public class MongoDataManager implements IDataManager {
     @Override
     public List<DEvent> getEvents(DFilter filter) {
 
-        logger.info(getClientName() + " getEvents: filter=" + filter);
+        logger.info(getClientName() + " getEvents: " + filter);
 
         long before = System.currentTimeMillis();
 
@@ -228,6 +228,8 @@ public class MongoDataManager implements IDataManager {
             MongoCollection<DEvent> collection = db.getCollection(dbCollectionEvents, DEvent.class);
 
             List<DEvent> docsResultList = null;
+
+
 
             if (filter == null) {
                 docsResultList = collection.find()
@@ -266,8 +268,9 @@ public class MongoDataManager implements IDataManager {
     }
 
     public Bson prepareBsonFilter(DFilter filter) {
-        Bson bsonFilter;
+
         List<Bson> tempBsonList = new ArrayList<>();
+
         if (filter.getHosts() != null && filter.getHosts().length > 0) {
             Bson[] bArray = new Bson[filter.getHosts().length];
             for (int i = 0; i < filter.getHosts().length; i++) {
@@ -277,6 +280,7 @@ public class MongoDataManager implements IDataManager {
             Bson hostsFilter = Filters.or(bArray);
             tempBsonList.add(hostsFilter);
         }
+
         if (filter.getIdents() != null && filter.getIdents().length > 0) {
             Bson[] bArray = new Bson[filter.getIdents().length];
             for (int i = 0; i < filter.getIdents().length; i++) {
@@ -286,27 +290,28 @@ public class MongoDataManager implements IDataManager {
             Bson identsFilter = Filters.or(bArray);
             tempBsonList.add(identsFilter);
         }
+
         if (filter.getSearchPattern() != null && filter.getSearchPattern().length() > 0) {
             Bson b = Filters.regex("message", filter.getSearchPattern());
             tempBsonList.add(b);
             // https://www.mongodb.com/docs/manual/reference/operator/query/regex/
             //https://www.mongodb.com/docs/manual/reference/operator/query/regex/#std-label-syntax-restrictions
         }
-        if (filter.getFromTimestamp() != 0 && filter.getToTimestamp() != 0) {
-            Bson b1 = Filters.gte("timestamp", filter.getFromTimestamp());
-            Bson b2 = Filters.lte("timestamp", filter.getToTimestamp());
-            tempBsonList.add(b1);
-            tempBsonList.add(b2);
-        }
 
-        if (tempBsonList.isEmpty()) {
-            return null;
-        }
+        Bson b1 = Filters.gte("timestamp", filter.getFromTimestamp());
+        Bson b2 = Filters.lte("timestamp", filter.getToTimestamp());
+        tempBsonList.add(b1);
+        tempBsonList.add(b2);
+
+//        if (tempBsonList.isEmpty()) {
+//            return null;
+//        }
         Bson[] barr = new Bson[tempBsonList.size()];
         tempBsonList.toArray(barr);
 
+        Bson bsonFilter;
         bsonFilter = Filters.and(barr);
-        logger.debug("prepareBsonFilter: " + bsonFilter.toString());
+        logger.info("prepareBsonFilter: " + bsonFilter.toString());
         return bsonFilter;
     }
 

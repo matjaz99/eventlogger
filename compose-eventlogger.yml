@@ -8,7 +8,7 @@ networks:
 services:
 
   eventlogger:
-    image: matjaz99/eventlogger:0.2.3
+    image: matjaz99/eventlogger:0.2.4
     ports:
       - 7073:8080
     networks:

@@ -83,9 +83,7 @@ public class AlarmMananger {
 
             Response response = httpClient.newCall(request).execute();
             logger.info("AlarmMananger: push(): responseCode=" + response.code());
-            boolean success = response.isSuccessful();
-            int responseCode = response.code();
-            String responseText = response.body().string();
+
             response.close();
 
         } catch (Exception e) {
@@ -97,14 +95,12 @@ public class AlarmMananger {
     public static String toJsonString(DAlarm alarm) {
         Gson gson = new Gson();
         String s = gson.toJson(alarm);
-        System.out.println(s);
         return s;
     }
 
     public static String toJsonStringAllAlarms() {
         Gson gson = new Gson();
         String s = gson.toJson(activeAlarmsList.values());
-        System.out.println(s);
         return s;
     }
 

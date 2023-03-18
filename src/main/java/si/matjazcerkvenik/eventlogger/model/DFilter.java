@@ -19,24 +19,16 @@ import java.util.Arrays;
 
 public class DFilter {
 
-    private String sort;
     private int limit;
     private boolean ascending = false;
     private String[] hosts;
     private String[] idents;
-    private String searchType;
+    private String searchPatternType;
     private String searchPattern;
     private long fromTimestamp;
     private long toTimestamp;
 
 
-    public String getSort() {
-        return sort;
-    }
-
-    public void setSort(String sort) {
-        this.sort = sort;
-    }
 
     public int getLimit() {
         return limit;
@@ -70,12 +62,12 @@ public class DFilter {
         this.idents = idents;
     }
 
-    public String getSearchType() {
-        return searchType;
+    public String getSearchPatternType() {
+        return searchPatternType;
     }
 
-    public void setSearchType(String searchType) {
-        this.searchType = searchType;
+    public void setSearchPatternType(String searchPatternType) {
+        this.searchPatternType = searchPatternType;
     }
 
     public String getSearchPattern() {
@@ -105,11 +97,10 @@ public class DFilter {
     @Override
     public String toString() {
         return "DFilter{" +
-                "sort='" + sort + '\'' +
-                ", limit=" + limit +
+                "limit=" + limit +
                 ", hosts=[" + Arrays.toString(hosts) + "]" +
                 ", ident=[" + Arrays.toString(idents) + "]" +
-                ", searchType='" + searchType + '\'' +
+                ", searchPatternType='" + searchPatternType + '\'' +
                 ", searchPattern='" + searchPattern + '\'' +
                 ", fromTimestamp=" + fromTimestamp +
                 ", toTimestamp=" + toTimestamp +

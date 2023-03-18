@@ -67,18 +67,23 @@
 							<p:panel id="timeRangePanel" styleClass="ui-noborder">
 								<p:selectOneMenu id="selectedTimeRange"
 												 value="#{backendBean.selectedPredefinedTimeRange}">
-									<f:selectItem itemLabel="Quick select" itemValue="no-value"/>
-									<f:selectItem itemLabel="Last 1 hour" itemValue="last1h" update="startDateButton, endDateButton"/>
-									<f:selectItem itemLabel="Last 4 hours" itemValue="last4h" action="#{backendBean.confTimeRange('last4h')}" update="timeRangePanel"/>
+									<f:selectItem itemLabel="Last 1 hour" itemValue="last1h"/>
+									<f:selectItem itemLabel="Last 4 hours" itemValue="last4h"/>
 									<f:selectItem itemLabel="Last 24 hours" itemValue="last24h"/>
 									<f:selectItem itemLabel="Last 7 days" itemValue="last7d"/>
 									<f:selectItem itemLabel="Last 30 days" itemValue="last30d"/>
+									<f:selectItem itemLabel="Custom" itemValue="custom"/>
+									<p:ajax event="valueChange" listener="#{backendBean.handlePredefinedTimeRangeChange}" update="timeRangePanel" />
 								</p:selectOneMenu>
 								<p:outputLabel value="OR" style="font-weight: bold; margin-left: 20px; margin-right: 20px;"/>
 								<p:outputLabel for="startDateButton" value="From:" style="margin-right: 10px;"/>
-								<p:datePicker id="startDateButton" value="#{backendBean.startDate}" showTime="true" showIcon="true"/>
+								<p:datePicker id="startDateButton" value="#{backendBean.startDate}" showTime="true" showIcon="true">
+									<p:ajax event="dateSelect" listener="#{backendBean.handleStartDateChange}" update="selectedTimeRange" />
+								</p:datePicker>
 								<p:outputLabel for="endDateButton" value="To:" style="margin-left: 20px; margin-right: 10px;"/>
-								<p:datePicker id="endDateButton" value="#{backendBean.endDate}" showTime="true" showIcon="true"/>
+								<p:datePicker id="endDateButton" value="#{backendBean.endDate}" showTime="true" showIcon="true">
+									<p:ajax event="dateSelect" listener="#{backendBean.handleEndDateChange}" update="selectedTimeRange" />
+								</p:datePicker>
 							</p:panel>
 						</p:panelGrid>
 					</p:tab>
@@ -87,21 +92,23 @@
 						<p:panelGrid columns="2">
 							<p:outputLabel value="Limit:"/>
 							<p:inputText value="#{backendBean.limit}"/>
-							<p:outputLabel value="Sort ascending:"/>
-							<p:toggleSwitch value="#{backendBean.sortAscending}">
-							</p:toggleSwitch>
+							<p:outputLabel value="Sort:"/>
+							<p:selectOneRadio id="sortSelect" value="#{backendBean.selectedSortType}">
+								<f:selectItem itemLabel="Ascending" itemValue="ascending"/>
+								<f:selectItem itemLabel="Descending" itemValue="descending"/>
+							</p:selectOneRadio>
 						</p:panelGrid>
 					</p:tab>
 				</p:tabView>
 
 				<p:commandButton type="submit" value="Reset"
 								 styleClass="ui-button-outlined ui-button-secondary"
-								 style="width: 6rem;"
+								 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
 								 action="#{backendBean.resetFilter}"
 								 update="msgForm, eventPanel"/>
 				<p:commandButton type="submit" value="Apply"
 								 styleClass="ui-button-outlined"
-								 style="width: 6rem;"
+								 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
 								 action="#{backendBean.applyFilterAction}"
 								 update="msgForm, eventPanel" />
 
