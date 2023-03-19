@@ -21,7 +21,7 @@ jobs:
     - name: list dir
       run: ls -la
     - name: Read current version
-      run: TAG=$(cat src/main/webapp/WEB-INF/version.txt)
+      run: echo $(cat src/main/webapp/WEB-INF/version.txt) >> $TAG
     - name: Print current version
       run: echo "LAST VERSION="$TAG
     #- name: Build the Docker image
