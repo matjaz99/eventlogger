@@ -9,6 +9,7 @@ on:
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
+    environment: eventlogger_environment
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
