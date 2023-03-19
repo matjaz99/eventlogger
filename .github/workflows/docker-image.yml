@@ -21,7 +21,7 @@ jobs:
     - name: list dir
       run: ls -la
     - name: Read current version
-      run: echo $(cat src/main/webapp/WEB-INF/version.txt) >> $TAG
+      run: echo "TAG=$(cat src/main/webapp/WEB-INF/version.txt)" >> $GITHUB_ENV
     - name: Print current version
       run: echo "LAST VERSION="$TAG
     #- name: Build the Docker image
