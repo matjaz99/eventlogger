@@ -48,7 +48,7 @@ public class BackendBean {
         String parameterOne = params.get("filter");
         LogFactory.getLogger().info("BackendBean: PostConstruct filter=" + parameterOne);
 
-        confTimeRange("last1h");
+//        confTimeRange("last1h");
     }
 
     public List<DRequest> getRequests() {
@@ -119,22 +119,44 @@ public class BackendBean {
 
     public DFilter composeDFilter() {
 
-//        LogFactory.getLogger().info("BackendBean: composeDFilter: selectedHosts=" + selectedHosts);
-//        LogFactory.getLogger().info("BackendBean: composeDFilter: selectedIdents=" + selectedIdents);
-//        LogFactory.getLogger().info("BackendBean: composeDFilter: selectedSearchOption=" + selectedSearchOption);
-//        LogFactory.getLogger().info("BackendBean: composeDFilter: selectedSearchPattern=" + selectedSearchPattern);
-//        LogFactory.getLogger().info("BackendBean: composeDFilter: selectedSortType=" + selectedSortType);
-//        LogFactory.getLogger().info("BackendBean: composeDFilter: limit=" + limit);
-//        LogFactory.getLogger().info("BackendBean: composeDFilter: startDate=" + startDate);
-//        LogFactory.getLogger().info("BackendBean: composeDFilter: endDate=" + endDate);
-
         DFilter filter = new DFilter();
         filter.setHosts(selectedHosts);
         filter.setIdents(selectedIdents);
         filter.setSearchPatternType(selectedSearchOption);
         filter.setSearchPattern(selectedSearchPattern);
-        if (startDate != null) filter.setFromTimestamp(startDate.getTime());
-        if (endDate != null) filter.setToTimestamp(endDate.getTime());
+        if (selectedPredefinedTimeRange != null
+                && selectedPredefinedTimeRange.startsWith("last")) {
+            Date startDateFromRange = new Date();
+            Date endDateFromRange = new Date();
+            long now = System.currentTimeMillis();
+            if (selectedPredefinedTimeRange.equals("last1h")) {
+                startDateFromRange.setTime(now - 3600 * 1000);
+                endDateFromRange.setTime(now);
+            } else if (selectedPredefinedTimeRange.equals("last4h")) {
+                startDateFromRange.setTime(now - 4 * 3600 * 1000);
+                endDateFromRange.setTime(now);
+            } else if (selectedPredefinedTimeRange.equals("last24h")) {
+                startDateFromRange.setTime(now - 24 * 3600 * 1000);
+                endDateFromRange.setTime(now);
+            } else if (selectedPredefinedTimeRange.equals("last7d")) {
+                startDateFromRange.setTime(now - 7 * 24 * 3600 * 1000);
+                endDateFromRange.setTime(now);
+            } else if (selectedPredefinedTimeRange.equals("last30d")) {
+                Calendar c1 = Calendar.getInstance();
+                c1.set(Calendar.DAY_OF_YEAR, c1.get(Calendar.DAY_OF_YEAR) - 30);
+                c1.set(Calendar.HOUR_OF_DAY, 0);
+                c1.set(Calendar.MINUTE, 0);
+                c1.set(Calendar.SECOND, 0);
+                startDateFromRange.setTime(c1.getTimeInMillis());
+                endDateFromRange.setTime(now);
+            }
+            filter.setFromTimestamp(startDateFromRange.getTime());
+            filter.setToTimestamp(endDateFromRange.getTime());
+        } else {
+            filter.setFromTimestamp(startDate.getTime());
+            filter.setToTimestamp(endDate.getTime());
+        }
+
         filter.setLimit(limit);
         if (selectedSortType.equalsIgnoreCase("ascending")) {
             filter.setAscending(true);
@@ -149,8 +171,8 @@ public class BackendBean {
         selectedIdents = null;
         selectedHosts = null;
         selectedSearchPattern = null;
-        selectedSearchOption = null;
-        selectedPredefinedTimeRange = null;
+        selectedSearchOption = "REGEX";
+        selectedPredefinedTimeRange = "last1h";
         startDate = null;
         endDate = null;
         selectedSortType = "descending";
@@ -299,45 +321,26 @@ public class BackendBean {
 
     public void setSelectedPredefinedTimeRange(String selectedPredefinedTimeRange) {
         this.selectedPredefinedTimeRange = selectedPredefinedTimeRange;
-        confTimeRange(selectedPredefinedTimeRange);
     }
 
-    private String confTimeRange(String s) {
-        startDate = new Date();
-        endDate = new Date();
-        long now = System.currentTimeMillis();
-        if (selectedPredefinedTimeRange.equals("last1h")) {
-            startDate.setTime(now - 3600 * 1000);
-            endDate.setTime(now);
-        } else if (selectedPredefinedTimeRange.equals("last4h")) {
-            startDate.setTime(now - 4 * 3600 * 1000);
-            endDate.setTime(now);
-        } else if (selectedPredefinedTimeRange.equals("last24h")) {
-            startDate.setTime(now - 24 * 3600 * 1000);
-            endDate.setTime(now);
-        } else if (selectedPredefinedTimeRange.equals("last7d")) {
-            startDate.setTime(now - 7 * 24 * 3600 * 1000);
-            endDate.setTime(now);
-        } else if (selectedPredefinedTimeRange.equals("last30d")) {
-            Calendar c1 = Calendar.getInstance();
-            c1.set(Calendar.DAY_OF_YEAR, c1.get(Calendar.DAY_OF_YEAR) - 30);
-            c1.set(Calendar.HOUR_OF_DAY, 0);
-            c1.set(Calendar.MINUTE, 0);
-            c1.set(Calendar.SECOND, 0);
-            startDate.setTime(c1.getTimeInMillis());
-            endDate.setTime(now);
-        }
-        return "";
-    }
-
+    /**
+     * Reset startDate and endDate if predefined time range is selected from drop-down menu
+     */
     public void handlePredefinedTimeRangeChange() {
-        // nothing to do
+        startDate = null;
+        endDate = null;
     }
 
+    /**
+     * Set predefined time range to 'custom' if startDate is changed
+     */
     public void handleStartDateChange(SelectEvent<Date> event) {
         selectedPredefinedTimeRange = "custom";
     }
 
+    /**
+     * Set predefined time range to 'custom' if endDate is changed
+     */
     public void handleEndDateChange(SelectEvent<Date> event) {
         selectedPredefinedTimeRange = "custom";
     }
