@@ -306,12 +306,12 @@ public class MongoDataManager implements IDataManager {
 //        if (tempBsonList.isEmpty()) {
 //            return null;
 //        }
-        Bson[] barr = new Bson[tempBsonList.size()];
-        tempBsonList.toArray(barr);
+        Bson[] bArray = new Bson[tempBsonList.size()];
+        tempBsonList.toArray(bArray);
 
         Bson bsonFilter;
-        bsonFilter = Filters.and(barr);
-        logger.info("prepareBsonFilter: " + bsonFilter.toString());
+        bsonFilter = Filters.and(bArray);
+        logger.info(getClientName() + " BSON: " + bsonFilter);
         return bsonFilter;
     }
 

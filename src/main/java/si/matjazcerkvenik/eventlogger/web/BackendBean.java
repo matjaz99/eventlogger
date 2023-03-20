@@ -82,7 +82,7 @@ public class BackendBean {
 
     /**
      * This method actually prepares the whole output for the GUI.
-     * @return
+     * @return whole text, new-line delimited
      */
     public String getConcatenatedEvents() {
 
