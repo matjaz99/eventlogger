@@ -21,8 +21,21 @@ import si.matjazcerkvenik.eventlogger.model.config.YamlConfig;
 public class DProps {
 
     // internal counters
-    public static long requestsReceivedCount = 0;
-    public static long eventsReceivedCount = 0;
+    private static long requestsReceivedCount = 0;
+
+    public static synchronized long increaseAndGetRequestsReceivedCount() {
+        return requestsReceivedCount++;
+    }
+
+    private static long eventsReceivedCount = 0;
+
+    public static synchronized long increaseAndGetEventsReceivedCount() {
+        return eventsReceivedCount++;
+    }
+
+    public static long getEventsReceivedCount() {
+        return eventsReceivedCount;
+    }
 
     public static YamlConfig yamlConfig;
 

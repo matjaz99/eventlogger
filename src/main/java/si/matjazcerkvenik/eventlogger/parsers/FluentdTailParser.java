@@ -44,7 +44,7 @@ public class FluentdTailParser implements IEventParser {
             long now = System.currentTimeMillis();
 
             for (DEvent de : elist) {
-                de.setId(DProps.eventsReceivedCount++);
+                de.setId(DProps.increaseAndGetEventsReceivedCount());
                 de.setRuntimeId(DProps.RUNTIME_ID);
                 de.setTimestamp(now);
                 de.setHost(dRequest.getRemoteHost());

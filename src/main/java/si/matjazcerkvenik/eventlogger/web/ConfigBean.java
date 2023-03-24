@@ -57,7 +57,7 @@ public class ConfigBean {
     }
 
     public long getEventsCount() {
-        return DProps.eventsReceivedCount;
+        return DProps.getEventsReceivedCount();
     }
 
     public String getRuntimeId() {

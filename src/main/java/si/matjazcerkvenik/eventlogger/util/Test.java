@@ -121,7 +121,7 @@ public class Test {
         MongoCollection<DEvent> eventsCollection = db.getCollection("events", DEvent.class);
 
         DEvent eventIn = new DEvent();
-        eventIn.setId(DProps.eventsReceivedCount++);
+        eventIn.setId(DProps.increaseAndGetEventsReceivedCount());
         eventIn.setRuntimeId("1000");
         eventIn.setTimestamp(System.currentTimeMillis());
         eventIn.setEventSource("test_source");
@@ -140,7 +140,7 @@ public class Test {
         List<DEvent> list = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             DEvent ev = new DEvent();
-            ev.setId(DProps.eventsReceivedCount++);
+            ev.setId(DProps.increaseAndGetEventsReceivedCount());
             ev.setRuntimeId("1001");
             ev.setTimestamp(System.currentTimeMillis());
             ev.setEventSource("test_many_source");

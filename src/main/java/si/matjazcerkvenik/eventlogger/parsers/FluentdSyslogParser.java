@@ -45,7 +45,7 @@ public class FluentdSyslogParser implements IEventParser {
 
                 for (int i = 0; i < msgArray.length; i++) {
                     DEvent e = gson.fromJson(msgArray[i].trim(), DEvent.class);
-                    e.setId(DProps.eventsReceivedCount++);
+                    e.setId(DProps.increaseAndGetEventsReceivedCount());
                     e.setRuntimeId(DProps.RUNTIME_ID);
                     e.setTimestamp(now);
                     e.setEventSource("fluentd.syslog");

@@ -5,25 +5,24 @@
 [![GitHub release](https://img.shields.io/github/release/matjaz99/eventlogger.svg)](https://GitHub.com/matjaz99/eventlogger/releases/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/matjaz99/eventlogger.svg)](https://hub.docker.com/r/matjaz99/eventlogger)
 
-Eventlogger is a repository of events received on the http webhook. Event is considered to be a simple message, such 
-as syslog event.
+Eventlogger is a repository of events received on the http webhook. Event is a simple message, such 
+as syslog event. Eventlogger relies on fluentd as an event source.
 
-Eventlogger relies on fluentd as an event source to support wide variety of events.
+Eventlogger offers a nice web GUI where events can be displayed, searched and filtered.
 
 Eventlogger supports customized rules, which can extract data from events and trigger actions
 
 Eventlogger started as a syslog viewer, backed-up by a database. Fluentd is used to collect Syslog events and 
-forward them to eventlogger using fluent's `out_http` plugin.
+forward them to Eventlogger using fluent's `out_http` plugin.
 
-Eventlogger offers a nice web GUI where events can be displayed, searched and filtered.
 
 At the end, eventlogger is a proxy between an event sender and database and it relays on the configuration of the 
 sender (eg. fluentd configuration). See examples of fluentd configuration that is supported by eventlogger - HERE.
 
 ## Webhooks
 
-Webhooks are http endpoints where events from various sources are received. Each webhook endpoint implements 
-specific parser for processing of data. Data is normalized in uniform format and stored in the
+Webhooks are http endpoints where events from different sources are received. Each webhook endpoint implements 
+specific parser for processing of data. Data is then normalized in uniform format and stored in the
 database.
 
 
@@ -79,7 +78,7 @@ Memory storage type stores all data internally in memory. It is limited to the l
 ### Fluentd
 
 Eventlogger supports events received from fluent's `out_http` plugin, but the structure of 
-output messages strongly depend on the source type.
+output messages strongly depend on the source input type.
 
 Eventlogger supports the following data sources in fluentd:
 - syslog

@@ -54,7 +54,7 @@ public class MongoDataManager implements IDataManager {
     private MongoClient mongoClient;
     private int clientId = 0;
     private String clientName;
-    /** Temporary flag indicating that index was already created (at startup of eventlogger). */
+    /** A flag indicating that index was already created (at startup of eventlogger). */
     private static boolean dbIndexCreated = false;
 
     private static DAlarm mongoDownAlarm = new DAlarm("eventlogger", "MongoDB down",

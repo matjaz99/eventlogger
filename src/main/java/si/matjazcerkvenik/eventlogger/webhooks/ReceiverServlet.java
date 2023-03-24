@@ -60,7 +60,7 @@ public class ReceiverServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        DRequest dRequest = RequestProcessor.incomingRequest(req, DProps.requestsReceivedCount++);
+        DRequest dRequest = RequestProcessor.incomingRequest(req, DProps.increaseAndGetRequestsReceivedCount());
 
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
         iDataManager.addHttpRequest(dRequest);

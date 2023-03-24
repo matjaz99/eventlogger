@@ -42,7 +42,7 @@ public class GenericPostParser implements IEventParser {
         try {
 
             DEvent e = new DEvent();
-            e.setId(DProps.eventsReceivedCount++);
+            e.setId(DProps.increaseAndGetEventsReceivedCount());
             e.setRuntimeId(DProps.RUNTIME_ID);
             e.setTimestamp(System.currentTimeMillis());
             e.setHost(dRequest.getRemoteHost());
