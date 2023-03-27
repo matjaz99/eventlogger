@@ -15,9 +15,8 @@ Eventlogger supports customized rules, which can extract data from events and tr
 Eventlogger started as a syslog viewer, backed-up by a database. Fluentd is used to collect Syslog events and 
 forward them to Eventlogger using fluent's `out_http` plugin.
 
-
-At the end, eventlogger is a proxy between an event sender and database and it relays on the configuration of the 
-sender (eg. fluentd configuration). See examples of fluentd configuration that is supported by eventlogger - HERE.
+At the end, eventlogger is a proxy between an event sender and database.
+See examples of fluentd configuration that is supported by eventlogger - (TODO).
 
 ## Webhooks
 
@@ -44,10 +43,14 @@ Each event in eventlogger consists of the following fields:
 Run in docker container:
 
 ```
-$ docker run -d TODO ...
+$ docker run -d -p 8080:8080 
+--name eventlogger
+--env EVENTLOGGER_EVENT_RULES_CONFIG_FILE=/opt/eventlogger/rules/event_rules.yml 
+-v ./rules/event_rules.yml:/opt/eventlogger/rules/event_rules.yml 
+matjaz99/eventlogger:0.2.4
 ```
 
-To run eventlogger with persistance capabililty, configure MongoDB connection string via environment variables (see here).
+To run Eventlogger with persistence capability, configure MongoDB connection string via environment variables - see below.
 
 Docker compose file example is available on GitHub.
 
@@ -59,25 +62,34 @@ storage type is limited to the last 1000 events. If you don't need long-term per
 need to follow the last N events from various sources centralized in one place, memory option is totally fine.
 
 Eventlogger supports MongoDB as a long-term storage. The `mongodb` storage type must be configured
-to enable storing data in MongoDB. See configuration HERE.
+to enable storing data in MongoDB.
 
-## Storage type
+## Storage types
 
 Eventlogger currently supports two storage types: `memory` or `mongodb`.
 
 ### Memory
 
 Memory storage type stores all data internally in memory. It is limited to the last 1000 events.
+Memory storage type does not require any configuration.
 
 ### MongoDB
 
+MongoDB is configured with environment variables:
+
+- `EVENTLOGGER_STORAGE_TYPE` - set to `mongodb` to enable persistence in MongoDB (default is `memory`).
+- `EVENTLOGGER_MONGODB_CONNECTION_STRING` - connection string to connect to MongoDB (default `mongodb://admin:mongodbpassword@mongovm:27017/?authSource=admin`).
+- `EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC` - connect timeout of MongoDB client (default is 5 seconds).
+- `EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC` - read timeout of MongoDB client (default is 30 seconds).
+- `EVENTLOGGER_DB_POOL_SIZE` - number of MongoDB clients (default 3).
+- `EVENTLOGGER_DATA_RETENTION_DAYS` - how many days before data is deleted from database (default 30 days)
 
 
 ## Configuring data sources
 
 ### Fluentd
 
-Eventlogger supports events received from fluent's `out_http` plugin, but the structure of 
+Eventlogger supports events received from fluentd's `out_http` plugin, but the structure of 
 output messages strongly depend on the source input type.
 
 Eventlogger supports the following data sources in fluentd:
@@ -130,7 +142,8 @@ Body formats (based on content-type):
 Rules are powerful and efficient way to check the contents of event message and act upon it. Rule specifies 
 a search pattern and an action that must be executed when event matches that search pattern.
 
-Rules file is in yaml format.
+Rules file is in yaml format. Default location of rules file is `/opt/eventlogger/rules/event_rules.yml`, 
+but it can be overridden with environment variable `EVENTLOGGER_EVENT_RULES_CONFIG_FILE`.
 
 Rules are grouped into groups. Each group has a `name`, `endpoint` and a list of `rules`. 
 The `endpoint` will limit the processing of rules only to events received on specified endpoint. 
@@ -169,8 +182,8 @@ Destination URL where alarms and events will be sent to is configurable via envi
 `EVENTLOGGER_ALARM_DESTINATION`. Default destination url for Eventlogger alarms is **Alertmonitor** 
 on URL: `http://alertmonitor:8080/alertmonitor/webhook/eventlogger`. 
 
-Webhook for Eventlogger must be configured in Alertmonitor to be able to receive alarms. 
-Read more about Alertmonitor project here [link].
+Eventlogger webhook must be configured in Alertmonitor to be able to receive alarms. 
+Read more about Alertmonitor project on Github: [here](https://hub.docker.com/r/matjaz99/alertmonitor).
 
 
 ## Metrics

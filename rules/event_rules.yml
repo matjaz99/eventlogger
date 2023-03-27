@@ -32,7 +32,7 @@ groups:
           expr: "Started Session \\d+ of user"
           type: regex
         filter:
-          ident: "systemd"
+          ident: systemd
         action:
           type: count
           metricName: event_session_started_total
@@ -41,10 +41,44 @@ groups:
           expr: "Connection closed by remote host"
           type: regex
         filter:
-          ident: "sshd"
+          ident: sshd
         action:
           type: count
           metricName: event_connection_closed_total
+      - name: NTP Can't synchronise
+        pattern:
+          expr: "Can't synchronise"
+          type: regex
+        filter:
+          ident: chronyd
+        action:
+          type: alarm
+      - name: NTP Can't synchronise - clear
+        pattern:
+          expr: "Selected source"
+          type: regex
+        filter:
+          ident: chronyd
+        action:
+          # this could be clear
+          type: event
+      - name: NTP System clock wrong
+        pattern:
+          expr: "System clock wrong"
+          type: regex
+        filter:
+          ident: chronyd
+        action:
+          type: alarm
+      - name: DNF Metadata cache refreshed recently
+        pattern:
+          expr: "Metadata cache refreshed recently"
+          type: regex
+        filter:
+          ident: dnf
+        action:
+          type: count
+          metricName: event_dnf_metadata_cache_refreshed
 
   - name: docker events in syslog
     endpoint: /eventlogger/event/fluentd-syslog

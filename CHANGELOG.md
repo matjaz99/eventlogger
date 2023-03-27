@@ -1,9 +1,14 @@
 # EventLogger changelog
 
-## 0.3.0
+## 0.2.4
 
-* [DOCKER] `docker pull matjaz99/eventlogger:0.3.0`
-* [CHANGE] Renamed `webhook/*` endpoint to `api/v1/*`. Sounds better.
+* [DOCKER] `docker pull matjaz99/eventlogger:0.2.4`
+* [FEATURE] Event rules
+
+## 0.2.3
+
+* [DOCKER] `docker pull matjaz99/eventlogger:0.2.3`
+* [CHANGE] Renamed `webhook/*` endpoint to `event/*`. Sounds better.
 * [FEATURE] Help view
 * [FEATURE] Sending alarms
 
