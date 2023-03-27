@@ -53,15 +53,14 @@ groups:
           ident: chronyd
         action:
           type: alarm
-      - name: NTP Can't synchronise - clear
+      - name: NTP Can't synchronise
         pattern:
           expr: "Selected source"
           type: regex
         filter:
           ident: chronyd
         action:
-          # this could be clear
-          type: event
+          type: clear
       - name: NTP System clock wrong
         pattern:
           expr: "System clock wrong"

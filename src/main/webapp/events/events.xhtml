@@ -101,18 +101,36 @@
 					</p:tab>
 				</p:tabView>
 
-				<p:commandButton type="submit" value="Reset"
-								 styleClass="ui-button-outlined ui-button-secondary"
-								 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
-								 action="#{backendBean.resetFilter}"
-								 update="msgForm, eventPanel"/>
-				<p:commandButton type="submit" value="Apply"
-								 styleClass="ui-button-outlined"
-								 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
-								 action="#{backendBean.applyFilterAction}"
-								 update="msgForm, eventPanel" />
+				<p:panelGrid columns="3" styleClass="ui-noborder">
+
+					<p:commandButton type="submit" value="Reset"
+									 styleClass="ui-button-outlined ui-button-secondary"
+									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
+									 action="#{backendBean.resetFilter}"
+									 update="msgForm, eventPanel"/>
+					<p:commandButton type="submit" value="Apply"
+									 styleClass="ui-button-outlined"
+									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
+									 action="#{backendBean.applyFilterAction}"
+									 update="msgForm, eventPanel" />
 
 
+					<p:ajaxStatus styleClass="p-d-block p-mb-4">
+						<f:facet name="default">
+							<p:outputLabel value="" />
+						</f:facet>
+
+						<f:facet name="start">
+							<p:outputLabel value="Loading... " />
+							<i class="pi pi-spin pi-refresh loading-icon" aria-hidden="true"></i>
+						</f:facet>
+
+						<f:facet name="complete">
+							<p:outputLabel value="" />
+						</f:facet>
+					</p:ajaxStatus>
+
+				</p:panelGrid>
 
 			</h:form>
 

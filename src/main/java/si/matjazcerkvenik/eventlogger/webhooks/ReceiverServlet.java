@@ -164,7 +164,6 @@ public class ReceiverServlet extends HttpServlet {
                         continue;
                     }
 
-
                 } else if (rule.getPattern().get("type").equalsIgnoreCase("grok")) {
 
                     GrokCompiler grokCompiler = GrokCompiler.newInstance();
@@ -193,6 +192,14 @@ public class ReceiverServlet extends HttpServlet {
                     DAlarm a = new DAlarm(event.getHost(), rule.getName(),
                             DAlarmSeverity.MAJOR, event.getIdent(), "addInfo");
                     AlarmMananger.raiseAlarm(a);
+
+                    DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
+
+                } else if (rule.getAction().get("type").equalsIgnoreCase("clear")) {
+
+                    DAlarm a = new DAlarm(event.getHost(), rule.getName(),
+                            DAlarmSeverity.MAJOR, event.getIdent(), "addInfo");
+                    AlarmMananger.clearAlarm(a);
 
                     DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
 
@@ -226,7 +233,7 @@ public class ReceiverServlet extends HttpServlet {
                     LogFactory.getLogger().info("no action");
                 }
 
-            }
+            } // end for each rule
 
         }
 

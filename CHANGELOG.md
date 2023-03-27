@@ -1,6 +1,11 @@
 # EventLogger changelog
 
-## 0.2.4
+## 0.2.5
+
+* [ENHANCEMENT] Show ajax status when loading events from DB
+
+
+## 0.2.4 / 2023-03-28
 
 * [DOCKER] `docker pull matjaz99/eventlogger:0.2.4`
 * [FEATURE] Event rules
