@@ -1,7 +1,8 @@
 # EventLogger changelog
 
-## 0.2.5
+## 0.2.5-SNAPSHOT
 
+* [FEATURE] Event rules view
 * [ENHANCEMENT] Show ajax status when loading events from DB
 
 

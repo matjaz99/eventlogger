@@ -1,0 +1,53 @@
+<ui:composition template="/templates/pageTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div id="contentFrame">
+		<ui:define name="contentFrame">
+
+			<p:outputLabel value="Event rules" style="font-weight: bold; font-size: 24px;"/>
+
+			<p:accordionPanel multiple="true"
+							  widgetVar="multiple"
+							  activeIndex="-1"
+							  value="#{configBean.rulesGroups}" var="group">
+				<p:tab>
+
+					<f:facet name="title">
+						<p:outputLabel value="#{group.name}" class="boldtext" />
+						<p:outputLabel value="#{group.endpoint}" style="margin-left: 20px; font-size: 12px;" />
+					</f:facet>
+
+					<h:form id="groupForm">
+
+						<p:dataTable value="#{group.rules}" var="rule"
+									 cellpadding="0" cellspacing="0">
+							<p:column headerText="Name">
+								<p:outputLabel value="#{rule.name}"/>
+							</p:column>
+							<p:column headerText="Filter">
+								<p:outputLabel value="#{rule.filter.get('host')}/#{rule.filter.get('ident')}"/>
+							</p:column>
+							<p:column headerText="Pattern">
+								<p:outputLabel value="#{rule.pattern.get('type')}"/>
+							</p:column>
+							<p:column headerText="Action">
+								<p:outputLabel value="#{rule.action.get('type')}"/>
+							</p:column>
+						</p:dataTable>
+
+					</h:form>
+
+					<br/>
+
+				</p:tab>
+			</p:accordionPanel>
+
+		</ui:define>
+	</div>
+
+</ui:composition>
+

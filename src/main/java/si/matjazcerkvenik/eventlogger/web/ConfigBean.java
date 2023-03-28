@@ -15,6 +15,7 @@
  */
 package si.matjazcerkvenik.eventlogger.web;
 
+import si.matjazcerkvenik.eventlogger.model.config.DRulesGroup;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.Formatter;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
@@ -22,6 +23,7 @@ import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.bean.SessionScoped;
+import java.util.List;
 
 @ManagedBean
 //@SessionScoped
@@ -128,6 +130,11 @@ public class ConfigBean {
         } else {
             LogFactory.getLogger().setLogLevel(3);
         }
+    }
+
+
+    public List<DRulesGroup> getRulesGroups() {
+        return DProps.yamlConfig.getGroups();
     }
 
 }

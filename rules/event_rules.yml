@@ -100,7 +100,7 @@ groups:
         action:
           type: alarm
 
-  - name: tailing log files
+  - name: log files (tail)
     endpoint: /eventlogger/event/fluentd-tail
     rules:
       - name: Error counter on fluentd-tail endpoint

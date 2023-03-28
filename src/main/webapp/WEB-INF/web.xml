@@ -7,6 +7,7 @@
         <welcome-file>index.xhtml</welcome-file>
         <welcome-file>requests.xhtml</welcome-file>
         <welcome-file>events.xhtml</welcome-file>
+        <welcome-file>rules.xhtml</welcome-file>
         <welcome-file>config.xhtml</welcome-file>
         <welcome-file>help.xhtml</welcome-file>
     </welcome-file-list>
