@@ -67,11 +67,14 @@ public class DAlarm {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+        dateTime = Formatter.getFormatedTimestamp(timestamp);
     }
 
     public String getDateTime() {
-        return Formatter.getFormatedTimestamp(timestamp);
+        return dateTime;
     }
+
+
 
     public String getAlarmName() {
         return alarmName;

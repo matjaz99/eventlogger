@@ -120,10 +120,10 @@ groups:
           type: count
           metricName: event_alertmonitor_failed_sync_total
 
-  - name: generic http events
+  - name: http endpoint events
     endpoint: /eventlogger/event/http
     rules:
-      - name: Error counter on http endpoint
+      - name: Error counter
         pattern:
           expr: "%{GREEDYDATA}(error|Error|ERROR|Exception)%{GREEDYDATA}"
           type: grok
@@ -132,14 +132,14 @@ groups:
           metricName: event_http_endpoint_errors_total
 
 
-# actions - ideas
+# actions:
 # alarm - send alarm and keep state until cleared
 # event - just send without expecting a clear anti-event
 # count - count occurrences and expose as Prometheus metric (counter)
-# extract - extract value and expose the value as Prometheus metric (gauge)
-# log - write event to separate log
-# list - show as separated list in gui
-# tag - add custom tags
-# ignore - ignore event
-# kafka - send to kafka topic
+# extract - extract value and expose the value as Prometheus metric (gauge) - TODO
+# log - write event to separate log - TODO
+# list - show as separated list in gui - TODO
+# tag - add custom tags - TODO
+# ignore - ignore event - TODO
+# kafka - send to kafka topic - TODO
 

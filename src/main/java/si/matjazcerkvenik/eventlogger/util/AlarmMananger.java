@@ -54,7 +54,8 @@ public class AlarmMananger {
     }
 
     public static void sendEvent(DAlarm alarm) {
-        if (alarm.getTimestamp() == 0) alarm.setTimestamp(System.currentTimeMillis());
+        alarm.setTimestamp(System.currentTimeMillis());
+        alarm.setNotificationType("event");
         String body = toJsonString(alarm);
         push(body, "EVENT");
     }
