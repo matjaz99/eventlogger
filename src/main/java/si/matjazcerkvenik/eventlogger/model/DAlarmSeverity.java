@@ -25,4 +25,24 @@ public class DAlarmSeverity {
     public static final int CLEAR = 5;
     public static final int INFORMATIONAL = 6;
 
+    public static int getSeverity(String s) {
+        if (s == null) {
+            return INDETERMINATE;
+        } else if (s.equalsIgnoreCase("critical")) {
+            return CRITICAL;
+        } else if (s.equalsIgnoreCase("major")) {
+            return MAJOR;
+        } else if (s.equalsIgnoreCase("minor")) {
+            return MINOR;
+        } else if (s.equalsIgnoreCase("warning")) {
+            return WARNING;
+        } else if (s.equalsIgnoreCase("informational")) {
+            return INFORMATIONAL;
+        } else if (s.equalsIgnoreCase("clear")) {
+            return CLEAR;
+        } else {
+            return INDETERMINATE;
+        }
+    }
+
 }

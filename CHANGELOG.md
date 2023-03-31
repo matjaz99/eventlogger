@@ -4,6 +4,7 @@
 
 * [FEATURE] Event rules view
 * [ENHANCEMENT] Show ajax status when loading events from DB
+* [FIX] Corrections for raising and clearing alarms
 
 
 ## 0.2.4 / 2023-03-28

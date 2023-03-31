@@ -42,15 +42,11 @@ public class AlarmMananger {
     public static synchronized void clearAlarm(DAlarm alarm) {
         DAlarm a = activeAlarmsList.remove(alarm.getAlarmId());
         if (a != null) {
-            int sev = a.getSeverity();
             a.setSeverity(5);
-            if (alarm.getTimestamp() == 0) alarm.setTimestamp(System.currentTimeMillis());
+            alarm.setTimestamp(System.currentTimeMillis());
             String body = toJsonString(alarm);
             push(body, (alarm.getSeverity() == 5 ? "CLEAR" : "ALARM"));
-            a.setSeverity(sev);
-            a.setTimestamp(0);
         }
-        alarm.setTimestamp(0);
     }
 
     public static void sendEvent(DAlarm alarm) {

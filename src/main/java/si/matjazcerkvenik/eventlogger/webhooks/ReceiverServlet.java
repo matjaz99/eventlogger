@@ -189,8 +189,9 @@ public class ReceiverServlet extends HttpServlet {
                 // execute an action
                 if (rule.getAction().get("type").equalsIgnoreCase("alarm")) {
 
+                    int severity = DAlarmSeverity.getSeverity(rule.getAction().get("severity"));
                     DAlarm a = new DAlarm(event.getHost(), rule.getName(),
-                            DAlarmSeverity.MAJOR, event.getIdent(), "addInfo");
+                            severity, event.getIdent(), "addInfo");
                     AlarmMananger.raiseAlarm(a);
 
                     DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
@@ -198,7 +199,7 @@ public class ReceiverServlet extends HttpServlet {
                 } else if (rule.getAction().get("type").equalsIgnoreCase("clear")) {
 
                     DAlarm a = new DAlarm(event.getHost(), rule.getName(),
-                            DAlarmSeverity.MAJOR, event.getIdent(), "addInfo");
+                            DAlarmSeverity.CLEAR, event.getIdent(), "addInfo");
                     AlarmMananger.clearAlarm(a);
 
                     DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();

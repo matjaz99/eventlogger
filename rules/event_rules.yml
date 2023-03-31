@@ -53,6 +53,7 @@ groups:
           ident: chronyd
         action:
           type: alarm
+          severity: minor
       - name: NTP Can't synchronise
         pattern:
           expr: "Selected source"
@@ -99,6 +100,7 @@ groups:
           ident: "dockerd"
         action:
           type: alarm
+          severity: critical
 
   - name: log files (tail)
     endpoint: /eventlogger/event/fluentd-tail
@@ -131,7 +133,7 @@ groups:
           type: count
           metricName: event_http_endpoint_errors_total
 
-  - name: TEST alarm events
+  - name: Test alarm events
     endpoint: /eventlogger/event/http
     rules:
       - name: Alarm test
@@ -142,6 +144,7 @@ groups:
           ident: my-process
         action:
           type: alarm
+          severity: major
       - name: Alarm test
         pattern:
           expr: "is working now"
@@ -154,12 +157,12 @@ groups:
 
 # actions:
 # alarm - send alarm and keep state until cleared
-# event - just send without expecting a clear anti-event
+# clear - clear alarm
+# event - just send without expecting a clear event
 # count - count occurrences and expose as Prometheus metric (counter)
-# extract - extract value and expose the value as Prometheus metric (gauge) - TODO
-# log - write event to separate log - TODO
-# list - show as separated list in gui - TODO
-# tag - add custom tags - TODO
-# ignore - ignore event - TODO
-# kafka - send to kafka topic - TODO
+# extract - extract value and expose the value as Prometheus metric (gauge) - TODO?
+# log - write event to separate log - TODO?
+# tag - add custom tags - TODO?
+# ignore - ignore event - TODO?
+# kafka - send to kafka topic - TODO?
 
