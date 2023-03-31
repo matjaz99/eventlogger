@@ -89,10 +89,10 @@ MongoDB is configured with environment variables:
 
 ### Fluentd
 
-Eventlogger supports events received from fluentd's `out_http` plugin, but the structure of 
-output messages strongly depend on the source input type.
+Eventlogger supports events received from fluentd's `out_http` plugin. The structure of 
+output messages slightly depends on the source input type.
 
-Eventlogger supports the following data sources in fluentd:
+Eventlogger supports the following incoming data sources in fluentd:
 - syslog
 - tail
 - http
@@ -165,7 +165,8 @@ Possible values of `action` are:
 - `count` - count events that match with the rule conditions and will be exposed as Prometheus metric (see metrics). 
 Requires additional parameter `metricName`.
 - `event` - forward event to another http endpoint (see alarms).
-- `alarm` - send event as alarm to another http endpoint (see alarms). TODO: define what is clear
+- `alarm` - send alarm notification to another http endpoint (see alarms).
+- `clear` - send alarm-clear notification to another http endpoint. Rule name for clear must match rule name for alarm!
 
 
 ## Alarms
@@ -175,7 +176,9 @@ When event rule is matched, alarm is sent and added to the list of currently act
 Eventlogger keeps current state of active alarms. Active alarms can be retrieved from eventlogger
 on `/eventlogger/alarms` endpoint.
 
-Events on the other side are sent every time when conditions in the event rule are met. Events are 
+Withdrawal of alarm is also supported. Rule name for clear must match rule name for alarm!
+
+Events (aka. notifications) on the other side are sent every time when conditions in the event rule are met. Events are 
 not added to the list of active alarms and cannot be retrieved from the /alarms endpoint.
 
 Destination URL where alarms and events will be sent to is configurable via environment variable 

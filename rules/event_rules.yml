@@ -131,6 +131,26 @@ groups:
           type: count
           metricName: event_http_endpoint_errors_total
 
+  - name: TEST alarm events
+    endpoint: /eventlogger/event/http
+    rules:
+      - name: Alarm test
+        pattern:
+          expr: "does not work"
+          type: regex
+        filter:
+          ident: my-process
+        action:
+          type: alarm
+      - name: Alarm test
+        pattern:
+          expr: "is working now"
+          type: regex
+        filter:
+          ident: my-process
+        action:
+          type: clear
+
 
 # actions:
 # alarm - send alarm and keep state until cleared
