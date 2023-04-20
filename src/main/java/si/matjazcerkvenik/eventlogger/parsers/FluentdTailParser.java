@@ -50,7 +50,7 @@ public class FluentdTailParser implements IEventParser {
                 de.setHost(dRequest.getRemoteHost());
                 de.setEventSource(dRequest.getRemoteHost());
                 de.setEndpoint(dRequest.getRequestUri());
-                de.setIdent("eventlogger.http.post");
+                de.setIdent("http.post");
                 de.setPid("0");
                 if (dRequest.getParameterMap().containsKey("ident")) {
                     ident = dRequest.getParameterMap().get("ident");

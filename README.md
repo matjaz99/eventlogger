@@ -5,10 +5,26 @@
 [![GitHub release](https://img.shields.io/github/release/matjaz99/eventlogger.svg)](https://GitHub.com/matjaz99/eventlogger/releases/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/matjaz99/eventlogger.svg)](https://hub.docker.com/r/matjaz99/eventlogger)
 
-Eventlogger is a repository of events received on the http webhook. Event is a simple message, such 
-as syslog event. Eventlogger relies on fluentd as an event source.
+Eventlogger is a processor of HTTP requests. It listens for HTTP requests (aka. **events**) on 
+a webhook, processes the message body, stores them in database and at the end offers an overview of received 
+events in a web GUI.
 
-Eventlogger offers a nice web GUI where events can be displayed, searched and filtered.
+### What is event?
+
+Event could be any message transmitted over the network. So, basically it's just a String. Perfect, 
+as I was initially mostly interested into syslog events (logs).
+
+Eventlogger focuses on human-readable messages which might have some context and meaning of what is 
+happening in our network/server infrastructure, collect those messages and make use of them.
+
+### Eventlogger was born
+
+Each event should provide at least information about:
+- where it comes from (source IP address, aka. `host`)
+- who sent the event (some process with a name, aka. `ident`)
+- what happened (the message of the event, aka. `message` or shorter `msg`)
+
+Eventlogger offers a web GUI where events can be displayed, searched and filtered.
 
 Eventlogger supports customized rules, which can extract data from events and trigger actions
 
@@ -169,7 +185,7 @@ Requires additional parameter `metricName`.
 - `clear` - send alarm-clear notification to another http endpoint. Rule name for clear must match rule name for alarm!
 
 
-## Alarms
+## Alarms and events
 
 When event rule is matched, alarm is sent and added to the list of currently active alarms. 
 

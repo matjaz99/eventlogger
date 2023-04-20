@@ -69,8 +69,8 @@ public class HttpPostParser implements IEventParser {
             e.setTimestamp(System.currentTimeMillis());
             e.setHost(dRequest.getRemoteHost());
             e.setEndpoint(dRequest.getRequestUri());
-            e.setEventSource("eventlogger.http.post.text");
-            e.setIdent("eventlogger.http.post.text");
+            e.setEventSource(dRequest.getRemoteHost());
+            e.setIdent("http.post.plain-text");
             if (dRequest.getParameterMap().containsKey("ident")) {
                 e.setIdent(dRequest.getParameterMap().get("ident"));
             }

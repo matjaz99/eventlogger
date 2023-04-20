@@ -29,7 +29,7 @@
 								<p:outputLabel value="#{rule.name}"/>
 							</p:column>
 							<p:column headerText="Filter">
-								<p:outputLabel value="#{rule.filter.get('host')}/#{rule.filter.get('ident')}"/>
+								<p:outputLabel value="Host=#{rule.filter.get('host')}, Ident=#{rule.filter.get('ident')}"/>
 							</p:column>
 							<p:column headerText="Pattern">
 								<p:outputLabel value="#{rule.pattern.get('type')}"/>

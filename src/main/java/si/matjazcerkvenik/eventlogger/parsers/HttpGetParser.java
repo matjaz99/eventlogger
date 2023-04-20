@@ -39,8 +39,8 @@ public class HttpGetParser implements IEventParser {
             e.setTimestamp(System.currentTimeMillis());
             e.setHost(dRequest.getRemoteHost());
             e.setEndpoint(dRequest.getRequestUri());
-            e.setEventSource("eventlogger.http.get");
-            e.setIdent("eventlogger.http.get");
+            e.setEventSource(dRequest.getRemoteHost());
+            e.setIdent("http.get");
             if (dRequest.getParameterMap().containsKey("ident")) {
                 e.setIdent(dRequest.getParameterMap().get("ident"));
             }
