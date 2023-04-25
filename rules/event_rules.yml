@@ -154,6 +154,25 @@ groups:
         action:
           type: clear
 
+  - name: kuma events
+    endpoint: /eventlogger/event/http
+    rules:
+      - name: HTTP Request failed
+        pattern:
+          expr: "%{GREEDYDATA}Request failed with status code%{GREEDYDATA}"
+          type: grok
+        filter:
+          ident: uptime-kuma
+        action:
+          type: alarm
+      - name: HTTP Request failed
+        pattern:
+          expr: "%{GREEDYDATA}200 - OK%{GREEDYDATA}"
+          type: grok
+        filter:
+          ident: uptime-kuma
+        action:
+          type: clear
 
 # actions:
 # alarm - send alarm and keep state until cleared
