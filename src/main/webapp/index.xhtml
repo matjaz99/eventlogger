@@ -8,23 +8,15 @@
     <div id="contentFrame">
         <ui:define name="contentFrame">
 
+            <h1>Eventlogger</h1>
+
             <h:form>
 
-                <h:outputLink value="/eventlogger/events" >
-                    /events
-                </h:outputLink>
-
                 <br/>
 
-                <h:outputLink value="/eventlogger/requests" >
-                    /requests
-                </h:outputLink>
-
-                <br/>
-
-                <h:outputLink value="/eventlogger/config" >
-                    /config
-                </h:outputLink>
+                <div class="card">
+                    <p:barChart model="#{backendBean.hbarModel}" style="width: 100%; height: 300px;"/>
+                </div>
 
                 <br/>
 
@@ -39,6 +31,8 @@
                 </h:outputLink>
 
             </h:form>
+
+
 
         </ui:define>
     </div>

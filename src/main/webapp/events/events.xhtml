@@ -76,7 +76,7 @@
 									<p:ajax event="valueChange" listener="#{backendBean.handlePredefinedTimeRangeChange}" update="timeRangePanel" />
 								</p:selectOneMenu>
 								<p:outputLabel value="OR" style="font-weight: bold; margin-left: 20px; margin-right: 20px;"/>
-								<p:outputLabel for="startDateButton" value="From:" style="margin-right: 10px;"/>
+								<p:outputLabel for="startDateButton" value="Select from:" style="margin-right: 10px;"/>
 								<p:datePicker id="startDateButton" value="#{backendBean.startDate}" showTime="true" showIcon="true">
 									<p:ajax event="dateSelect" listener="#{backendBean.handleStartDateChange}" update="selectedTimeRange" />
 								</p:datePicker>
@@ -103,28 +103,25 @@
 
 				<p:panelGrid columns="3" styleClass="ui-noborder">
 
-					<p:commandButton type="submit" value="Reset"
-									 styleClass="ui-button-outlined ui-button-secondary"
-									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
-									 action="#{backendBean.resetFilter}"
-									 update="msgForm, eventPanel"/>
 					<p:commandButton type="submit" value="Apply"
 									 styleClass="ui-button-outlined"
 									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
 									 action="#{backendBean.applyFilterAction}"
 									 update="msgForm, eventPanel" />
-
+					<p:commandButton type="submit" value="Reset"
+									 styleClass="ui-button-outlined ui-button-secondary"
+									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
+									 action="#{backendBean.resetFilter}"
+									 update="msgForm, eventPanel"/>
 
 					<p:ajaxStatus styleClass="p-d-block p-mb-4">
 						<f:facet name="default">
 							<p:outputLabel value="" />
 						</f:facet>
-
 						<f:facet name="start">
 							<p:outputLabel value="Loading... " />
 							<i class="pi pi-spin pi-refresh loading-icon" aria-hidden="true"></i>
 						</f:facet>
-
 						<f:facet name="complete">
 							<p:outputLabel value="" />
 						</f:facet>

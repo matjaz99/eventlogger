@@ -17,11 +17,20 @@ package si.matjazcerkvenik.eventlogger.web;
 
 
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.charts.ChartData;
+import org.primefaces.model.charts.axes.cartesian.CartesianScales;
+import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
+import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearTicks;
+import org.primefaces.model.charts.bar.BarChartOptions;
+import org.primefaces.model.charts.hbar.HorizontalBarChartDataSet;
+import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
+import org.primefaces.model.charts.optionconfig.title.Title;
 import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DFilter;
 import si.matjazcerkvenik.eventlogger.model.DRequest;
+import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.Formatter;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
@@ -30,14 +39,12 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ManagedBean
 @SessionScoped
 //@RequestScoped
+@SuppressWarnings("unused")
 public class BackendBean {
 
     @PostConstruct
@@ -375,4 +382,97 @@ public class BackendBean {
     public void setSelectedSortType(String selectedSortType) {
         this.selectedSortType = selectedSortType;
     }
+
+
+
+
+
+
+
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
+    /*                                                   */
+    /*                 horizontal bar                    */
+    /*                                                   */
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+
+    private HorizontalBarChartModel hbarModel;
+
+    public HorizontalBarChartModel getHbarModel() {
+        createHorizontalBarModel();
+        return hbarModel;
+    }
+
+    public void setHbarModel(HorizontalBarChartModel hbarModel) {
+        this.hbarModel = hbarModel;
+    }
+
+    public void createHorizontalBarModel() {
+
+        if (DProps.EVENTLOGGER_STORAGE_TYPE.equalsIgnoreCase("memory")) return;
+
+        IDataManager idm = DataManagerFactory.getInstance().getClient();
+        Map<String, Integer> map = idm.getTopEventsByHosts();
+
+        hbarModel = new HorizontalBarChartModel();
+        ChartData data = new ChartData();
+
+        HorizontalBarChartDataSet hbarDataSet = new HorizontalBarChartDataSet();
+        hbarDataSet.setLabel("Number of events");
+
+        List<String> bgColor = new ArrayList<>();
+        bgColor.add("rgba(255, 99, 132, 0.4)");
+        bgColor.add("rgba(255, 159, 64, 0.4)");
+        bgColor.add("rgba(255, 205, 86, 0.4)");
+        bgColor.add("rgba(75, 192, 192, 0.4)");
+        bgColor.add("rgba(54, 162, 235, 0.4)");
+        bgColor.add("rgba(153, 102, 255, 0.4)");
+        bgColor.add("rgba(101, 202, 255, 0.4)");
+        hbarDataSet.setBackgroundColor(bgColor);
+
+        List<String> borderColor = new ArrayList<>();
+        borderColor.add("rgb(255, 99, 132)");
+        borderColor.add("rgb(255, 159, 64)");
+        borderColor.add("rgb(255, 205, 86)");
+        borderColor.add("rgb(75, 192, 192)");
+        borderColor.add("rgb(54, 162, 235)");
+        borderColor.add("rgb(153, 102, 255)");
+        borderColor.add("rgb(201, 203, 207)");
+        hbarDataSet.setBorderColor(borderColor);
+        hbarDataSet.setBorderWidth(1);
+
+        data.addChartDataSet(hbarDataSet);
+
+        List<Number> values = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+
+        for (String s : map.keySet()) {
+            values.add(map.getOrDefault(s, 0));
+            labels.add(s);
+        }
+        hbarDataSet.setData(values);
+        data.setLabels(labels);
+        hbarModel.setData(data);
+
+        //Options
+        BarChartOptions options = new BarChartOptions();
+        CartesianScales cScales = new CartesianScales();
+        CartesianLinearAxes linearAxes = new CartesianLinearAxes();
+        linearAxes.setOffset(true);
+        linearAxes.setBeginAtZero(true);
+        CartesianLinearTicks ticks = new CartesianLinearTicks();
+        linearAxes.setTicks(ticks);
+        cScales.addXAxesData(linearAxes);
+        options.setScales(cScales);
+
+        Title title = new Title();
+        title.setDisplay(true);
+        title.setText("Events by host in last 4 hours");
+        options.setTitle(title);
+
+        hbarModel.setOptions(options);
+    }
+
+
 }

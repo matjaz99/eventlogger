@@ -18,10 +18,7 @@ package si.matjazcerkvenik.eventlogger.db;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.*;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Indexes;
-import com.mongodb.client.model.InsertManyOptions;
-import com.mongodb.client.model.Sorts;
+import com.mongodb.client.model.*;
 import com.mongodb.client.result.DeleteResult;
 import io.krakens.grok.api.Grok;
 import io.krakens.grok.api.GrokCompiler;
@@ -37,9 +34,7 @@ import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
@@ -227,9 +222,7 @@ public class MongoDataManager implements IDataManager {
             MongoDatabase db = mongoClient.getDatabase(dbName);
             MongoCollection<DEvent> collection = db.getCollection(dbCollectionEvents, DEvent.class);
 
-            List<DEvent> docsResultList = null;
-
-
+            List<DEvent> docsResultList;
 
             if (filter == null) {
                 docsResultList = collection.find()
@@ -313,6 +306,48 @@ public class MongoDataManager implements IDataManager {
         bsonFilter = Filters.and(bArray);
         logger.info(getClientName() + " BSON: " + bsonFilter);
         return bsonFilter;
+    }
+
+    @Override
+    public Map<String, Integer> getTopEventsByHosts() {
+        logger.info(getClientName() + " getTopEventsByHosts");
+
+        long before = System.currentTimeMillis();
+
+        try {
+            MongoDatabase db = mongoClient.getDatabase(dbName);
+            MongoCollection<Document> collection = db.getCollection(dbCollectionEvents);
+
+            // https://www.mongodb.com/docs/drivers/java/sync/current/fundamentals/aggregation/
+
+            List<Document> docsResultList = collection.aggregate(
+                            Arrays.asList(
+                                    Aggregates.match(Filters.gte("timestamp", System.currentTimeMillis() - 4 * 3600 * 1000)),
+                                    Aggregates.group("$host", Accumulators.sum("count", 1)),
+                                    Aggregates.sort(Sorts.descending("count")),
+                                    Aggregates.limit(7)
+                            )
+                    ).into(new ArrayList<>());
+
+            Map<String, Integer> map = new HashMap<>();
+            for (Document d : docsResultList) {
+                map.put(d.get("_id").toString(), Integer.parseInt(d.get("count").toString()));
+//                System.out.println(d.toJson());
+            }
+
+            AlarmMananger.clearAlarm(mongoDownAlarm);
+
+            return map;
+
+        } catch (Exception e) {
+            AlarmMananger.raiseAlarm(mongoDownAlarm);
+            logger.error(getClientName() + " getTopEventsByHosts: Exception: " + e.getMessage());
+            DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionEvents, "query").inc();
+        } finally {
+            double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
+            DMetrics.eventlogger_db_duration_seconds.labels(dbName, dbCollectionEvents, "query").observe(duration);
+        }
+        return null;
     }
 
     @Override

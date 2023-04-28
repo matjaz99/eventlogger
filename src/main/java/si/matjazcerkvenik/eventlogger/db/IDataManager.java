@@ -21,6 +21,7 @@ import si.matjazcerkvenik.eventlogger.model.DFilter;
 import si.matjazcerkvenik.eventlogger.model.DRequest;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IDataManager {
 
@@ -33,6 +34,8 @@ public interface IDataManager {
     public void addEvents(List<DEvent> eventList);
 
     public List<DEvent> getEvents(DFilter filter);
+
+    public Map<String, Integer> getTopEventsByHosts();
 
     public List<String> getDistinctKeys(String key);
 

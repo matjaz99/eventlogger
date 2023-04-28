@@ -2,8 +2,12 @@
 
 ## 0.2.5-SNAPSHOT
 
+* [CHANGE] Renamed endpoint `event/*` endpoint back to `webhook/*`. It didn't sound better. 
+Now all events are received on `/event/webhook/<name>` endpoint.
+* [FEATURE] Home view with statistical charts about incoming events
 * [FEATURE] Event rules view
 * [ENHANCEMENT] Show ajax status when loading events from DB
+* [ENHANCEMENT] Added `Home` icon in toolbar
 * [FIX] Corrections for raising and clearing alarms
 
 
