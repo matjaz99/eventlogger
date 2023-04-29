@@ -85,18 +85,6 @@
   &lt;/parse&gt;
 &lt;/source&gt;
 
-&lt;source&gt;
-  @type syslog
-  port 10514
-  bind 0.0.0.0
-  &lt;transport tcp&gt;
-  &lt;/transport&gt;
-  tag syslog.tcp
-  &lt;parse&gt;
-    message_format auto
-  &lt;/parse&gt;
-&lt;/source&gt;
-
 &lt;filter syslog.**&gt;
   @type record_transformer
   &lt;record&gt;
@@ -106,7 +94,7 @@
 
 &lt;match syslog.**&gt;
   @type http
-  endpoint http://eventlogger:8080/eventlogger/api/v1/fluentd-syslog
+  endpoint http://eventlogger:8080/eventlogger/webhook/fluentd-syslog
   open_timeout 2
   &lt;format&gt;
     @type json

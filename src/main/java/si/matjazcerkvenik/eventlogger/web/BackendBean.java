@@ -414,6 +414,7 @@ public class BackendBean {
 
         IDataManager idm = DataManagerFactory.getInstance().getClient();
         Map<String, Integer> map = idm.getTopEventsByHosts();
+        DataManagerFactory.getInstance().returnClient(idm);
 
         hbarModel = new HorizontalBarChartModel();
         ChartData data = new ChartData();

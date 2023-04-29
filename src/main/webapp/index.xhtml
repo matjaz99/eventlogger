@@ -8,7 +8,9 @@
     <div id="contentFrame">
         <ui:define name="contentFrame">
 
-            <h1>Eventlogger</h1>
+            <p:outputLabel value="Eventlogger" style="font-weight: bold; font-size: 24px;"/>
+            <p:outputLabel value="Up time: #{configBean.upTime}" style="font-weight: bold; font-size: 16px;"/>
+            <p:outputLabel value="Events processed: #{configBean.eventsCount}" style="font-weight: bold; font-size: 16px;"/>
 
             <h:form>
 
