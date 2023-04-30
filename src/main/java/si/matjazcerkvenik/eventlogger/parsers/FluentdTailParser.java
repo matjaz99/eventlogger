@@ -24,7 +24,6 @@ import si.matjazcerkvenik.eventlogger.util.DMetrics;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FluentdTailParser implements IEventParser {
@@ -49,6 +48,7 @@ public class FluentdTailParser implements IEventParser {
                 de.setTimestamp(now);
                 de.setHost(dRequest.getRemoteHost());
                 de.setEventSource(dRequest.getRemoteHost());
+                de.setLogfile("unknown");
                 de.setEndpoint(dRequest.getRequestUri());
                 de.setIdent("http.post");
                 de.setPid("0");
@@ -58,6 +58,9 @@ public class FluentdTailParser implements IEventParser {
                 }
                 if (dRequest.getParameterMap().containsKey("pid")) {
                     de.setPid(dRequest.getParameterMap().get("pid"));
+                }
+                if (dRequest.getParameterMap().containsKey("file")) {
+                    de.setLogfile(dRequest.getParameterMap().get("file"));
                 }
                 if (dRequest.getParameterMap().containsKey("tag")) {
                     de.setTag(dRequest.getParameterMap().get("tag"));

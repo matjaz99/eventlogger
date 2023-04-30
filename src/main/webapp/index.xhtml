@@ -14,11 +14,20 @@
 
             <h:form>
 
-                <br/>
-
-                <div class="card">
-                    <p:barChart model="#{backendBean.hbarModel}" style="width: 100%; height: 300px;"/>
-                </div>
+                <p:panelGrid style="width:100%" styleClass="ui-noborder">
+                    <p:row>
+                        <p:column style="width:30%">
+                            <div class="card">
+                                <p:polarAreaChart model="#{backendBean.eventsByHostsPolarAreaModel}" style="width: 100%; height: 300px;"/>
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <div class="card">
+                                <p:barChart model="#{backendBean.eventsByHostsHbarModel}" style="width: 100%; height: 350px;"/>
+                            </div>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
 
                 <br/>
 

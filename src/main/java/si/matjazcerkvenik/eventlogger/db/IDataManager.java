@@ -35,7 +35,7 @@ public interface IDataManager {
 
     public List<DEvent> getEvents(DFilter filter);
 
-    public Map<String, Integer> getTopEventsByHosts();
+    public Map<String, Integer> getTopEventsByHosts(int limit);
 
     public List<String> getDistinctKeys(String key);
 

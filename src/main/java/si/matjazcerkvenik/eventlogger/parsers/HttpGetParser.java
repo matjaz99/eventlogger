@@ -15,9 +15,6 @@
  */
 package si.matjazcerkvenik.eventlogger.parsers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DRequest;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
@@ -40,6 +37,7 @@ public class HttpGetParser implements IEventParser {
             e.setHost(dRequest.getRemoteHost());
             e.setEndpoint(dRequest.getRequestUri());
             e.setEventSource(dRequest.getRemoteHost());
+            e.setLogfile("unknown");
             e.setIdent("http.get");
             if (dRequest.getParameterMap().containsKey("ident")) {
                 e.setIdent(dRequest.getParameterMap().get("ident"));
@@ -47,6 +45,9 @@ public class HttpGetParser implements IEventParser {
             e.setPid("0");
             if (dRequest.getParameterMap().containsKey("pid")) {
                 e.setPid(dRequest.getParameterMap().get("pid"));
+            }
+            if (dRequest.getParameterMap().containsKey("file")) {
+                e.setLogfile(dRequest.getParameterMap().get("file"));
             }
             if (dRequest.getParameterMap().containsKey("tag")) {
                 e.setTag(dRequest.getParameterMap().get("tag"));

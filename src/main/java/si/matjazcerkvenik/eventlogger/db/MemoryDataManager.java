@@ -97,7 +97,7 @@ public class MemoryDataManager implements IDataManager {
     }
 
     @Override
-    public Map<String, Integer> getTopEventsByHosts() {
+    public Map<String, Integer> getTopEventsByHosts(int limit) {
         // not aplicable
         return null;
     }

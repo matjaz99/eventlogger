@@ -45,6 +45,9 @@ public class DEvent {
     private String message;
     @BsonProperty(value = "eventSource")
     private String eventSource;
+    /** Typically a log file where event/line originates from. */
+    @BsonProperty(value = "logfile")
+    private String logfile;
     /** Eventlogger endpoint where event was received -> parser which processed the event */
     @BsonProperty(value = "endpoint")
     private String endpoint;
@@ -121,6 +124,14 @@ public class DEvent {
         this.eventSource = eventSource;
     }
 
+    public String getLogfile() {
+        return logfile;
+    }
+
+    public void setLogfile(String logfile) {
+        this.logfile = logfile;
+    }
+
     public String getEndpoint() {
         return endpoint;
     }
@@ -139,6 +150,7 @@ public class DEvent {
                 ", tag='" + tag + '\'' +
                 ", message='" + message + '\'' +
                 ", eventSource='" + eventSource + '\'' +
+                ", file='" + logfile + '\'' +
                 ", endpoint='" + endpoint + '\'' +
                 '}';
     }

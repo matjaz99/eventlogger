@@ -42,7 +42,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 public class MongoDataManager implements IDataManager {
 
-    private static SimpleLogger logger = LogFactory.getLogger();
+    private static final SimpleLogger logger = LogFactory.getLogger();
     public static String dbName = "eventlogger";
     public static final String dbCollectionEvents = "events";
     public static final String dbCollectionRequests = "requests";
@@ -61,8 +61,6 @@ public class MongoDataManager implements IDataManager {
 
         clientId = id;
         clientName = "Mongo[" + clientId + "]";
-
-        int timeoutSeconds = 5;
 
         CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().automatic(true).build());
         CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
@@ -309,7 +307,7 @@ public class MongoDataManager implements IDataManager {
     }
 
     @Override
-    public Map<String, Integer> getTopEventsByHosts() {
+    public Map<String, Integer> getTopEventsByHosts(int limit) {
         logger.info(getClientName() + " getTopEventsByHosts");
 
         long before = System.currentTimeMillis();
@@ -325,7 +323,7 @@ public class MongoDataManager implements IDataManager {
                                     Aggregates.match(Filters.gte("timestamp", System.currentTimeMillis() - 4 * 3600 * 1000)),
                                     Aggregates.group("$host", Accumulators.sum("count", 1)),
                                     Aggregates.sort(Sorts.descending("count")),
-                                    Aggregates.limit(7)
+                                    Aggregates.limit(limit)
                             )
                     ).into(new ArrayList<>());
 

@@ -25,6 +25,8 @@ import org.primefaces.model.charts.bar.BarChartOptions;
 import org.primefaces.model.charts.hbar.HorizontalBarChartDataSet;
 import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
 import org.primefaces.model.charts.optionconfig.title.Title;
+import org.primefaces.model.charts.polar.PolarAreaChartDataSet;
+import org.primefaces.model.charts.polar.PolarAreaChartModel;
 import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
@@ -397,15 +399,15 @@ public class BackendBean {
 
 
 
-    private HorizontalBarChartModel hbarModel;
+    private HorizontalBarChartModel eventsByHostsHbarModel;
 
-    public HorizontalBarChartModel getHbarModel() {
+    public HorizontalBarChartModel getEventsByHostsHbarModel() {
         createHorizontalBarModel();
-        return hbarModel;
+        return eventsByHostsHbarModel;
     }
 
-    public void setHbarModel(HorizontalBarChartModel hbarModel) {
-        this.hbarModel = hbarModel;
+    public void setEventsByHostsHbarModel(HorizontalBarChartModel eventsByHostsHbarModel) {
+        this.eventsByHostsHbarModel = eventsByHostsHbarModel;
     }
 
     public void createHorizontalBarModel() {
@@ -413,23 +415,23 @@ public class BackendBean {
         if (DProps.EVENTLOGGER_STORAGE_TYPE.equalsIgnoreCase("memory")) return;
 
         IDataManager idm = DataManagerFactory.getInstance().getClient();
-        Map<String, Integer> map = idm.getTopEventsByHosts();
+        Map<String, Integer> map = idm.getTopEventsByHosts(7);
         DataManagerFactory.getInstance().returnClient(idm);
 
-        hbarModel = new HorizontalBarChartModel();
+        eventsByHostsHbarModel = new HorizontalBarChartModel();
         ChartData data = new ChartData();
 
         HorizontalBarChartDataSet hbarDataSet = new HorizontalBarChartDataSet();
         hbarDataSet.setLabel("Number of events");
 
         List<String> bgColor = new ArrayList<>();
-        bgColor.add("rgba(255, 99, 132, 0.4)");
-        bgColor.add("rgba(255, 159, 64, 0.4)");
-        bgColor.add("rgba(255, 205, 86, 0.4)");
-        bgColor.add("rgba(75, 192, 192, 0.4)");
-        bgColor.add("rgba(54, 162, 235, 0.4)");
-        bgColor.add("rgba(153, 102, 255, 0.4)");
-        bgColor.add("rgba(101, 202, 255, 0.4)");
+        bgColor.add("rgba(255, 99, 132, 0.6)");
+        bgColor.add("rgba(255, 159, 64, 0.6)");
+        bgColor.add("rgba(255, 205, 86, 0.6)");
+        bgColor.add("rgba(75, 192, 192, 0.6)");
+        bgColor.add("rgba(54, 162, 235, 0.6)");
+        bgColor.add("rgba(153, 102, 255, 0.6)");
+        bgColor.add("rgba(101, 202, 255, 0.6)");
         hbarDataSet.setBackgroundColor(bgColor);
 
         List<String> borderColor = new ArrayList<>();
@@ -448,13 +450,16 @@ public class BackendBean {
         List<Number> values = new ArrayList<>();
         List<String> labels = new ArrayList<>();
 
-        for (String s : map.keySet()) {
-            values.add(map.getOrDefault(s, 0));
-            labels.add(s);
+        if (map != null) {
+            for (String s : map.keySet()) {
+                values.add(map.getOrDefault(s, 0));
+                labels.add(s);
+            }
         }
+
         hbarDataSet.setData(values);
         data.setLabels(labels);
-        hbarModel.setData(data);
+        eventsByHostsHbarModel.setData(data);
 
         //Options
         BarChartOptions options = new BarChartOptions();
@@ -472,7 +477,57 @@ public class BackendBean {
         title.setText("Events by host in last 4 hours");
         options.setTitle(title);
 
-        hbarModel.setOptions(options);
+        eventsByHostsHbarModel.setOptions(options);
+    }
+
+
+    private PolarAreaChartModel eventsByHostsPolarAreaModel;
+
+    public PolarAreaChartModel getEventsByHostsPolarAreaModel() {
+        createPolarAreaModel();
+        return eventsByHostsPolarAreaModel;
+    }
+
+    public void setEventsByHostsPolarAreaModel(PolarAreaChartModel eventsByHostsPolarAreaModel) {
+        this.eventsByHostsPolarAreaModel = eventsByHostsPolarAreaModel;
+    }
+
+    private void createPolarAreaModel() {
+
+        if (DProps.EVENTLOGGER_STORAGE_TYPE.equalsIgnoreCase("memory")) return;
+
+        IDataManager idm = DataManagerFactory.getInstance().getClient();
+        Map<String, Integer> map = idm.getTopEventsByHosts(5);
+        DataManagerFactory.getInstance().returnClient(idm);
+
+        eventsByHostsPolarAreaModel = new PolarAreaChartModel();
+        ChartData data = new ChartData();
+
+        PolarAreaChartDataSet dataSet = new PolarAreaChartDataSet();
+
+        List<String> bgColors = new ArrayList<>();
+        bgColors.add("rgb(255, 99, 132)");
+        bgColors.add("rgb(75, 192, 192)");
+        bgColors.add("rgb(255, 205, 86)");
+        bgColors.add("rgb(201, 203, 207)");
+        bgColors.add("rgb(54, 162, 235)");
+        dataSet.setBackgroundColor(bgColors);
+
+        List<String> labels = new ArrayList<>();
+        List<Number> values = new ArrayList<>();
+
+        if (map != null) {
+            for (String s : map.keySet()) {
+                values.add(map.getOrDefault(s, 0));
+                labels.add(s);
+            }
+        }
+
+        dataSet.setData(values);
+        data.addChartDataSet(dataSet);
+        data.setLabels(labels);
+
+        eventsByHostsPolarAreaModel.setData(data);
     }
 
 
