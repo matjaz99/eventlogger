@@ -2,7 +2,7 @@ version: 1
 
 groups:
   - name: syslog events
-    endpoint: /eventlogger/event/fluentd-syslog
+    endpoint: /eventlogger/webhook/fluentd-syslog
     rules:
       - name: Counting errors
         pattern:
@@ -81,7 +81,7 @@ groups:
           metricName: event_dnf_metadata_cache_refreshed
 
   - name: docker events in syslog
-    endpoint: /eventlogger/event/fluentd-syslog
+    endpoint: /eventlogger/webhook/fluentd-syslog
     rules:
       - name: The swarm does not have a leader
         pattern:
@@ -103,7 +103,7 @@ groups:
           severity: critical
 
   - name: log files (tail)
-    endpoint: /eventlogger/event/fluentd-tail
+    endpoint: /eventlogger/webhook/fluentd-tail
     rules:
       - name: Error counter on fluentd-tail endpoint
         pattern:
@@ -123,7 +123,7 @@ groups:
           metricName: event_alertmonitor_failed_sync_total
 
   - name: http endpoint events
-    endpoint: /eventlogger/event/http
+    endpoint: /eventlogger/webhook/http
     rules:
       - name: Error counter
         pattern:
@@ -134,7 +134,7 @@ groups:
           metricName: event_http_endpoint_errors_total
 
   - name: Test alarm events
-    endpoint: /eventlogger/event/http
+    endpoint: /eventlogger/webhook/http
     rules:
       - name: Alarm test
         pattern:
@@ -155,7 +155,7 @@ groups:
           type: clear
 
   - name: kuma events
-    endpoint: /eventlogger/event/http
+    endpoint: /eventlogger/webhook/http
     rules:
       - name: HTTP Request failed
         pattern:

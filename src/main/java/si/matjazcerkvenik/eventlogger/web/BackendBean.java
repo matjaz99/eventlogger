@@ -16,6 +16,8 @@
 package si.matjazcerkvenik.eventlogger.web;
 
 
+import io.krakens.grok.api.Grok;
+import io.krakens.grok.api.GrokCompiler;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.CartesianScales;
@@ -131,8 +133,19 @@ public class BackendBean {
         DFilter filter = new DFilter();
         filter.setHosts(selectedHosts);
         filter.setIdents(selectedIdents);
-        filter.setSearchPatternType(selectedSearchOption);
-        filter.setSearchPattern(selectedSearchPattern);
+
+        if (selectedSearchOption != null) {
+            filter.setSearchPatternType(selectedSearchOption);
+            if (selectedSearchOption.equalsIgnoreCase("grok")) {
+                GrokCompiler grokCompiler = GrokCompiler.newInstance();
+                grokCompiler.registerDefaultPatterns();
+                Grok grok = grokCompiler.compile(selectedSearchPattern);
+                filter.setSearchPattern(grok.getNamedRegex());
+            } else {
+                filter.setSearchPattern(selectedSearchPattern);
+            }
+        }
+
         if (selectedPredefinedTimeRange != null
                 && selectedPredefinedTimeRange.startsWith("last")) {
             Date startDateFromRange = new Date();

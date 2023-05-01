@@ -9,6 +9,7 @@ Now all events are received on `/event/webhook/<name>` endpoint.
 * [ENHANCEMENT] Show ajax status when loading events from DB
 * [ENHANCEMENT] Added `Home` icon in toolbar
 * [ENHANCEMENT] Added new parameter to event: `logfile` - originating log file.
+* [FIX] Corrected MongoDB query that contains Grok pattern. Grok pattern is converted to RegEx.
 * [FIX] Corrections for raising and clearing alarms
 
 
