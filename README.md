@@ -1,6 +1,6 @@
 # eventlogger for logging events
 
-![GitHub Project](https://img.shields.io/badge/app-eventlogger-orange)
+![GitHub Project](https://img.shields.io/badge/app-eventlogger-seagreen)
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/matjaz99/eventlogger/docker-image.yml)
 [![GitHub release](https://img.shields.io/github/release/matjaz99/eventlogger.svg)](https://GitHub.com/matjaz99/eventlogger/releases/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/matjaz99/eventlogger.svg)](https://hub.docker.com/r/matjaz99/eventlogger)
