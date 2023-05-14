@@ -68,9 +68,6 @@ public class RequestProcessor {
         m.setHeaderMap(generateHeaderMap(req));
         m.setParameterMap(generateParamMap(req));
 
-        DMetrics.eventlogger_http_requests_total.labels(m.getRemoteHost(), m.getMethod(), m.getRequestUri()).inc();
-        DMetrics.eventlogger_http_requests_size_total.labels(m.getRemoteHost(), m.getMethod(), m.getRequestUri()).inc(m.getContentLength());
-
         return m;
     }
 
@@ -138,7 +135,7 @@ public class RequestProcessor {
             s = req.getReader().readLine();
         }
 
-        return body;
+        return body.trim();
 
     }
 

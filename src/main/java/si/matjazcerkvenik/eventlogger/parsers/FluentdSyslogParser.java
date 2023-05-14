@@ -45,28 +45,38 @@ public class FluentdSyslogParser implements IEventParser {
 
                 for (int i = 0; i < msgArray.length; i++) {
                     DEvent e = gson.fromJson(msgArray[i].trim(), DEvent.class);
-                    e.setId(DProps.increaseAndGetEventsReceivedCount());
                     e.setRuntimeId(DProps.RUNTIME_ID);
                     e.setTimestamp(now);
                     e.setEventSource(request.getRemoteHost());
                     e.setLogfile("messages");
                     e.setEndpoint(request.getRequestUri());
-                    eventList.add(e);
                     if (e.getHost() == null) e.setHost(request.getRemoteHost());
-                    if (e.getIdent() == null) e.setIdent("unknown");
+                    if (e.getIdent() == null || e.getIdent().trim().length() == 0) {
+                        DMetrics.eventlogger_events_ignored_total.labels(request.getRemoteHost(), request.getRequestUri(), "missing ident").inc();
+                        continue;
+                    } else if (e.getMessage() == null || e.getMessage().trim().length() == 0) {
+                        DMetrics.eventlogger_events_ignored_total.labels(request.getRemoteHost(), request.getRequestUri(), "no content").inc();
+                        continue;
+                    }
+                    e.setId(DProps.increaseAndGetEventsReceivedCount());
+                    eventList.add(e);
                     LogFactory.getLogger().trace(e.toString());
                     DMetrics.eventlogger_events_total.labels(request.getRemoteHost(), e.getHost(), e.getIdent()).inc();
-
                 }
             }
             if (request.getContentType().equalsIgnoreCase("application/json")) {
                 // this is a json (array of objects): [{},{},{}]
             }
 
-            return eventList;
+            if (eventList != null && eventList.size() > 0) {
+                return eventList;
+            }
+
+            LogFactory.getLogger().warn("FluentdSyslogParser: eventList is empty!");
+            return null;
 
         } catch (Exception e) {
-            LogFactory.getLogger().error("FluentdSyslogParser: parseRequest: Exception: " + e.getMessage());
+            LogFactory.getLogger().error("FluentdSyslogParser: Exception: " + e.getMessage());
             throw new EventParserException("fluentd-syslog parser failed");
         }
     }

@@ -31,18 +31,17 @@ public class HttpGetParser implements IEventParser {
         try {
 
             DEvent e = new DEvent();
-            e.setId(DProps.increaseAndGetEventsReceivedCount());
             e.setRuntimeId(DProps.RUNTIME_ID);
             e.setTimestamp(System.currentTimeMillis());
             e.setHost(dRequest.getRemoteHost());
             e.setEndpoint(dRequest.getRequestUri());
             e.setEventSource(dRequest.getRemoteHost());
-            e.setLogfile("unknown");
-            e.setIdent("http.get");
             if (dRequest.getParameterMap().containsKey("ident")) {
                 e.setIdent(dRequest.getParameterMap().get("ident"));
+            } else {
+                DMetrics.eventlogger_events_ignored_total.labels(dRequest.getRemoteHost(), dRequest.getRequestUri(), "missing ident").inc();
+                return null;
             }
-            e.setPid("0");
             if (dRequest.getParameterMap().containsKey("pid")) {
                 e.setPid(dRequest.getParameterMap().get("pid"));
             }
@@ -57,8 +56,10 @@ public class HttpGetParser implements IEventParser {
             } else if (dRequest.getParameterMap().containsKey("message")) {
                 e.setMessage(dRequest.getParameterMap().get("message"));
             } else {
-                e.setMessage(null);
+                DMetrics.eventlogger_events_ignored_total.labels(dRequest.getRemoteHost(), dRequest.getRequestUri(), "no content").inc();
+                return null;
             }
+            e.setId(DProps.increaseAndGetEventsReceivedCount());
             LogFactory.getLogger().trace(e.toString());
             DMetrics.eventlogger_events_total.labels(dRequest.getRemoteHost(), e.getHost(), e.getIdent()).inc();
 
@@ -68,11 +69,10 @@ public class HttpGetParser implements IEventParser {
                 return eventList;
             }
 
-            DMetrics.eventlogger_events_ignored_total.labels(dRequest.getRemoteHost(), dRequest.getMethod()).inc();
-            LogFactory.getLogger().warn("HttpGetParser: parseRequest: message is empty; event will be ignored");
+            LogFactory.getLogger().warn("HttpGetParser: eventList is empty!");
 
         } catch (Exception e) {
-            LogFactory.getLogger().error("HttpGetParser: parseRequest: Exception: " + e.getMessage());
+            LogFactory.getLogger().error("HttpGetParser: Exception: " + e.getMessage());
             throw new EventParserException("generic-get parser failed");
         }
 

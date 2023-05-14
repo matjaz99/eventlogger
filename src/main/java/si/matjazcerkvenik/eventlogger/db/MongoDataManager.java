@@ -349,6 +349,48 @@ public class MongoDataManager implements IDataManager {
     }
 
     @Override
+    public Map<String, Integer> getTopEventsByIdent(int limit) {
+        logger.info(getClientName() + " getTopEventsByIdent");
+
+        long before = System.currentTimeMillis();
+
+        try {
+            MongoDatabase db = mongoClient.getDatabase(dbName);
+            MongoCollection<Document> collection = db.getCollection(dbCollectionEvents);
+
+            // https://www.mongodb.com/docs/drivers/java/sync/current/fundamentals/aggregation/
+
+            List<Document> docsResultList = collection.aggregate(
+                    Arrays.asList(
+                            Aggregates.match(Filters.gte("timestamp", System.currentTimeMillis() - 4 * 3600 * 1000)),
+                            Aggregates.group("$ident", Accumulators.sum("count", 1)),
+                            Aggregates.sort(Sorts.descending("count")),
+                            Aggregates.limit(limit)
+                    )
+            ).into(new ArrayList<>());
+
+            Map<String, Integer> map = new HashMap<>();
+            for (Document d : docsResultList) {
+                map.put(d.get("_id").toString(), Integer.parseInt(d.get("count").toString()));
+//                System.out.println(d.toJson());
+            }
+
+            AlarmMananger.clearAlarm(mongoDownAlarm);
+
+            return map;
+
+        } catch (Exception e) {
+            AlarmMananger.raiseAlarm(mongoDownAlarm);
+            logger.error(getClientName() + " getTopEventsByIdent: Exception: " + e.getMessage());
+            DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionEvents, "query").inc();
+        } finally {
+            double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
+            DMetrics.eventlogger_db_duration_seconds.labels(dbName, dbCollectionEvents, "query").observe(duration);
+        }
+        return null;
+    }
+
+    @Override
     public List<String> getDistinctKeys(String key) {
         logger.info(getClientName() + " getDistinctKeys");
 

@@ -56,7 +56,13 @@ public class DMetrics {
     public static final Counter eventlogger_events_ignored_total = Counter.build()
             .name("eventlogger_events_ignored_total")
             .help("You are losing some events")
-            .labelNames("source", "method")
+            .labelNames("remotehost", "webhook", "reason")
+            .register();
+
+    public static final Counter eventlogger_requests_ignored_total = Counter.build()
+            .name("eventlogger_requests_ignored_total")
+            .help("You are losing some events")
+            .labelNames("remotehost", "webhook", "reason")
             .register();
 
     public static final Histogram eventlogger_db_duration_seconds = Histogram.build()

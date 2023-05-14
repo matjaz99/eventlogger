@@ -42,18 +42,22 @@ public class GenericPostParser implements IEventParser {
         try {
 
             DEvent e = new DEvent();
-            e.setId(DProps.increaseAndGetEventsReceivedCount());
             e.setRuntimeId(DProps.RUNTIME_ID);
             e.setTimestamp(System.currentTimeMillis());
             e.setHost(dRequest.getRemoteHost());
             e.setEndpoint(dRequest.getRequestUri());
             e.setEventSource(dRequest.getRemoteHost());
-            e.setLogfile("unknown");
-            e.setIdent("http.post.plain-text");
+            e.setMessage(dRequest.getBody());
             if (dRequest.getParameterMap().containsKey("ident")) {
                 e.setIdent(dRequest.getParameterMap().get("ident"));
+            } else {
+                DMetrics.eventlogger_events_ignored_total.labels(dRequest.getRemoteHost(), dRequest.getRequestUri(), "missing ident").inc();
+                return null;
             }
-            e.setPid("0");
+            if (e.getMessage() == null || e.getMessage().trim().length() == 0) {
+                DMetrics.eventlogger_events_ignored_total.labels(dRequest.getRemoteHost(), dRequest.getRequestUri(), "no content").inc();
+                return null;
+            }
             if (dRequest.getParameterMap().containsKey("pid")) {
                 e.setPid(dRequest.getParameterMap().get("pid"));
             }
@@ -63,7 +67,7 @@ public class GenericPostParser implements IEventParser {
             if (dRequest.getParameterMap().containsKey("tag")) {
                 e.setTag(dRequest.getParameterMap().get("tag"));
             }
-            e.setMessage(dRequest.getBody());
+            e.setId(DProps.increaseAndGetEventsReceivedCount());
             LogFactory.getLogger().trace(e.toString());
             DMetrics.eventlogger_events_total.labels(dRequest.getRemoteHost(), e.getHost(), e.getIdent()).inc();
 
@@ -73,11 +77,10 @@ public class GenericPostParser implements IEventParser {
                 return eventList;
             }
 
-            DMetrics.eventlogger_events_ignored_total.labels(dRequest.getRemoteHost(), dRequest.getMethod()).inc();
-            LogFactory.getLogger().warn("GenericPostParser: parsePlainText: message is empty; event will be ignored");
+            LogFactory.getLogger().warn("GenericPostParser: eventList is empty!");
 
         } catch (Exception e) {
-            LogFactory.getLogger().error("HttpPostParser: parsePlainText: Exception: " + e.getMessage());
+            LogFactory.getLogger().error("GenericPostParser: Exception: " + e.getMessage());
         }
         return null;
     }

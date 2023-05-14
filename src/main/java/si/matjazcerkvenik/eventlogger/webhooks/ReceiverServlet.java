@@ -62,6 +62,14 @@ public class ReceiverServlet extends HttpServlet {
 
         DRequest dRequest = RequestProcessor.incomingRequest(req, DProps.increaseAndGetRequestsReceivedCount());
 
+        if (dRequest.getBody() == null || dRequest.getBody().length() == 0) {
+            DMetrics.eventlogger_requests_ignored_total.labels(dRequest.getRemoteHost(), dRequest.getRequestUri(), "no content").inc();
+            return;
+        }
+
+        DMetrics.eventlogger_http_requests_total.labels(req.getRemoteHost(), req.getMethod(), req.getRequestURI()).inc();
+        DMetrics.eventlogger_http_requests_size_total.labels(req.getRemoteHost(), req.getMethod(), req.getRequestURI()).inc(req.getContentLength());
+
         IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
         iDataManager.addHttpRequest(dRequest);
 

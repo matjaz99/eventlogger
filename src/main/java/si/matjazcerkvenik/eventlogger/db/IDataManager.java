@@ -37,6 +37,8 @@ public interface IDataManager {
 
     public Map<String, Integer> getTopEventsByHosts(int limit);
 
+    public Map<String, Integer> getTopEventsByIdent(int limit);
+
     public List<String> getDistinctKeys(String key);
 
     public void cleanDB();

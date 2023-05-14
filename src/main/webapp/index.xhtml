@@ -31,6 +31,18 @@
 
                 <br/>
 
+                <p:panelGrid style="width:100%" styleClass="ui-noborder">
+                    <p:row>
+                        <p:column>
+                            <div class="card">
+                                <p:barChart model="#{backendBean.eventsByIdentHbarModel}" style="width: 100%; height: 300px;"/>
+                            </div>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+
+                <br/>
+
                 <h:outputLink value="/eventlogger/metrics" >
                     /metrics
                 </h:outputLink>

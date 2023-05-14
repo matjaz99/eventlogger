@@ -103,6 +103,12 @@ public class MemoryDataManager implements IDataManager {
     }
 
     @Override
+    public Map<String, Integer> getTopEventsByIdent(int limit) {
+        // not aplicable
+        return null;
+    }
+
+    @Override
     public List<String> getDistinctKeys(String key) {
         logger.info(getClientName() + " getDistinctKeys");
         Map<String, String> map = new HashMap<>();

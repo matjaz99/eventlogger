@@ -544,4 +544,85 @@ public class BackendBean {
     }
 
 
+
+    private HorizontalBarChartModel eventsByIdentHbarModel;
+
+    public HorizontalBarChartModel getEventsByIdentHbarModel() {
+        createHorizontalBarModel2();
+        return eventsByIdentHbarModel;
+    }
+
+    public void setEventsByIdentHbarModel(HorizontalBarChartModel eventsByIdentHbarModel) {
+        this.eventsByIdentHbarModel = eventsByIdentHbarModel;
+    }
+
+    public void createHorizontalBarModel2() {
+
+        if (DProps.EVENTLOGGER_STORAGE_TYPE.equalsIgnoreCase("memory")) return;
+
+        IDataManager idm = DataManagerFactory.getInstance().getClient();
+        Map<String, Integer> map = idm.getTopEventsByIdent(7);
+        DataManagerFactory.getInstance().returnClient(idm);
+
+        eventsByIdentHbarModel = new HorizontalBarChartModel();
+        ChartData data = new ChartData();
+
+        HorizontalBarChartDataSet hbarDataSet = new HorizontalBarChartDataSet();
+        hbarDataSet.setLabel("Number of events");
+
+        List<String> bgColor = new ArrayList<>();
+        bgColor.add("rgba(255, 99, 132, 0.6)");
+        bgColor.add("rgba(255, 159, 64, 0.6)");
+        bgColor.add("rgba(255, 205, 86, 0.6)");
+        bgColor.add("rgba(75, 192, 192, 0.6)");
+        bgColor.add("rgba(54, 162, 235, 0.6)");
+        bgColor.add("rgba(153, 102, 255, 0.6)");
+        bgColor.add("rgba(101, 202, 255, 0.6)");
+        hbarDataSet.setBackgroundColor(bgColor);
+
+        List<String> borderColor = new ArrayList<>();
+        borderColor.add("rgb(255, 99, 132)");
+        borderColor.add("rgb(255, 159, 64)");
+        borderColor.add("rgb(255, 205, 86)");
+        borderColor.add("rgb(75, 192, 192)");
+        borderColor.add("rgb(54, 162, 235)");
+        borderColor.add("rgb(153, 102, 255)");
+        borderColor.add("rgb(201, 203, 207)");
+        hbarDataSet.setBorderColor(borderColor);
+        hbarDataSet.setBorderWidth(1);
+
+        data.addChartDataSet(hbarDataSet);
+
+        List<Number> values = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+
+        if (map != null) {
+            for (String s : map.keySet()) {
+                values.add(map.getOrDefault(s, 0));
+                labels.add(s);
+            }
+        }
+
+        hbarDataSet.setData(values);
+        data.setLabels(labels);
+        eventsByIdentHbarModel.setData(data);
+
+        //Options
+        BarChartOptions options = new BarChartOptions();
+        CartesianScales cScales = new CartesianScales();
+        CartesianLinearAxes linearAxes = new CartesianLinearAxes();
+        linearAxes.setOffset(true);
+        linearAxes.setBeginAtZero(true);
+        CartesianLinearTicks ticks = new CartesianLinearTicks();
+        linearAxes.setTicks(ticks);
+        cScales.addXAxesData(linearAxes);
+        options.setScales(cScales);
+
+        Title title = new Title();
+        title.setDisplay(true);
+        title.setText("Events by ident in last 4 hours");
+        options.setTitle(title);
+
+        eventsByIdentHbarModel.setOptions(options);
+    }
 }

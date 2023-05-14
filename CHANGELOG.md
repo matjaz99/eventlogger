@@ -11,6 +11,7 @@ Now all events are received on `/event/webhook/<name>` endpoint.
 * [ENHANCEMENT] Added new parameter to event: `logfile` - originating log file.
 * [FIX] Corrected MongoDB query that contains Grok pattern. Grok pattern is converted to RegEx.
 * [FIX] Corrections for raising and clearing alarms
+* [FIX] Fixed metrics for ignored events and requests
 
 
 ## 0.2.4 / 2023-03-28

@@ -101,6 +101,15 @@ groups:
         action:
           type: alarm
           severity: critical
+      - name: Certificate has expired
+        pattern:
+          expr: "%{GREEDYDATA}certificate has expired or is not yet valid%{GREEDYDATA}"
+          type: grok
+        filter:
+          ident: "dockerd"
+        action:
+          type: alarm
+          severity: critical
 
   - name: log files (tail)
     endpoint: /eventlogger/webhook/fluentd-tail
