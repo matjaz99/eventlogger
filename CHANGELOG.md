@@ -1,5 +1,7 @@
 # EventLogger changelog
 
+## 0.2.6-SNAPSHOT
+
 ## 0.2.5 / 2023-05-23
 
 * [CHANGE] Renamed endpoint `event/*` endpoint back to `webhook/*`. It didn't sound better. 
