@@ -101,7 +101,7 @@
 					</p:tab>
 				</p:tabView>
 
-				<p:panelGrid columns="3" styleClass="ui-noborder">
+				<p:panelGrid columns="4" styleClass="ui-noborder">
 
 					<p:commandButton type="submit" value="Apply"
 									 styleClass="ui-button-outlined"
@@ -113,6 +113,11 @@
 									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
 									 action="#{backendBean.resetFilter}"
 									 update="msgForm, eventPanel"/>
+					<p:commandButton type="submit" value="Download"
+									 styleClass="ui-button-outlined ui-button-secondary"
+									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
+									 action="#{backendBean.resetFilter}"
+									 update="msgForm"/>
 
 					<p:ajaxStatus styleClass="p-d-block p-mb-4">
 						<f:facet name="default">

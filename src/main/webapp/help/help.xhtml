@@ -12,60 +12,89 @@
 
 			<p:outputPanel>
 				<ul>
-					<li>HTTP Generic Webhooks</li>
-					<li>Fluentd out_http plugin</li>
-					<li>ccc</li>
-					<li>ddd</li>
-					<li>eee</li>
+					<li><a href="#WEBHOOKS">Webhooks</a></li>
+					<li><a href="#FLUENTD">Fluentd configuration</a></li>
+					<li>Syslog configuration</li>
+					<li>Event rules</li>
 				</ul>
 			</p:outputPanel>
 
 			<hr/>
 
-			<p:outputLabel value="HTTP Generic Webhooks" class="boldtext"/>
+			<p:outputLabel value="What is event in eventlogger?" class="boldtext"/>
 
 			<p:outputPanel>
-				<p>HTTP webhook accepts any GET http request that contains the following URL parameters:</p>
+				<p>Event is HTTP request with some data coming on Eventlogger's webhook endpoint.
+				Event consists of the following attributes:</p>
 				<ul>
 					<li>ident - identification of the process that sent the event [required]</li>
+					<li>msg - content of body in plain text [required]</li>
 					<li>tag - custom label [optional]</li>
-					<li>msg - plain text message [required]</li>
+					<li>timestamp - timestamp of event reception [added automatically]</li>
+					<li>host - hostname where the event came from [added automatically]</li>
 				</ul>
-				<p>Example:</p>
-			</p:outputPanel>
-
-			<p:outputPanel>
-				<div class="card">
-					<pre style="font-size: 12px;">GET  /eventlogger/api/v1/http?tag=test&amp;ident=my-process&amp;msg=This is the text message</pre>
-				</div>
-			</p:outputPanel>
-
-			<p:outputPanel>
-				<p>HTTP webhook also accepts any POST http request that contains the following URL parameters and
-					contains the message in the request body:</p>
-				<ul>
-					<li>ident - identification of the process that sent the event [required]</li>
-					<li>tag - custom label [optional]</li>
-				</ul>
-				<p>Example:</p>
-			</p:outputPanel>
-
-			<p:outputPanel>
-				<div class="card">
-					<pre style="font-size: 12px;">POST  /eventlogger/api/v1/http?tag=json&amp;ident=my-process</pre>
-					<pre style="font-size: 12px;">Body: {"anything":1,"or":"just plain text"}</pre>
-				</div>
 			</p:outputPanel>
 
 			<hr/>
 
-			<p:outputLabel value="Collecting syslog events with fluentd" class="boldtext"/>
+			<a id="WEBHOOKS"></a>
+			<p:outputLabel value="Webhooks" class="boldtext"/>
 
 			<p:outputPanel>
-				<p>
-					Configure Fluentd to listen for syslog events on port 10514 and forward them
-					to Eventlogger using out_http plugin.
-				</p>
+				<p>Webhook is an endpoint where HTTP requests are received. Each webhook uses a specific parser for
+					that type of message. The following webhooks are supported:</p>
+				<ul>
+					<li>/eventlogger/webhook/http - any GET or POST request with plain text body</li>
+					<li>/eventlogger/webhook/fluentd-syslog - syslog messages coming from fluentd</li>
+					<li>/eventlogger/webhook/fluentd-tail - tail of log files from fluentd</li>
+				</ul>
+			</p:outputPanel>
+
+			<hr/>
+
+			<p:outputLabel value="HTTP Webhook" class="boldtext"/>
+
+			<p:outputPanel>
+				<p>HTTP webhook receives GET or POST requests and does not provide any parsing of the
+					incoming message. In case of POST request, the message is taken from the
+					body of the request. Parameters tag and ident must be provided with
+					URL parameters.</p>
+				<p>Example:</p>
+			</p:outputPanel>
+
+			<p:outputPanel>
+				<div class="card">
+					<pre style="font-size: 12px;">POST  /eventlogger/webhook/http?tag=json&amp;ident=my-process</pre>
+					<pre style="font-size: 12px;">Body: plain text</pre>
+				</div>
+			</p:outputPanel>
+
+			<p:outputPanel>
+				<p>HTTP webhook also accepts GET requests. All parameters must be provided as URL parameters,
+					including message (or msg)</p>
+				<p>Example:</p>
+			</p:outputPanel>
+
+			<p:outputPanel>
+				<div class="card">
+					<pre style="font-size: 12px;">GET  /eventlogger/webhook/http?tag=test&amp;ident=my-process&amp;msg=This is the text message</pre>
+				</div>
+			</p:outputPanel>
+
+			<p:outputPanel>
+				<p><b>Note: </b>Message must be properly URL encoded to avoid problems with whitespaces.</p>
+			</p:outputPanel>
+
+			<hr/>
+
+			<a id="FLUENTD"></a>
+			<p:outputLabel value="Fluentd syslog webhook" class="boldtext"/>
+
+			<p:outputPanel>
+				<p>Fluentd syslog webhook accepts syslog messages from fluentd. Configure fluentd
+				to receive syslog messages with in_syslog plugin and send the data to Eventlogger
+				with out_http plugin.</p>
+				<p>Example configuration:</p>
 			</p:outputPanel>
 
 			<p:outputPanel>
@@ -105,6 +134,23 @@
 &lt;/match&gt;</pre>
 				</div>
 			</p:outputPanel>
+
+			<hr/>
+
+			<p:outputLabel value="Fluentd tail webhook" class="boldtext"/>
+
+			<hr/>
+
+			<p:outputLabel value="Collecting syslog events with fluentd" class="boldtext"/>
+
+			<p:outputPanel>
+				<p>
+					Configure Fluentd to listen for syslog events on port 10514 and forward them
+					to Eventlogger using out_http plugin.
+				</p>
+			</p:outputPanel>
+
+
 
 			<hr/>
 

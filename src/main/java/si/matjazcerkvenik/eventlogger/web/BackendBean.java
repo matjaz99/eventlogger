@@ -19,6 +19,8 @@ package si.matjazcerkvenik.eventlogger.web;
 import io.krakens.grok.api.Grok;
 import io.krakens.grok.api.GrokCompiler;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.CartesianScales;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
@@ -43,6 +45,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @ManagedBean
@@ -206,6 +210,17 @@ public class BackendBean {
     }
 
 
+    private StreamedContent downloadFile;
+
+    public StreamedContent downloadFile() {
+        downloadFile = DefaultStreamedContent.builder()
+                .name("log_" + System.currentTimeMillis() + ".log")
+                .contentType("text/plain")
+//                .stream(() -> new InputStream().readAllBytes())
+                .stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/demo/images/boromir.jpg"))
+                .build();
+        return downloadFile;
+    }
 
 
 

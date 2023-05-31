@@ -109,6 +109,14 @@ public class ConfigBean {
         return DProps.EVENTLOGGER_DB_POOL_SIZE;
     }
 
+    public int getDbConnectTimeout() {
+        return DProps.EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC;
+    }
+
+    public int getDbReadTimeout() {
+        return DProps.EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC;
+    }
+
     public String getSelectedLogLevel() {
         return selectedLogLevel;
     }
