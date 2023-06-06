@@ -45,8 +45,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 @ManagedBean
@@ -62,8 +60,6 @@ public class BackendBean {
                 getExternalContext().getRequestParameterMap();
         String parameterOne = params.get("filter");
         LogFactory.getLogger().info("BackendBean: PostConstruct filter=" + parameterOne);
-
-//        confTimeRange("last1h");
     }
 
     public List<DRequest> getRequests() {
@@ -73,27 +69,27 @@ public class BackendBean {
         return list;
     }
 
-    public List<DEvent> getEvents() {
-
-        IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-        List<DEvent> list = null;
-
-        try {
-            if (selectedHosts == null || selectedHosts.length == 0) {
-                // no filter
-                LogFactory.getLogger().info("BackendBean: getEvents: no filter");
-                list = iDataManager.getEvents(null);
-            } else {
-                DFilter filter = new DFilter();
-                filter.setHosts(selectedHosts);
-                LogFactory.getLogger().info("BackendBean: getEvents: apply filter " + filter.toString());
-                list = iDataManager.getEvents(filter);
-            }
-        } finally {
-            DataManagerFactory.getInstance().returnClient(iDataManager);
-        }
-        return list;
-    }
+//    public List<DEvent> getEvents() {
+//
+//        IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
+//        List<DEvent> list = null;
+//
+//        try {
+//            if (selectedHosts == null || selectedHosts.length == 0) {
+//                // no filter
+//                LogFactory.getLogger().info("BackendBean: getEvents: no filter");
+//                list = iDataManager.getEvents(null);
+//            } else {
+//                DFilter filter = new DFilter();
+//                filter.setHosts(selectedHosts);
+//                LogFactory.getLogger().info("BackendBean: getEvents: apply filter " + filter.toString());
+//                list = iDataManager.getEvents(filter);
+//            }
+//        } finally {
+//            DataManagerFactory.getInstance().returnClient(iDataManager);
+//        }
+//        return list;
+//    }
 
     /**
      * This method actually prepares the whole output for the GUI.

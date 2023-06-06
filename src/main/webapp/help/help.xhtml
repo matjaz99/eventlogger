@@ -12,16 +12,17 @@
 
 			<p:outputPanel>
 				<ul>
-					<li><a href="#WEBHOOKS">Webhooks</a></li>
+					<li><a href="#WEBHOOKS">Eventlogger webhooks</a></li>
 					<li><a href="#FLUENTD">Fluentd configuration</a></li>
-					<li>Syslog configuration</li>
-					<li>Event rules</li>
+					<li><a href="#SYSLOG">Syslog configuration</a></li>
+					<li><a href="#DOCKER">Docker logging drivers</a></li>
+					<li><a href="#RULES">Event rules</a></li>
 				</ul>
 			</p:outputPanel>
 
 			<hr/>
 
-			<p:outputLabel value="What is event in eventlogger?" class="boldtext"/>
+			<p:outputLabel value="What is event in Eventlogger?" class="boldtext"/>
 
 			<p:outputPanel>
 				<p>Event is HTTP request with some data coming on Eventlogger's webhook endpoint.
@@ -139,26 +140,97 @@
 
 			<p:outputLabel value="Fluentd tail webhook" class="boldtext"/>
 
+			<p:outputPanel>
+				<p>Use fluend to tail log files using in_tail plugin. This example sends data to
+				two destinations. Ident parameter is provided in URL.</p>
+			</p:outputPanel>
+
+			<p:outputPanel>
+				<div class="card">
+					<pre style="font-size: 12px;">
+&lt;source&gt;
+  @type tail
+  &lt;parse&gt;
+    @type none
+  &lt;/parse&gt;
+  read_from_head true
+  tag alertmonitor
+  path /fluentd/var/log/alertmonitor.log
+  pos_file /tmp/alertmonitor.log.pos
+&lt;/source&gt;
+
+&lt;match alertmonitor&gt;
+  @type copy
+  &lt;store&gt;
+    @type http
+    endpoint http://eventlogger:8080/eventlogger/webhook/fluentd-tail?ident=alertmonitor&amp;file=alertmonitor.log
+    http_method post
+    open_timeout 2
+    headers {"user-agent":"monis-fluentd-tail", "source-file":"alertmonitor.log"}
+    content_type "application/json"
+    json_array true
+    &lt;format&gt;
+      @type json
+    &lt;/format&gt;
+    &lt;buffer&gt;
+      flush_interval 5s
+    &lt;/buffer&gt;
+  &lt;/store&gt;
+  &lt;store&gt;
+    @type http
+    endpoint http://192.168.0.25:8080/eventlogger/webhook/fluentd-tail?ident=alertmonitor&amp;file=alertmonitor.log
+    http_method post
+    open_timeout 2
+    headers {"user-agent":"monis-fluentd-tail", "source-file":"alertmonitor.log"}
+    content_type "application/json"
+    json_array true
+    &lt;format&gt;
+      @type json
+    &lt;/format&gt;
+    &lt;buffer&gt;
+      flush_interval 5s
+    &lt;/buffer&gt;
+  &lt;/store&gt;
+&lt;/match&gt;
+</pre>
+				</div>
+			</p:outputPanel>
+
 			<hr/>
 
-			<p:outputLabel value="Collecting syslog events with fluentd" class="boldtext"/>
+			<a id="SYSLOG"></a>
+			<p:outputLabel value="Enable syslog server on Linux" class="boldtext"/>
 
 			<p:outputPanel>
 				<p>
-					Configure Fluentd to listen for syslog events on port 10514 and forward them
-					to Eventlogger using out_http plugin.
+					To enable receiving messages on port 514 (udp/tcp), configure /etc/rsyslogd.conf:
 				</p>
 			</p:outputPanel>
 
+			<p:outputPanel>
+				<div class="card">
+					<pre style="font-size: 12px;">$ModLoad imudp
+$UDPServerRun 514
 
-
-			<hr/>
-
-			<p:outputLabel value="Configure syslog on the Linux server" class="boldtext"/>
+$ModLoad imtcp
+$TCPServerRun 514</pre>
+				</div>
+			</p:outputPanel>
 
 			<p:outputPanel>
 				<p>
-					Open the /etc/rsyslogd.conf and add a line like this:
+					Restart syslog (or rsyslog).
+				</p>
+			</p:outputPanel>
+
+			<hr/>
+
+			<p:outputLabel value="Forward syslog messages" class="boldtext"/>
+
+			<p:outputPanel>
+				<p>
+					Open the /etc/rsyslogd.conf. Configure syslog to send all messages to fluentd
+					syslog plugin. Use single @ for udp, and double @@ for tcp.:
 				</p>
 			</p:outputPanel>
 
@@ -170,19 +242,56 @@
 
 			<p:outputPanel>
 				<p>
-					Restart syslog (or rsyslog). This will tell syslog to send all messages to fluentd
-					syslog plugin (or another syslog server). Use single @ for udp, and @@ for tcp.
+					Restart syslog (or rsyslog).
 				</p>
 			</p:outputPanel>
 
 			<hr/>
 
-			<p:outputLabel value="Configure syslog driver on Docker container" class="boldtext"/>
+			<p:outputLabel value="Tail files with syslog" class="boldtext"/>
 
 			<p:outputPanel>
 				<p>
-					Use Docker's built-in syslog logging driver to send logs to fluentd syslog plugin.
-					Select a syslog format and add a custom tag that will become an ident in fluentd.
+					Edit the /etc/rsyslogd.conf or create custom file in /etc/rsyslog.d.
+				</p>
+			</p:outputPanel>
+
+			<p:outputPanel>
+				<div class="card">
+					<pre style="font-size: 12px;">$ vi /etc/rsyslog.d/remote-alertmonitor.conf
+
+$ModLoad imfile
+$InputFilePollInterval 10
+$PrivDropToGroup adm
+$InputFileName /var/log/alertmonitor.log
+$InputFileTag ALERTMONITOR
+$InputFileStateFile /var/spool/rsyslog/alertmonitor-state
+$InputFileSeverity info
+$InputFileFacility local7
+$InputRunFileMonitor
+$InputFilePersistStateInterval 1000</pre>
+				</div>
+			</p:outputPanel>
+
+			<p:outputPanel>
+				<p>
+					Restart syslog (or rsyslog).
+				</p>
+			</p:outputPanel>
+
+			<hr/>
+
+			<a id="DOCKER"></a>
+			<p:outputLabel value="Using syslog driver in Docker containers" class="boldtext"/>
+
+			<p:outputPanel>
+				<p>
+					Use Docker's syslog logging driver to send logs to:<br/>
+					- fluentd syslog plugin (port 10514) OR<br/>
+					- remote syslog server (port 514)
+				</p>
+				<p>
+					In logging options, set remote syslog address, select a syslog format and add a custom tag that will become ident in fluentd (and eventlogger also).
 				</p>
 			</p:outputPanel>
 
@@ -202,13 +311,21 @@
 				</div>
 			</p:outputPanel>
 
+			<p:outputPanel>
+				<p>
+					Syslog driver can send messages directly to fluentd on port 10514, or it can send
+					messages to remote syslog on port 514, where messages can be intercepted locally
+					by fluentd again.
+				</p>
+			</p:outputPanel>
+
 			<hr/>
 
-			<p:outputLabel value="Configure fluentd driver on Docker container" class="boldtext"/>
+			<p:outputLabel value="Using fluentd driver in Docker containers" class="boldtext"/>
 
 			<p:outputPanel>
 				<p>
-					Use Docker's built-in fluentd logging driver to send logs to fluentd forward plugin.
+					Use Docker's fluentd logging driver to send logs to fluentd forward plugin.
 					Set address of fluentd and add a custom tag.
 				</p>
 			</p:outputPanel>
@@ -230,9 +347,8 @@
 
 			<p:outputPanel>
 				<p>
-					Event must be sent to eventlogger's
-					http endpoint. It is highly recommended to set the ident in URL parameters.
-					Example how to configure forward plugin.
+					Further, configure fluentd to intercept these messages and send them to
+					Eventlogger using out_http plugin. Set the ident and tag as URL parameters.
 				</p>
 			</p:outputPanel>
 
@@ -246,7 +362,7 @@
 
 &lt;match httpd.access&gt;
     @type http
-      endpoint http://192.168.0.16:8080/eventlogger/api/v1/http?ident=httpd.access
+      endpoint http://192.168.0.16:8080/eventlogger/webhook/http?ident=httpd.access
       open_timeout 2
       &lt;format&gt;
         @type json
@@ -260,7 +376,8 @@
 
 			<hr/>
 
-			<p:outputLabel value="File tailing with fluentd" class="boldtext"/>
+			<a id="RULES"></a>
+			<p:outputLabel value="Event rules" class="boldtext"/>
 
 			<p:outputPanel>
 				<p>
