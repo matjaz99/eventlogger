@@ -88,8 +88,8 @@ public class OnStartListener implements ServletContextListener {
             LogFactory.getLogger().warn("#######   RUNNING IN DEV MODE   #######");
 //            DProps.EVENTLOGGER_STORAGE_TYPE = System.getenv().getOrDefault("EVENTLOGGER_STORAGE_TYPE", "memory").trim();
             DProps.EVENTLOGGER_STORAGE_TYPE = "mongodb";
-//            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@elasticvm:27017/?authSource=admin";
-            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@lionvm:27017/?authSource=admin";
+            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@elasticvm:27017/?authSource=admin";
+//            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@lionvm:27017/?authSource=admin";
             DProps.EVENTLOGGER_DATA_RETENTION_DAYS = 500;
             DProps.EVENTLOGGER_DB_POOL_SIZE = 10;
             DProps.EVENTLOGGER_ALARM_DESTINATION = "http://192.168.0.25:7070/alertmonitor/webhook/eventlogger";

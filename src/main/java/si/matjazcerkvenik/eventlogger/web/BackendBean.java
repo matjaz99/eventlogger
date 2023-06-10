@@ -45,11 +45,11 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
+import java.io.ByteArrayInputStream;
 import java.util.*;
 
 @ManagedBean
 @SessionScoped
-//@RequestScoped
 @SuppressWarnings("unused")
 public class BackendBean {
 
@@ -68,28 +68,6 @@ public class BackendBean {
         DataManagerFactory.getInstance().returnClient(iDataManager);
         return list;
     }
-
-//    public List<DEvent> getEvents() {
-//
-//        IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-//        List<DEvent> list = null;
-//
-//        try {
-//            if (selectedHosts == null || selectedHosts.length == 0) {
-//                // no filter
-//                LogFactory.getLogger().info("BackendBean: getEvents: no filter");
-//                list = iDataManager.getEvents(null);
-//            } else {
-//                DFilter filter = new DFilter();
-//                filter.setHosts(selectedHosts);
-//                LogFactory.getLogger().info("BackendBean: getEvents: apply filter " + filter.toString());
-//                list = iDataManager.getEvents(filter);
-//            }
-//        } finally {
-//            DataManagerFactory.getInstance().returnClient(iDataManager);
-//        }
-//        return list;
-//    }
 
     /**
      * This method actually prepares the whole output for the GUI.
@@ -209,11 +187,12 @@ public class BackendBean {
     private StreamedContent downloadFile;
 
     public StreamedContent downloadFile() {
+        String s = getConcatenatedEvents();
         downloadFile = DefaultStreamedContent.builder()
                 .name("log_" + System.currentTimeMillis() + ".log")
                 .contentType("text/plain")
-//                .stream(() -> new InputStream().readAllBytes())
-                .stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/demo/images/boromir.jpg"))
+                .stream(() -> new ByteArrayInputStream(s.getBytes()))
+//                .stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/demo/images/boromir.jpg"))
                 .build();
         return downloadFile;
     }
