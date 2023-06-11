@@ -58,6 +58,19 @@ public class ConfigBean {
         }
     }
 
+    public String getAlarmDestination() {
+        return DProps.EVENTLOGGER_ALARM_DESTINATION;
+    }
+
+    public void setAlarmDestination(String s) {
+        try {
+            DProps.EVENTLOGGER_ALARM_DESTINATION = s;
+            LogFactory.getLogger().info("ConfigBean: set EVENTLOGGER_ALARM_DESTINATION: " + DProps.EVENTLOGGER_ALARM_DESTINATION);
+        } catch (NumberFormatException e) {
+            LogFactory.getLogger().error("ConfigBean: set EVENTLOGGER_ALARM_DESTINATION failed: " + e.getMessage());
+        }
+    }
+
     public long getEventsCount() {
         return DProps.getEventsReceivedCount();
     }

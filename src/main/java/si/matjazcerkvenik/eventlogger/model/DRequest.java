@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class DRequest {
 
 	@BsonProperty(value = "id")

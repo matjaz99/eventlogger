@@ -9,7 +9,7 @@ Eventlogger is a processor of HTTP requests. It listens for HTTP requests (aka. 
 a webhook, processes the message body, stores them in database and at the end offers an overview of received 
 events in a web GUI.
 
-[Screenshots](/docs/screenshots/Screenshots)
+[Screenshots](/docs/screenshots/Screenshots.md)
 
 ### What is event?
 
