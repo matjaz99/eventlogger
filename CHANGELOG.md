@@ -1,6 +1,6 @@
 # EventLogger changelog
 
-## 0.2.6-SNAPSHOT
+## 0.2.6 / 2023-11-03
 
 * [ENHANCEMENT] Added `alarm destination` configuration
 * [ENHANCEMENT] Added more help (syslog, fluentd)
