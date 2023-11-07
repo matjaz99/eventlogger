@@ -47,9 +47,9 @@ public class MemoryDataManager implements IDataManager {
     }
 
     @Override
-    public void addHttpRequest(DRequest DRequest) {
-        logger.info(getClientName() + " addWebhookMessage");
-        httpRequests.add(DRequest);
+    public void addHttpRequest(DRequest dRequest) {
+        logger.info(getClientName() + " addHttpRequest");
+        httpRequests.add(dRequest);
         if (httpRequests.size() > 100) {
             httpRequests.remove(0);
         }

@@ -50,11 +50,19 @@ public class DProps {
     // memory or mongodb
     public static String EVENTLOGGER_STORAGE_TYPE = "mongodb";
     public static int EVENTLOGGER_MEMORY_BUFFER_SIZE = 1000;
-    public static String EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@promvm:27017/test?authSource=admin";
-    public static int EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC = 5;
-    public static int EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC = 30;
     public static int EVENTLOGGER_DATA_RETENTION_DAYS = 30;
     public static int EVENTLOGGER_DB_POOL_SIZE = 3;
+
+    // mongodb config
+    public static String EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:password@hostname:27017/test?authSource=admin";
+    public static int EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC = 5;
+    public static int EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC = 30;
+
+    // opensearch config
+    public static String EVENTLOGGER_OPENSEARCH_CONNECTION_STRING = "https://admin:admin@hostname:9200";
+    public static int EVENTLOGGER_OPENSEARCH_CONNECT_TIMEOUT_SEC = 5;
+    public static int EVENTLOGGER_OPENSEARCH_READ_TIMEOUT_SEC = 30;
+    public static String EVENTLOGGER_OPENSEARCH_INDEX_NAME = "eventlogger";
 
     public static String EVENTLOGGER_ALARM_DESTINATION = "http://alertmonitor:8080/alerts";
 

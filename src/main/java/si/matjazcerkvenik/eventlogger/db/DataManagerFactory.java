@@ -28,6 +28,7 @@ public class DataManagerFactory {
     private int count = 0;
     private List<IDataManager> pool = new ArrayList<>();
 
+    /** This class is singleton */
     private static DataManagerFactory instance;
 
     private DataManagerFactory() {
@@ -51,6 +52,8 @@ public class DataManagerFactory {
             iDataManager = new MemoryDataManager(count++);
         } else if (DProps.EVENTLOGGER_STORAGE_TYPE.equalsIgnoreCase("mongodb")) {
             iDataManager = new MongoDataManager(count++);
+        } else if (DProps.EVENTLOGGER_STORAGE_TYPE.equalsIgnoreCase("opensearch")) {
+            iDataManager = new OpenSearchDataManager(count++);
         } else {
             LogFactory.getLogger().warn("DataManagerFactory:getDataManager: unknown storage type: " + DProps.EVENTLOGGER_STORAGE_TYPE);
         }

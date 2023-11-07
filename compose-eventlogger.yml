@@ -8,7 +8,7 @@ networks:
 services:
 
   eventlogger:
-    image: matjaz99/eventlogger:0.2.4
+    image: matjaz99/eventlogger:0.2.6
     ports:
       - 7073:8080
     networks:
@@ -19,11 +19,15 @@ services:
       - EVENTLOGGER_EVENT_RULES_CONFIG_FILE=/opt/eventlogger/rules/event_rules.yml
       - EVENTLOGGER_DATA_RETENTION_DAYS=30
       - EVENTLOGGER_DB_POOL_SIZE=3
-      # choose storage type: mongodb or memory
+      # choose storage type: mongodb, opensearch or memory
       - EVENTLOGGER_STORAGE_TYPE=mongodb
-      - EVENTLOGGER_MONGODB_CONNECTION_STRING=mongodb://admin:mongodbpassword@172.29.18.22:27017/?authSource=admin
+      - EVENTLOGGER_MONGODB_CONNECTION_STRING=mongodb://admin:mongodbpassword@192.168.0.170:27017/?authSource=admin
       - EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC=5
       - EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC=30
+      - EVENTLOGGER_OPENSEARCH_CONNECTION_STRING=https://admin:admin@192.168.0.170:9200
+      - EVENTLOGGER_OPENSEARCH_CONNECT_TIMEOUT_SEC=5
+      - EVENTLOGGER_OPENSEARCH_READ_TIMEOUT_SEC=30
+      - EVENTLOGGER_OPENSEARCH_INDEX_NAME=eventlogger
       - EVENTLOGGER_ALARM_DESTINATION=http://alertmonitor:8080/alertmonitor/webhook/eventlogger
     volumes:
       - /var/log:/opt/eventlogger/log

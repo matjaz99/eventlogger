@@ -1,5 +1,9 @@
 # EventLogger changelog
 
+## 0.3.0-SNAPSHOT
+
+* [FEATURE] OpenSearch client
+
 ## 0.2.6 / 2023-11-03
 
 * [ENHANCEMENT] Added `alarm destination` configuration

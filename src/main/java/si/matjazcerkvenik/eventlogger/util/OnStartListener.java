@@ -73,13 +73,18 @@ public class OnStartListener implements ServletContextListener {
             LogFactory.getLogger().info(entry.getKey() + "=" + entry.getValue());
         }
 
+        // read application specific environment variables
         DProps.EVENTLOGGER_STORAGE_TYPE = System.getenv().getOrDefault("EVENTLOGGER_STORAGE_TYPE", "memory").trim();
         DProps.EVENTLOGGER_MEMORY_BUFFER_SIZE = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MEMORY_BUFFER_SIZE", "1000").trim());
-        DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = System.getenv().getOrDefault("EVENTLOGGER_MONGODB_CONNECTION_STRING", "mongodb://admin:mongodbpassword@mongovm:27017/?authSource=admin").trim();
         DProps.EVENTLOGGER_DATA_RETENTION_DAYS = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_DATA_RETENTION_DAYS", "30").trim());
         DProps.EVENTLOGGER_DB_POOL_SIZE = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_DB_POOL_SIZE", "3").trim());
+        DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = System.getenv().getOrDefault("EVENTLOGGER_MONGODB_CONNECTION_STRING", "mongodb://admin:mongodbpassword@mongovm:27017/?authSource=admin").trim();
         DProps.EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC", "5").trim());
         DProps.EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC", "30").trim());
+        DProps.EVENTLOGGER_OPENSEARCH_CONNECTION_STRING = System.getenv().getOrDefault("EVENTLOGGER_OPENSEARCH_CONNECTION_STRING", "https://admin:admin@hostname:9200").trim();
+        DProps.EVENTLOGGER_OPENSEARCH_CONNECT_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_OPENSEARCH_CONNECT_TIMEOUT_SEC", "5").trim());
+        DProps.EVENTLOGGER_OPENSEARCH_READ_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_OPENSEARCH_READ_TIMEOUT_SEC", "30").trim());
+        DProps.EVENTLOGGER_OPENSEARCH_INDEX_NAME = System.getenv().getOrDefault("EVENTLOGGER_OPENSEARCH_INDEX_NAME", "eventlogger").trim();
         DProps.EVENTLOGGER_ALARM_DESTINATION = System.getenv().getOrDefault("EVENTLOGGER_ALARM_DESTINATION", "http://alertmonitor:8080/alertmonitor/alerts").trim();
         DProps.EVENTLOGGER_EVENT_RULES_CONFIG_FILE = System.getenv().getOrDefault("EVENTLOGGER_EVENT_RULES_CONFIG_FILE", "/opt/eventlogger/rules/event_rules.yml").trim();
 
@@ -87,9 +92,10 @@ public class OnStartListener implements ServletContextListener {
         if (new File("/Users/matjaz").exists()) {
             LogFactory.getLogger().warn("#######   RUNNING IN DEV MODE   #######");
 //            DProps.EVENTLOGGER_STORAGE_TYPE = System.getenv().getOrDefault("EVENTLOGGER_STORAGE_TYPE", "memory").trim();
-            DProps.EVENTLOGGER_STORAGE_TYPE = "mongodb";
+            DProps.EVENTLOGGER_STORAGE_TYPE = "opensearch"; // mongodb
             DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@elasticvm:27017/?authSource=admin";
 //            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@lionvm:27017/?authSource=admin";
+            DProps.EVENTLOGGER_OPENSEARCH_CONNECTION_STRING = "https://admin:admin@elasticvm:9200";
             DProps.EVENTLOGGER_DATA_RETENTION_DAYS = 500;
             DProps.EVENTLOGGER_DB_POOL_SIZE = 10;
             DProps.EVENTLOGGER_ALARM_DESTINATION = "http://192.168.0.25:7070/alertmonitor/webhook/eventlogger";

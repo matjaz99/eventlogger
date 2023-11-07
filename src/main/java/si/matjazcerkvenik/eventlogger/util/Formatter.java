@@ -15,8 +15,11 @@
  */
 package si.matjazcerkvenik.eventlogger.util;
 
+import si.matjazcerkvenik.eventlogger.model.DEvent;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 
 public class Formatter {
 
@@ -60,6 +63,23 @@ public class Formatter {
         }
 
         return resp;
+    }
+
+    public static String toNdJsonString(List<DEvent> eventList) {
+        StringBuilder sb = new StringBuilder();
+
+        for (DEvent e : eventList) {
+            sb.append("{ \"index\":{} }\n").append("{");
+            sb.append("\"host\":\"").append(e.getHost()).append("\",");
+            sb.append("\"ident\":\"").append(e.getIdent()).append("\",");
+            sb.append("\"pid\":").append(e.getPid()).append(",");
+            sb.append("\"tag\":").append(e.getTag()).append(",");
+            sb.append("\"message\":\"").append(e.getMessage().replace("\"", "'")).append("\",");
+            sb.append("\"@timestamp\":").append(e.getTimestamp()).append("}\n");
+        }
+
+        return sb.toString();
+
     }
 
 }
