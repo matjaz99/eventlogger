@@ -69,12 +69,19 @@ public class Formatter {
         StringBuilder sb = new StringBuilder();
 
         for (DEvent e : eventList) {
-            sb.append("{ \"index\":{} }\n").append("{");
+            String msg = e.getMessage();
+            msg = msg.replace("\"", "'");
+            msg = msg.replace("\\", "\\\\");
+//            String tag = "eventlogger"; // tag is index suffix
+//            if (e.getTag() != null && e.getTag().length() > 0) {
+//                tag += "-" + e.getTag();
+//            }
+            sb.append("{ \"index\":{\"_index\": \"eventlogger\"} }\n").append("{");
             sb.append("\"host\":\"").append(e.getHost()).append("\",");
             sb.append("\"ident\":\"").append(e.getIdent()).append("\",");
             sb.append("\"pid\":").append(e.getPid()).append(",");
-            sb.append("\"tag\":").append(e.getTag()).append(",");
-            sb.append("\"message\":\"").append(e.getMessage().replace("\"", "'")).append("\",");
+            sb.append("\"tag\":\"").append(e.getTag()).append("\",");
+            sb.append("\"message\":\"").append(msg).append("\",");
             sb.append("\"@timestamp\":").append(e.getTimestamp()).append("}\n");
         }
 

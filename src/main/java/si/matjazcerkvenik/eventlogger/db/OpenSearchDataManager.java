@@ -100,6 +100,45 @@ public class OpenSearchDataManager implements IDataManager {
 
     @Override
     public List<DEvent> getEvents(DFilter filter) {
+
+        logger.info(getClientName() + " getEvents: " + filter);
+
+        try {
+
+            String query = "{\n" +
+                    "    \"size\": 1000,\n" +
+                    "    \"query\": {\n" +
+                    "        \"match_all\": {}\n" +
+                    "    },\n" +
+                    "    \"sort\": [\n" +
+                    "        { \"@timestamp\": \"asc\" }\n" +
+                    "    ]\n" +
+                    "}";
+
+            Request request = new Request.Builder()
+                    .url(clientConfig.getConnectionString() + "/" + DProps.EVENTLOGGER_OPENSEARCH_INDEX_NAME + "/_search")
+                    .addHeader("User-Agent", "OkHttp")
+//                .addHeader("Content-Type", "application/json")
+                    .post(RequestBody.create(query, MEDIA_TYPE_JSON))
+                    .build();
+
+            execute(request);
+
+            if (filter == null) {
+
+            } else {
+
+            }
+
+            AlarmMananger.clearAlarm(opensearchDownAlarm);
+
+        } catch (Exception e) {
+            AlarmMananger.raiseAlarm(opensearchDownAlarm);
+            logger.error(clientName + " getEvents: Exception: " + e.getMessage());
+        } finally {
+
+        }
+
         return null;
     }
 

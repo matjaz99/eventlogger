@@ -38,7 +38,7 @@ public class HttpPostParser implements IEventParser {
         // (3) ndjson - contains }\n{ - this means at least 2 json objects
         //       - what if contentType=application/x-ndjson is misleading, and it is actually
         //         just single json object with newline delimiter - {}\n? - just use (1)
-        // (4) json with array: {[], [],..[]} - impossible
+        // (4) json object containing array of objects: {[{}, {},..{}]}
         // (5) xml - starts with <xml
         // (6) plain text - anything that is not json or xml
         //
