@@ -1,5 +1,7 @@
 package si.matjazcerkvenik.eventlogger.util;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
@@ -29,10 +31,12 @@ public class Test {
 
     public static void main(String[] args) {
 
-        tryRegex();
-        tryGrok();
+//        tryRegex();
+//        tryGrok();
+//
+//        testDb1();
 
-        testDb1();
+        testParseJsonArray();
 
     }
 
@@ -159,5 +163,16 @@ public class Test {
 
 //        MongoCollection<Document> gradesCollection = sampleTrainingDB.getCollection("grades");
 
+    }
+
+    public static void testParseJsonArray() {
+        String json = "[{\"aaa\":\"AAA\", \"count\": 111},{\"bbb\":\"BBB\", \"count\": 222}]";
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        Object[] obj = gson.fromJson(json, Object[].class);
+        System.out.println("testParseJsonArray: " + obj.toString());
+        for (Object s : obj) {
+            System.out.println(s.toString());
+        }
     }
 }

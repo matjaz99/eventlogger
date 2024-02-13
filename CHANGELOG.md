@@ -1,8 +1,12 @@
 # EventLogger changelog
 
+## 0.3.1-SNAPSHOT
+
+* [FEATURE] Querying OpenSearch
+
 ## 0.3.0-SNAPSHOT
 
-* [FEATURE] OpenSearch client
+* [FEATURE] OpenSearch client, send bulk
 
 ## 0.2.6 / 2023-11-03
 

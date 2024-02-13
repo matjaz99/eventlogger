@@ -84,18 +84,17 @@ public class HttpPostParser implements IEventParser {
 
             String s = dRequest.getBody().trim();
 
-            // TODO try if matches with syslog event
-//            GsonBuilder builder = new GsonBuilder();
-//            Gson gson = builder.create();
-//            DEvent obj = gson.fromJson(s, DEvent.class);
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+            Object[] obj = gson.fromJson(s, Object[].class);
 //            System.out.println("parseJsonArray: " + obj.toString());
 
 
-            s = s.substring(1, s.length() -1);
-            String delimiter = "},\\{";
-            String[] jsonArray = s.split(delimiter);
+//            s = s.substring(1, s.length() -1);
+//            String delimiter = "},\\{";
+//            String[] jsonArray = s.split(delimiter);
 
-            for (int i = 0; i < jsonArray.length; i++) {
+            for (int i = 0; i < obj.length; i++) {
 
                 DEvent e = new DEvent();
                 e.setRuntimeId(DProps.RUNTIME_ID);
@@ -103,7 +102,7 @@ public class HttpPostParser implements IEventParser {
                 e.setHost(dRequest.getRemoteHost());
                 e.setEndpoint(dRequest.getRequestUri());
                 e.setEventSource(dRequest.getRemoteHost());
-                e.setMessage(jsonArray[i]);
+                e.setMessage(obj[i].toString());
                 if (dRequest.getParameterMap().containsKey("ident")) {
                     e.setIdent(dRequest.getParameterMap().get("ident"));
                 } else {
