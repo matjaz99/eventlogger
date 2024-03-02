@@ -181,7 +181,7 @@ public class ReceiverServlet extends HttpServlet {
                     Match gm = grok.match(event.getMessage());
 //				System.out.println("GROK PATTERN: " + grok.getNamedRegex());
                     final Map<String, Object> capture = gm.capture();
-                    if (capture.size() == 0) {
+                    if (capture.isEmpty()) {
 //					System.out.println("nothing found");
                         continue;
                     }

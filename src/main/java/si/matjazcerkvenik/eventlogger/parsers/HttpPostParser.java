@@ -25,6 +25,7 @@ import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class HttpPostParser implements IEventParser {
 
@@ -80,7 +81,7 @@ public class HttpPostParser implements IEventParser {
     public List<DEvent> parseJsonArray(DRequest dRequest) {
         try {
 
-            List<DEvent> eventList = new ArrayList<>();;
+            List<DEvent> eventList = new ArrayList<>();
 
             String s = dRequest.getBody().trim();
 
@@ -89,46 +90,73 @@ public class HttpPostParser implements IEventParser {
             Object[] obj = gson.fromJson(s, Object[].class);
 //            System.out.println("parseJsonArray: " + obj.toString());
 
-
-//            s = s.substring(1, s.length() -1);
-//            String delimiter = "},\\{";
-//            String[] jsonArray = s.split(delimiter);
-
             for (int i = 0; i < obj.length; i++) {
+//                System.out.println("parseJsonArray: obj: " + obj[i].toString());
 
                 DEvent e = new DEvent();
                 e.setRuntimeId(DProps.RUNTIME_ID);
                 e.setTimestamp(System.currentTimeMillis());
-                e.setHost(dRequest.getRemoteHost());
                 e.setEndpoint(dRequest.getRequestUri());
-                e.setEventSource(dRequest.getRemoteHost());
-                e.setMessage(obj[i].toString());
-                if (dRequest.getParameterMap().containsKey("ident")) {
-                    e.setIdent(dRequest.getParameterMap().get("ident"));
+                e.setRemoteAddress(dRequest.getRemoteHost());
+
+                // try to find hostname in json
+                Gson gson2 = new Gson();
+                String json = gson2.toJson(obj[i]);
+                Map map = gson2.fromJson(json, Map.class);
+//                System.out.println(">>> " + map.size());
+                if (map.containsKey("hostname")) {
+                    e.setEventSource(map.get("hostname").toString());
+                    e.setHost(map.get("hostname").toString());
+                } else if (map.containsKey("host")) {
+                    e.setEventSource(map.get("host").toString());
+                    e.setHost(map.get("host").toString());
                 } else {
-                    DMetrics.eventlogger_events_ignored_total.labels(dRequest.getRemoteHost(), dRequest.getRequestUri(), "missing ident").inc();
-                    return null;
+                    e.setEventSource(dRequest.getRemoteHost());
+                    e.setHost(dRequest.getRemoteHost());
                 }
+//                e.setHost(dRequest.getRemoteHost());
+
+                e.setMessage(obj[i].toString());
                 if (e.getMessage() == null || e.getMessage().trim().length() == 0) {
+                    // ignore event with empty message
                     DMetrics.eventlogger_events_ignored_total.labels(dRequest.getRemoteHost(), dRequest.getRequestUri(), "no content").inc();
                     return null;
                 }
+
                 if (dRequest.getParameterMap().containsKey("pid")) {
                     e.setPid(dRequest.getParameterMap().get("pid"));
                 }
                 if (dRequest.getParameterMap().containsKey("file")) {
                     e.setLogfile(dRequest.getParameterMap().get("file"));
                 }
-                if (dRequest.getParameterMap().containsKey("tag")) {
-                    e.setTag(dRequest.getParameterMap().get("tag"));
+
+                if (dRequest.getHeaderMap().containsKey("tag")) {
+                    // first check if tag is present in header
+                    e.setTag(dRequest.getHeaderMap().get("tag"));
+                } else {
+                    // then check request parameters (uri)
+                    if (dRequest.getParameterMap().containsKey("tag")) {
+                        e.setTag(dRequest.getParameterMap().get("tag"));
+                    } else {
+                        // finally try searching content
+                        if (map.containsKey("tag")) {
+                            e.setTag(map.get("tag").toString());
+                        }
+                    }
                 }
+
+                if (dRequest.getParameterMap().containsKey("ident")) {
+                    e.setIdent(dRequest.getParameterMap().get("ident"));
+                } else {
+                    // use tag, if ident is not found
+                    e.setIdent(e.getTag());
+                }
+
                 e.setId(DProps.increaseAndGetEventsReceivedCount());
                 LogFactory.getLogger().trace(e.toString());
                 DMetrics.eventlogger_events_total.labels(dRequest.getRemoteHost(), e.getHost(), e.getIdent()).inc();
 
-                if (e.getMessage() != null && e.getMessage().trim().length() > 0) {
-                    eventList.add(e);
-                }
+                eventList.add(e);
 
             }
 

@@ -28,21 +28,25 @@ public class DEvent {
     /** Unix timestamp in millis when the event was received */
     @BsonProperty(value = "timestamp")
     private long timestamp;
+    /** The IP address of server which sent the http request */
+    @BsonProperty(value = "remoteAddress")
+    private String remoteAddress;
     /** Hostname or IP of object which sent the original event */
     @BsonProperty(value = "host")
     private String host;
-    /** Process name that generated original event */
+    /** Process name that generated event */
     @BsonProperty(value = "ident")
     private String ident;
-    /** PID of the process that generated original event */
+    /** PID of the process that generated event */
     @BsonProperty(value = "pid")
     private String pid;
-    /** Custom added tag */
+    /** Event tag, usually appended by another agent */
     @BsonProperty(value = "tag")
     private String tag;
     /** Main message body as it was received, could be plaintext or raw json format. */
     @BsonProperty(value = "message")
     private String message;
+    /** The source IP address of server who generated the event */
     @BsonProperty(value = "eventSource")
     private String eventSource;
     /** Typically a log file where event/line originates from. */
@@ -74,6 +78,14 @@ public class DEvent {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getRemoteAddress() {
+        return remoteAddress;
+    }
+
+    public void setRemoteAddress(String remoteAddress) {
+        this.remoteAddress = remoteAddress;
     }
 
     public String getHost() {
