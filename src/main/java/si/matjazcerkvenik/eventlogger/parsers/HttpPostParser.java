@@ -32,7 +32,7 @@ public class HttpPostParser implements IEventParser {
     @Override
     public List<DEvent> parseRequest(DRequest dRequest) throws EventParserException {
 
-        // guess what is the content of message:
+        // check the content of message:
         // (1) single json object - inside {}
         // (2) array of json objects - starting with [ and ending with ]
         //       - syntax: [{}, {},..{}]
@@ -182,6 +182,7 @@ public class HttpPostParser implements IEventParser {
             e.setTimestamp(System.currentTimeMillis());
             e.setHost(dRequest.getRemoteHost());
             e.setEndpoint(dRequest.getRequestUri());
+            e.setRemoteAddress(dRequest.getRemoteHost());
             e.setEventSource(dRequest.getRemoteHost());
             e.setMessage(dRequest.getBody());
             if (dRequest.getParameterMap().containsKey("ident")) {

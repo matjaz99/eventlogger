@@ -47,6 +47,7 @@ public class FluentdSyslogParser implements IEventParser {
                     DEvent e = gson.fromJson(msgArray[i].trim(), DEvent.class);
                     e.setRuntimeId(DProps.RUNTIME_ID);
                     e.setTimestamp(now);
+                    e.setRemoteAddress(request.getRemoteHost());
                     e.setEventSource(request.getRemoteHost());
                     e.setLogfile("messages");
                     e.setEndpoint(request.getRequestUri());
@@ -78,6 +79,7 @@ public class FluentdSyslogParser implements IEventParser {
                     DEvent e = gson.fromJson(msgArray[i].trim(), DEvent.class);
                     e.setRuntimeId(DProps.RUNTIME_ID);
                     e.setTimestamp(now);
+                    e.setRemoteAddress(request.getRemoteHost());
                     e.setEventSource(request.getRemoteHost());
                     e.setLogfile("messages");
                     e.setEndpoint(request.getRequestUri());

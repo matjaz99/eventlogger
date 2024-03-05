@@ -95,6 +95,7 @@ public class BackendBean {
                     sb.append(Formatter.getFormatedTimestamp(list.get(i).getTimestamp())).append(" - ");
                 }
                 sb.append(list.get(i).getHost()).append(" - ");
+                sb.append(list.get(i).getRemoteAddress()).append(" - ");
                 sb.append(list.get(i).getIdent()).append("[").append(list.get(i).getPid()).append("] - ");
                 sb.append(list.get(i).getMessage()).append("\n");
             }
@@ -387,6 +388,18 @@ public class BackendBean {
     public void setSelectedSortType(String selectedSortType) {
         this.selectedSortType = selectedSortType;
     }
+
+
+    private String selectedDisplayPattern = "%d - %h - %i[%p] - %t - %m";
+
+    public String getSelectedDisplayPattern() {
+        return selectedDisplayPattern;
+    }
+
+    public void setSelectedDisplayPattern(String selectedDisplayPattern) {
+        this.selectedDisplayPattern = selectedDisplayPattern;
+    }
+
 
 
 

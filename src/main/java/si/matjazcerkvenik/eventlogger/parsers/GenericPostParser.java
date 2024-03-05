@@ -46,6 +46,7 @@ public class GenericPostParser implements IEventParser {
             e.setTimestamp(System.currentTimeMillis());
             e.setHost(dRequest.getRemoteHost());
             e.setEndpoint(dRequest.getRequestUri());
+            e.setRemoteAddress(dRequest.getRemoteHost());
             e.setEventSource(dRequest.getRemoteHost());
             e.setMessage(dRequest.getBody());
             if (dRequest.getParameterMap().containsKey("ident")) {

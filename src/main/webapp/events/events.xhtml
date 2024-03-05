@@ -99,6 +99,15 @@
 							</p:selectOneRadio>
 						</p:panelGrid>
 					</p:tab>
+
+					<p:tab title="Display pattern">
+						<p:panelGrid columns="2" styleClass="ui-noborder">
+							<p:outputLabel value="Pattern:"/>
+							<p:inputText size="100" value="#{backendBean.selectedDisplayPattern}"/>
+							<p:outputLabel value="Options:"/>
+							<p:outputLabel value="%d - date &amp; time, %h - hostname, %i - ident, %p - pid, %t - tag, %m - message"/>
+						</p:panelGrid>
+					</p:tab>
 				</p:tabView>
 
 				<p:panelGrid columns="4" styleClass="ui-noborder">
