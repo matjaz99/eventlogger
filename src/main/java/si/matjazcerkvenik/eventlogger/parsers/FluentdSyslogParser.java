@@ -81,7 +81,6 @@ public class FluentdSyslogParser implements IEventParser {
                     e.setTimestamp(now);
                     e.setRemoteAddress(request.getRemoteHost());
                     e.setEventSource(request.getRemoteHost());
-                    e.setLogfile("messages");
                     e.setEndpoint(request.getRequestUri());
                     if (e.getHost() == null) e.setHost(request.getRemoteHost());
                     if (e.getIdent() == null || e.getIdent().trim().length() == 0) {

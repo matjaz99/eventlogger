@@ -21,6 +21,7 @@ import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DRequest;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
 import si.matjazcerkvenik.eventlogger.util.DProps;
+import si.matjazcerkvenik.eventlogger.util.Formatter;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
 import java.util.ArrayList;
@@ -93,6 +94,12 @@ public class HttpPostParser implements IEventParser {
             for (int i = 0; i < obj.length; i++) {
 //                System.out.println("parseJsonArray: obj: " + obj[i].toString());
 
+                if (Formatter.isNullOrEmpty(obj[i].toString())) {
+                    // ignore event with empty message
+                    DMetrics.eventlogger_events_ignored_total.labels(dRequest.getRemoteHost(), dRequest.getRequestUri(), "no content").inc();
+                    continue;
+                }
+
                 DEvent e = new DEvent();
                 e.setRuntimeId(DProps.RUNTIME_ID);
                 e.setTimestamp(System.currentTimeMillis());
@@ -117,11 +124,6 @@ public class HttpPostParser implements IEventParser {
 //                e.setHost(dRequest.getRemoteHost());
 
                 e.setMessage(obj[i].toString());
-                if (e.getMessage() == null || e.getMessage().trim().length() == 0) {
-                    // ignore event with empty message
-                    DMetrics.eventlogger_events_ignored_total.labels(dRequest.getRemoteHost(), dRequest.getRequestUri(), "no content").inc();
-                    return null;
-                }
 
                 if (dRequest.getParameterMap().containsKey("pid")) {
                     e.setPid(dRequest.getParameterMap().get("pid"));
@@ -144,7 +146,7 @@ public class HttpPostParser implements IEventParser {
                         }
                     }
                 }
-                if (e.getTag() == null) e.setTag("undefined");
+                if (Formatter.isNullOrEmpty(e.getTag())) e.setTag("undefined");
 
                 if (dRequest.getParameterMap().containsKey("ident")) {
                     e.setIdent(dRequest.getParameterMap().get("ident"));

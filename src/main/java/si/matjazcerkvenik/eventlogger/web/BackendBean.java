@@ -120,6 +120,10 @@ public class BackendBean {
                     displayPattern = displayPattern.replace("%t", list.get(i).getTag());
                 }
 
+                if (displayPattern.contains("%f") && !Formatter.isNullOrEmpty(list.get(i).getLogfile())) {
+                    displayPattern = displayPattern.replace("%f", list.get(i).getLogfile());
+                }
+
                 if (displayPattern.contains("%m")) {
                     displayPattern = displayPattern.replace("%m", list.get(i).getMessage());
                 }
@@ -428,6 +432,18 @@ public class BackendBean {
     }
 
 
+
+
+
+
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
+    /*                                                   */
+    /*                display pattern                    */
+    /*                                                   */
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+
     private String selectedDisplayPattern = "%d - %h - %i[%p] - %t - %m";
 
     public String getSelectedDisplayPattern() {
@@ -435,6 +451,7 @@ public class BackendBean {
     }
 
     public void setSelectedDisplayPattern(String selectedDisplayPattern) {
+        if (Formatter.isNullOrEmpty(selectedDisplayPattern)) selectedDisplayPattern = "%d - %h - %i[%p] - %t - %m";
         this.selectedDisplayPattern = selectedDisplayPattern;
     }
 

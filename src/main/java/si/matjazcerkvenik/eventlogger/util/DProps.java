@@ -57,6 +57,12 @@ public class DProps {
     public static String EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:password@hostname:27017/test?authSource=admin";
     public static int EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC = 5;
     public static int EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC = 30;
+    /**
+     * If flush interval = 0, then all events are immediately sent to mongodb.
+     * If flush interval > 0, then put events in queue and send on each interval.
+     */
+    public static int EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC = 0;
+    public static int EVENTLOGGER_MONGODB_FLUSH_BUFFER_SIZE = 100;
 
     // opensearch config
     public static String EVENTLOGGER_OPENSEARCH_CONNECTION_STRING = "https://admin:admin@hostname:9200";
