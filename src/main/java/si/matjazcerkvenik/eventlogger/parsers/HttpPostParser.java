@@ -144,6 +144,7 @@ public class HttpPostParser implements IEventParser {
                         }
                     }
                 }
+                if (e.getTag() == null) e.setTag("undefined");
 
                 if (dRequest.getParameterMap().containsKey("ident")) {
                     e.setIdent(dRequest.getParameterMap().get("ident"));

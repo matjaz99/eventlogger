@@ -103,9 +103,13 @@
 					<p:tab title="Display pattern">
 						<p:panelGrid columns="2" styleClass="ui-noborder">
 							<p:outputLabel value="Pattern:"/>
-							<p:inputText size="100" value="#{backendBean.selectedDisplayPattern}"/>
+							<p:inplace editor="true" style="font-size: 1.1em; font-weight: bold;">
+								<p:inputText size="60" value="#{backendBean.selectedDisplayPattern}">
+									<p:ajax update="eventPanel"/>
+								</p:inputText>
+							</p:inplace>
 							<p:outputLabel value="Options:"/>
-							<p:outputLabel value="%d - date &amp; time, %h - hostname, %i - ident, %p - pid, %t - tag, %m - message"/>
+							<p:outputLabel value="%d - date &amp; time, %h - hostname, %r-remote address, %i - ident, %p - pid, %t - tag, %m - message"/>
 						</p:panelGrid>
 					</p:tab>
 				</p:tabView>

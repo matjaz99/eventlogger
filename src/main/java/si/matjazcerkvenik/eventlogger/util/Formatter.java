@@ -23,6 +23,12 @@ import java.util.List;
 
 public class Formatter {
 
+    public static boolean isNullOrEmpty(String s) {
+        if (s == null) return true;
+        if (s.trim().isEmpty()) return true;
+        return false;
+    }
+
     /**
      * Format timestamp from millis into readable form.
      * @param timestamp timestamp in millis

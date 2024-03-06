@@ -88,16 +88,54 @@ public class BackendBean {
 
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < list.size(); i++) {
-                long millisSince = now - list.get(i).getTimestamp();
-                if (millisSince < 4 * 3600 * 1000) {
-                    sb.append(Formatter.convertToDHMSFormat((int) millisSince / 1000)).append(" ago - ");
-                } else {
-                    sb.append(Formatter.getFormatedTimestamp(list.get(i).getTimestamp())).append(" - ");
+
+                String displayPattern = selectedDisplayPattern;
+
+                if (displayPattern.contains("%d")) {
+                    long millisSince = now - list.get(i).getTimestamp();
+                    if (millisSince < 4 * 3600 * 1000) {
+                        displayPattern = displayPattern.replace("%d", Formatter.convertToDHMSFormat((int) millisSince / 1000) + " ago");
+                    } else {
+                        displayPattern = displayPattern.replace("%d", Formatter.getFormatedTimestamp(list.get(i).getTimestamp()));
+                    }
                 }
-                sb.append(list.get(i).getHost()).append(" - ");
-                sb.append(list.get(i).getRemoteAddress()).append(" - ");
-                sb.append(list.get(i).getIdent()).append("[").append(list.get(i).getPid()).append("] - ");
-                sb.append(list.get(i).getMessage()).append("\n");
+
+                if (displayPattern.contains("%h")) {
+                    displayPattern = displayPattern.replace("%h", list.get(i).getHost());
+                }
+
+                if (displayPattern.contains("%r")) {
+                    displayPattern = displayPattern.replace("%r", list.get(i).getRemoteAddress());
+                }
+
+                if (displayPattern.contains("%i") && !Formatter.isNullOrEmpty(list.get(i).getIdent())) {
+                    displayPattern = displayPattern.replace("%i", list.get(i).getIdent());
+                }
+
+                if (displayPattern.contains("%p") && !Formatter.isNullOrEmpty(list.get(i).getPid())) {
+                    displayPattern = displayPattern.replace("%p", list.get(i).getPid());
+                }
+
+                if (displayPattern.contains("%t") && !Formatter.isNullOrEmpty(list.get(i).getTag())) {
+                    displayPattern = displayPattern.replace("%t", list.get(i).getTag());
+                }
+
+                if (displayPattern.contains("%m")) {
+                    displayPattern = displayPattern.replace("%m", list.get(i).getMessage());
+                }
+
+                sb.append(displayPattern).append("\n");
+
+//                long millisSince = now - list.get(i).getTimestamp();
+//                if (millisSince < 4 * 3600 * 1000) {
+//                    sb.append(Formatter.convertToDHMSFormat((int) millisSince / 1000)).append(" ago - ");
+//                } else {
+//                    sb.append(Formatter.getFormatedTimestamp(list.get(i).getTimestamp())).append(" - ");
+//                }
+//                sb.append(list.get(i).getHost()).append(" - ");
+//                sb.append(list.get(i).getRemoteAddress()).append(" - ");
+//                sb.append(list.get(i).getIdent()).append("[").append(list.get(i).getPid()).append("] - ");
+//                sb.append(list.get(i).getMessage()).append("\n");
             }
             return sb.toString();
 
