@@ -81,6 +81,8 @@ public class OnStartListener implements ServletContextListener {
         DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = System.getenv().getOrDefault("EVENTLOGGER_MONGODB_CONNECTION_STRING", "mongodb://admin:mongodbpassword@mongovm:27017/?authSource=admin").trim();
         DProps.EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC", "5").trim());
         DProps.EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC", "30").trim());
+        DProps.EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC", "0").trim());
+        DProps.EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE", "100").trim());
         DProps.EVENTLOGGER_OPENSEARCH_CONNECTION_STRING = System.getenv().getOrDefault("EVENTLOGGER_OPENSEARCH_CONNECTION_STRING", "https://admin:admin@hostname:9200").trim();
         DProps.EVENTLOGGER_OPENSEARCH_CONNECT_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_OPENSEARCH_CONNECT_TIMEOUT_SEC", "5").trim());
         DProps.EVENTLOGGER_OPENSEARCH_READ_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_OPENSEARCH_READ_TIMEOUT_SEC", "30").trim());
@@ -96,6 +98,7 @@ public class OnStartListener implements ServletContextListener {
 //            DProps.EVENTLOGGER_STORAGE_TYPE = "opensearch";
             DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@ubuntu-vm:27017/?authSource=admin";
 //            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@lionvm:27017/?authSource=admin";
+            DProps.EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC", "5").trim());
             DProps.EVENTLOGGER_OPENSEARCH_CONNECTION_STRING = "https://admin:admin@elasticvm:9200";
             DProps.EVENTLOGGER_DATA_RETENTION_DAYS = 500;
             DProps.EVENTLOGGER_DB_POOL_SIZE = 10;
@@ -118,10 +121,13 @@ public class OnStartListener implements ServletContextListener {
         // load yaml config file
         DProps.yamlConfig = ConfigReader.loadProvidersYamlConfig(DProps.EVENTLOGGER_EVENT_RULES_CONFIG_FILE);
 
+        TaskManager.getInstance().startFlushQueueTimer();
+
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
         TaskManager.getInstance().stopDbMaintenanceTimer();
+        TaskManager.getInstance().stopFlushQueueTimer();
     }
 }

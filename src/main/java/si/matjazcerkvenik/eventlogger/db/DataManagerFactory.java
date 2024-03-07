@@ -23,6 +23,10 @@ import si.matjazcerkvenik.eventlogger.util.TaskManager;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This is client factory and client pool implementation.
+ * Every client MUST be returned to the pool after use.
+ */
 public class DataManagerFactory {
 
     private int count = 0;

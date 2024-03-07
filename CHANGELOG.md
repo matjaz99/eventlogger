@@ -1,5 +1,13 @@
 # EventLogger changelog
 
+## 0.3.4-SNAPSHOT
+
+* [FEATURE] Events queue and flush interval
+
+## 0.3.3-SNAPSHOT
+
+* [FEATURE] Display pattern
+
 ## 0.3.1-SNAPSHOT
 
 * [FEATURE] Querying OpenSearch

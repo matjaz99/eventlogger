@@ -20,6 +20,7 @@ import io.krakens.grok.api.GrokCompiler;
 import io.krakens.grok.api.Match;
 import io.prometheus.client.Counter;
 import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
+import si.matjazcerkvenik.eventlogger.db.EventQueue;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DAlarm;
 import si.matjazcerkvenik.eventlogger.model.DAlarmSeverity;
@@ -125,7 +126,11 @@ public class ReceiverServlet extends HttpServlet {
 //            }
         }
 
-        iDataManager.addEvents(eventList);
+        if (DProps.EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC == 0) {
+            iDataManager.addEvents(eventList);
+        } else {
+            EventQueue.getInstance().addEvents(eventList);
+        }
         DataManagerFactory.getInstance().returnClient(iDataManager);
 
     }

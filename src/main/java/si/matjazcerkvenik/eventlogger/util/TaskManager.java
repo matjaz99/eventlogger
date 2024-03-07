@@ -16,6 +16,7 @@
 package si.matjazcerkvenik.eventlogger.util;
 
 import si.matjazcerkvenik.eventlogger.db.DbMaintenanceTask;
+import si.matjazcerkvenik.eventlogger.db.FlushQueueTask;
 
 import java.util.Timer;
 
@@ -54,4 +55,34 @@ public class TaskManager {
             dbMaintenanceTask = null;
         }
     }
+
+
+    private Timer flushQueueTimer = null;
+    private FlushQueueTask flushQueueTask = null;
+
+    public void startFlushQueueTimer() {
+
+        if (DProps.EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC == 0) return;
+
+        if (flushQueueTask == null) {
+            LogFactory.getLogger().info("Start FlushQueue Task");
+            flushQueueTimer = new Timer("FlushQueueTimer");
+            flushQueueTask = new FlushQueueTask();
+            flushQueueTimer.schedule(flushQueueTask, 0, DProps.EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC * 1000);
+        }
+
+    }
+
+    public void stopFlushQueueTimer() {
+        if (flushQueueTimer != null) {
+            flushQueueTimer.cancel();
+            flushQueueTimer = null;
+        }
+        if (flushQueueTask != null) {
+            flushQueueTask.cancel();
+            flushQueueTask = null;
+        }
+    }
+
+
 }

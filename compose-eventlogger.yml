@@ -8,7 +8,7 @@ networks:
 services:
 
   eventlogger:
-    image: matjaz99/eventlogger:0.2.6
+    image: matjaz99/eventlogger:0.3.4
     ports:
       - 7073:8080
     networks:
@@ -24,6 +24,8 @@ services:
       - EVENTLOGGER_MONGODB_CONNECTION_STRING=mongodb://admin:mongodbpassword@192.168.0.170:27017/?authSource=admin
       - EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC=5
       - EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC=30
+      - EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC=5
+      - EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE=100
       - EVENTLOGGER_OPENSEARCH_CONNECTION_STRING=https://admin:admin@192.168.0.170:9200
       - EVENTLOGGER_OPENSEARCH_CONNECT_TIMEOUT_SEC=5
       - EVENTLOGGER_OPENSEARCH_READ_TIMEOUT_SEC=30
