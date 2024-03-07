@@ -2,6 +2,7 @@ package si.matjazcerkvenik.eventlogger.db;
 
 
 import si.matjazcerkvenik.eventlogger.model.DEvent;
+import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
 import java.util.List;
 import java.util.TimerTask;
@@ -13,7 +14,8 @@ public class FlushQueueTask extends TimerTask {
 
         List<DEvent> eventList = EventQueue.getInstance().getAllEvents();
 
-        System.out.println("FlushQueueTask: size=" + eventList.size());
+        LogFactory.getLogger().info("FlushQueueTask: queue size=" + eventList.size());
+        if (eventList.isEmpty()) return;
 
         // TODO check and limit the size of batch
 
