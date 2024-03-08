@@ -17,6 +17,7 @@ services:
       - TZ=${TZ}
       - SIMPLELOGGER_FILENAME=/opt/eventlogger/log/eventlogger.log
       - EVENTLOGGER_EVENT_RULES_CONFIG_FILE=/opt/eventlogger/rules/event_rules.yml
+      - EVENTLOGGER_GUI_DISPLAY_PATTERN="%D - %h - %i[%p] - %t - %m"
       - EVENTLOGGER_DATA_RETENTION_DAYS=30
       - EVENTLOGGER_DB_POOL_SIZE=3
       # choose storage type: mongodb, opensearch or memory

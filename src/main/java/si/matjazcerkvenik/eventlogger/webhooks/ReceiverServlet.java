@@ -114,7 +114,7 @@ public class ReceiverServlet extends HttpServlet {
 
 
         if (eventList == null) {
-            LogFactory.getLogger().warn("ReceiverServlet: doPost: failed to parse: " + dRequest.toString());
+            LogFactory.getLogger().warn("ReceiverServlet: doPost: eventList is empty: " + dRequest.toString());
         } else {
             for (DEvent e : eventList) {
                 evaluateRules(e);

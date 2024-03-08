@@ -92,11 +92,15 @@ public class BackendBean {
                 String displayPattern = selectedDisplayPattern;
 
                 if (displayPattern.contains("%d")) {
+                    displayPattern = displayPattern.replace("%d", Formatter.getFormatedTimestamp(list.get(i).getTimestamp()));
+                }
+
+                if (displayPattern.contains("%D")) {
                     long millisSince = now - list.get(i).getTimestamp();
                     if (millisSince < 4 * 3600 * 1000) {
-                        displayPattern = displayPattern.replace("%d", Formatter.convertToDHMSFormat((int) millisSince / 1000) + " ago");
+                        displayPattern = displayPattern.replace("%D", Formatter.convertToDHMSFormat((int) millisSince / 1000) + " ago");
                     } else {
-                        displayPattern = displayPattern.replace("%d", Formatter.getFormatedTimestamp(list.get(i).getTimestamp()));
+                        displayPattern = displayPattern.replace("%D", Formatter.getFormatedTimestamp(list.get(i).getTimestamp()));
                     }
                 }
 
@@ -122,6 +126,10 @@ public class BackendBean {
 
                 if (displayPattern.contains("%f") && !Formatter.isNullOrEmpty(list.get(i).getLogfile())) {
                     displayPattern = displayPattern.replace("%f", list.get(i).getLogfile());
+                }
+
+                if (displayPattern.contains("%w") && !Formatter.isNullOrEmpty(list.get(i).getEndpoint())) {
+                    displayPattern = displayPattern.replace("%w", list.get(i).getEndpoint());
                 }
 
                 if (displayPattern.contains("%m")) {
@@ -444,14 +452,14 @@ public class BackendBean {
 
 
 
-    private String selectedDisplayPattern = "%d - %h - %i[%p] - %t - %m";
+    private String selectedDisplayPattern = DProps.EVENTLOGGER_GUI_DISPLAY_PATTERN;
 
     public String getSelectedDisplayPattern() {
         return selectedDisplayPattern;
     }
 
     public void setSelectedDisplayPattern(String selectedDisplayPattern) {
-        if (Formatter.isNullOrEmpty(selectedDisplayPattern)) selectedDisplayPattern = "%d - %h - %i[%p] - %t - %m";
+        if (Formatter.isNullOrEmpty(selectedDisplayPattern)) selectedDisplayPattern = DProps.EVENTLOGGER_GUI_DISPLAY_PATTERN;
         this.selectedDisplayPattern = selectedDisplayPattern;
     }
 

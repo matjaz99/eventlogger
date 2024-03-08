@@ -78,6 +78,7 @@ public class OnStartListener implements ServletContextListener {
         DProps.EVENTLOGGER_MEMORY_BUFFER_SIZE = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MEMORY_BUFFER_SIZE", "1000").trim());
         DProps.EVENTLOGGER_DATA_RETENTION_DAYS = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_DATA_RETENTION_DAYS", "30").trim());
         DProps.EVENTLOGGER_DB_POOL_SIZE = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_DB_POOL_SIZE", "3").trim());
+        DProps.EVENTLOGGER_GUI_DISPLAY_PATTERN = System.getenv().getOrDefault("EVENTLOGGER_GUI_DISPLAY_PATTERN", "%D - %h - %i[%p] - %t - %m").trim();
         DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = System.getenv().getOrDefault("EVENTLOGGER_MONGODB_CONNECTION_STRING", "mongodb://admin:mongodbpassword@mongovm:27017/?authSource=admin").trim();
         DProps.EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC", "5").trim());
         DProps.EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC", "30").trim());
