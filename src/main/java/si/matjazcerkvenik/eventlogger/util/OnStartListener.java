@@ -94,12 +94,12 @@ public class OnStartListener implements ServletContextListener {
         // set development environment
         if (new File("/Users/matjaz").exists()) {
             LogFactory.getLogger().warn("#######   RUNNING IN DEV MODE   #######");
-//            DProps.EVENTLOGGER_STORAGE_TYPE = System.getenv().getOrDefault("EVENTLOGGER_STORAGE_TYPE", "memory").trim();
+//            DProps.EVENTLOGGER_STORAGE_TYPE = "memory";
             DProps.EVENTLOGGER_STORAGE_TYPE = "mongodb";
 //            DProps.EVENTLOGGER_STORAGE_TYPE = "opensearch";
             DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@ubuntu-vm:27017/?authSource=admin";
 //            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@lionvm:27017/?authSource=admin";
-            DProps.EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC", "5").trim());
+            DProps.EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC = 5;
             DProps.EVENTLOGGER_OPENSEARCH_CONNECTION_STRING = "https://admin:admin@elasticvm:9200";
             DProps.EVENTLOGGER_DATA_RETENTION_DAYS = 500;
             DProps.EVENTLOGGER_DB_POOL_SIZE = 10;
