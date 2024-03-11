@@ -83,7 +83,7 @@ public class OnStartListener implements ServletContextListener {
         DProps.EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC", "5").trim());
         DProps.EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC", "30").trim());
         DProps.EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC", "0").trim());
-        DProps.EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE", "100").trim());
+        DProps.EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE", "300").trim());
         DProps.EVENTLOGGER_OPENSEARCH_CONNECTION_STRING = System.getenv().getOrDefault("EVENTLOGGER_OPENSEARCH_CONNECTION_STRING", "https://admin:admin@hostname:9200").trim();
         DProps.EVENTLOGGER_OPENSEARCH_CONNECT_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_OPENSEARCH_CONNECT_TIMEOUT_SEC", "5").trim());
         DProps.EVENTLOGGER_OPENSEARCH_READ_TIMEOUT_SEC = Integer.parseInt(System.getenv().getOrDefault("EVENTLOGGER_OPENSEARCH_READ_TIMEOUT_SEC", "30").trim());

@@ -5,6 +5,7 @@ import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FlushQueueThread extends Thread {
@@ -32,12 +33,21 @@ public class FlushQueueThread extends Thread {
             if (eventList.isEmpty()) continue;
 
             // TODO check and limit the size of batch
-            if (eventList.size() > DProps.EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE) {
-
-            }
-
             IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-            iDataManager.addEvents(eventList);
+
+            List<DEvent> tempList = new ArrayList<>();
+            int i = 0;
+            for (DEvent e : eventList) {
+                tempList.add(e);
+                i++;
+                if (i == DProps.EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE) {
+                    iDataManager.addEvents(tempList);
+                    i = 0;
+                    tempList.clear();
+                }
+            }
+            if (!tempList.isEmpty()) iDataManager.addEvents(tempList);
+
             DataManagerFactory.getInstance().returnClient(iDataManager);
 
         }
