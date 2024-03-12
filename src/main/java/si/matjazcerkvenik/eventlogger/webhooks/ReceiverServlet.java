@@ -81,11 +81,11 @@ public class ReceiverServlet extends HttpServlet {
 
             if (dRequest.getRequestUri().equalsIgnoreCase("/eventlogger/webhook/fluentd-syslog")) {
 
-                parser = new FluentdSyslogParser();
+                parser = new FluentSyslogParser();
 
             } else if (dRequest.getRequestUri().equalsIgnoreCase("/eventlogger/webhook/fluentd-tail")) {
 
-                parser = new FluentdTailParser();
+                parser = new FluentTailParser();
 
             } else if (dRequest.getRequestUri().equalsIgnoreCase("/eventlogger/webhook/http")) {
 

@@ -49,7 +49,7 @@ public class HttpPostParser implements IEventParser {
         try {
 
             if (dRequest.getContentType().equalsIgnoreCase("application/json")) {
-                // TODO check if object or array and cut to pieces
+                // check if it is just a json object or array of objects and cut to pieces
                 if (dRequest.getBody().startsWith("{") && dRequest.getBody().trim().endsWith("}")) {
                     return parseJsonObject(dRequest);
                 }
@@ -70,7 +70,7 @@ public class HttpPostParser implements IEventParser {
 
         } catch (Exception e) {
             LogFactory.getLogger().error("HttpPostParser: parseRequest: Exception: " + e.getMessage());
-            throw new EventParserException("generic-post parser failed");
+            throw new EventParserException("http post parser failed");
         }
 
     }
@@ -146,9 +146,9 @@ public class HttpPostParser implements IEventParser {
                         }
                     }
                 }
-                if (Formatter.isNullOrEmpty(e.getTag())) e.setTag("undefined");
+                if (Formatter.isNullOrEmpty(e.getTag())) e.setTag("unknown");
 
-                if (dRequest.getParameterMap().containsKey("ident")) {
+                if (!Formatter.isNullOrEmpty(dRequest.getParameterMap().get("ident"))) {
                     e.setIdent(dRequest.getParameterMap().get("ident"));
                 } else {
                     // use tag, if ident is not found

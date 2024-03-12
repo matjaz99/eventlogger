@@ -26,7 +26,7 @@ import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
 import java.util.List;
 
-public class FluentdTailParser implements IEventParser {
+public class FluentTailParser implements IEventParser {
 
     @Override
     public List<DEvent> parseRequest(DRequest dRequest) throws EventParserException {
@@ -78,12 +78,12 @@ public class FluentdTailParser implements IEventParser {
                 return eventList;
             }
 
-            LogFactory.getLogger().warn("FluentdTailParser: eventList is empty!");
+            LogFactory.getLogger().warn("FluentTailParser: eventList is empty!");
             return null;
 
         } catch (Exception e) {
-            LogFactory.getLogger().error("FluentdTailParser: Exception: " + e.getMessage());
-            throw new EventParserException("fluentd-tail parser failed");
+            LogFactory.getLogger().error("FluentTailParser: Exception: " + e.getMessage());
+            throw new EventParserException("fluent-tail parser failed");
         }
 
 
