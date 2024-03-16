@@ -95,6 +95,8 @@ public class MongoDataManager implements IDataManager {
                     database.createCollection(dbCollectionEvents);
                 }
                 // create indexes
+                logger.info(getClientName() + " creating index: timestamp");
+                coll.createIndex(Indexes.ascending("timestamp"));
                 logger.info(getClientName() + " creating index: host");
                 coll.createIndex(Indexes.ascending("host"));
                 logger.info(getClientName() + " creating index: ident");

@@ -97,10 +97,10 @@ public class OnStartListener implements ServletContextListener {
 //            DProps.EVENTLOGGER_STORAGE_TYPE = "memory";
             DProps.EVENTLOGGER_STORAGE_TYPE = "mongodb";
 //            DProps.EVENTLOGGER_STORAGE_TYPE = "opensearch";
-//            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@ubuntu-vm:27017/?authSource=admin";
+            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@ubuntu-vm:27017/?authSource=admin";
 //            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@lionvm:27017/?authSource=admin";
-            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@localhost:27017/?authSource=admin";
-            DProps.EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC = 5;
+//            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@localhost:27017/?authSource=admin";
+            DProps.EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC = 15;
             DProps.EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE = 10;
             DProps.EVENTLOGGER_OPENSEARCH_CONNECTION_STRING = "https://admin:admin@elasticvm:9200";
             DProps.EVENTLOGGER_DATA_RETENTION_DAYS = 500;
