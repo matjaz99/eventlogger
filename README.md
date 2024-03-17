@@ -95,12 +95,14 @@ Memory storage type does not require any configuration.
 
 MongoDB is configured with environment variables:
 
-- `EVENTLOGGER_STORAGE_TYPE` - set to `mongodb` to enable persistence in MongoDB (default is `memory`).
-- `EVENTLOGGER_MONGODB_CONNECTION_STRING` - connection string to connect to MongoDB (default `mongodb://admin:mongodbpassword@mongovm:27017/?authSource=admin`).
-- `EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC` - connect timeout of MongoDB client (default is 5 seconds).
-- `EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC` - read timeout of MongoDB client (default is 30 seconds).
-- `EVENTLOGGER_DB_POOL_SIZE` - number of MongoDB clients (default 3).
-- `EVENTLOGGER_DATA_RETENTION_DAYS` - how many days before data is deleted from database (default 30 days)
+| EnvVar                                    | Description                                                                                                          |
+|-------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| `EVENTLOGGER_STORAGE_TYPE`                | set to `mongodb` to enable persistence in MongoDB (default is `memory`).                                             |
+| `EVENTLOGGER_MONGODB_CONNECTION_STRING`   | connection string to connect to MongoDB (default `mongodb://admin:mongodbpassword@mongovm:27017/?authSource=admin`). |
+| `EVENTLOGGER_MONGODB_CONNECT_TIMEOUT_SEC` | connect timeout of MongoDB client (default is 5 seconds).                                                            |
+| `EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC`    | read timeout of MongoDB client (default is 30 seconds).                                                              |
+| `EVENTLOGGER_DB_POOL_SIZE`                | number of MongoDB clients (default 3).                                                                               |
+| `EVENTLOGGER_DATA_RETENTION_DAYS`         | how many days before data is deleted from database (default 30 days)                                                 |
 
 
 ## Configuring data sources
