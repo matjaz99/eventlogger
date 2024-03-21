@@ -46,6 +46,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @ManagedBean
@@ -237,13 +238,12 @@ public class BackendBean {
 
     private StreamedContent downloadFile;
 
-    public StreamedContent downloadFile() {
+    public StreamedContent getDownloadFile() {
         String s = getConcatenatedEvents();
         downloadFile = DefaultStreamedContent.builder()
                 .name("log_" + System.currentTimeMillis() + ".log")
                 .contentType("text/plain")
-                .stream(() -> new ByteArrayInputStream(s.getBytes()))
-//                .stream(() -> FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/demo/images/boromir.jpg"))
+                .stream(() -> new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8)))
                 .build();
         return downloadFile;
     }

@@ -126,11 +126,11 @@
 									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
 									 action="#{backendBean.resetFilter}"
 									 update="msgForm, eventPanel"/>
-					<p:commandButton type="submit" value="Download"
+					<p:commandButton value="Download"
 									 styleClass="ui-button-outlined ui-button-secondary"
-									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
-									 action="#{backendBean.downloadFile}"
-									 update="msgForm"/>
+									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;">
+						<p:fileDownload value="#{backendBean.downloadFile}"/>
+					</p:commandButton>
 
 					<p:ajaxStatus styleClass="p-d-block p-mb-4">
 						<f:facet name="default">
