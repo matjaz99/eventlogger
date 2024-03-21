@@ -187,8 +187,14 @@ public class BackendBean {
             } else if (selectedPredefinedTimeRange.equals("last4h")) {
                 startDateFromRange.setTime(now - 4 * 3600 * 1000);
                 endDateFromRange.setTime(now);
+            } else if (selectedPredefinedTimeRange.equals("last12h")) {
+                startDateFromRange.setTime(now - 12 * 3600 * 1000);
+                endDateFromRange.setTime(now);
             } else if (selectedPredefinedTimeRange.equals("last24h")) {
                 startDateFromRange.setTime(now - 24 * 3600 * 1000);
+                endDateFromRange.setTime(now);
+            } else if (selectedPredefinedTimeRange.equals("last2d")) {
+                startDateFromRange.setTime(now - 2 * 24 * 3600 * 1000);
                 endDateFromRange.setTime(now);
             } else if (selectedPredefinedTimeRange.equals("last7d")) {
                 startDateFromRange.setTime(now - 7 * 24 * 3600 * 1000);

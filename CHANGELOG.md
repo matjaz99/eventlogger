@@ -2,7 +2,8 @@
 
 ## 0.3.4-SNAPSHOT
 
-* [FEATURE] Events queue and flush interval
+* [FEATURE] Sort events in queue and flush data in periodic interval
+* [FEATURE] Download content
 
 ## 0.3.3-SNAPSHOT
 
