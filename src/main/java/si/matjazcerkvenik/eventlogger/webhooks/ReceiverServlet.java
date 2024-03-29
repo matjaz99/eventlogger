@@ -162,6 +162,20 @@ public class ReceiverServlet extends HttpServlet {
                         }
                     }
                 }
+                if (rule.getFilter() != null) {
+                    if (rule.getFilter().containsKey("host")) {
+                        if (!rule.getFilter().get("host").equalsIgnoreCase(event.getHost())) {
+                            continue;
+                        }
+                    }
+                }
+                if (rule.getFilter() != null) {
+                    if (rule.getFilter().containsKey("tag")) {
+                        if (!rule.getFilter().get("tag").equalsIgnoreCase(event.getTag())) {
+                            continue;
+                        }
+                    }
+                }
 
 
                 // check expression
@@ -190,9 +204,9 @@ public class ReceiverServlet extends HttpServlet {
 //					System.out.println("nothing found");
                         continue;
                     }
-                    for (String s : capture.keySet()) {
+//                    for (String s : capture.keySet()) {
 //					System.out.println("GROK RESULT: " + capture.get(s).toString());
-                    }
+//                    }
 
                 } else {
 
@@ -244,7 +258,7 @@ public class ReceiverServlet extends HttpServlet {
                     DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
 
                 } else {
-                    LogFactory.getLogger().info("no action");
+                    LogFactory.getLogger().info("unsupported action: " + rule.getAction().get("type"));
                 }
 
             } // end for each rule

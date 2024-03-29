@@ -56,7 +56,7 @@ public class FluentSyslogParser implements IEventParser {
                     e.setEventSource(request.getRemoteHost());
                     e.setEndpoint(request.getRequestUri());
                     if (Formatter.isNullOrEmpty(e.getHost())) e.setHost(request.getRemoteHost());
-                    if (Formatter.isNullOrEmpty(e.getIdent())) e.setIdent("?.syslog");
+                    if (Formatter.isNullOrEmpty(e.getIdent())) e.setIdent(".syslog");
                     if (request.getHeaderMap().containsKey("tag")) {
                         // first check if tag is present in header
                         e.setTag(request.getHeaderMap().get("tag"));
@@ -66,7 +66,7 @@ public class FluentSyslogParser implements IEventParser {
                             e.setTag(request.getParameterMap().get("tag"));
                         }
                     }
-                    if (Formatter.isNullOrEmpty(e.getTag())) e.setTag("?.syslog");
+                    if (Formatter.isNullOrEmpty(e.getTag())) e.setTag(".syslog");
                     if (Formatter.isNullOrEmpty(e.getPid())) e.setPid("null");
                     e.setId(DProps.increaseAndGetEventsReceivedCount());
                     eventList.add(e);
@@ -96,7 +96,7 @@ public class FluentSyslogParser implements IEventParser {
                     e.setEventSource(request.getRemoteHost());
                     e.setEndpoint(request.getRequestUri());
                     if (Formatter.isNullOrEmpty(e.getHost())) e.setHost(request.getRemoteHost());
-                    if (Formatter.isNullOrEmpty(e.getIdent())) e.setIdent("?.syslog");
+                    if (Formatter.isNullOrEmpty(e.getIdent())) e.setIdent(".syslog");
                     if (request.getHeaderMap().containsKey("tag")) {
                         // first check if tag is present in header
                         e.setTag(request.getHeaderMap().get("tag"));
@@ -106,7 +106,7 @@ public class FluentSyslogParser implements IEventParser {
                             e.setTag(request.getParameterMap().get("tag"));
                         }
                     }
-                    if (Formatter.isNullOrEmpty(e.getTag())) e.setTag("?.syslog");
+                    if (Formatter.isNullOrEmpty(e.getTag())) e.setTag(".syslog");
                     if (Formatter.isNullOrEmpty(e.getPid())) e.setPid("null");
                     e.setId(DProps.increaseAndGetEventsReceivedCount());
                     eventList.add(e);
