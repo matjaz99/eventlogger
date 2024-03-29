@@ -23,6 +23,7 @@ public class DRule {
     private Map<String, String> pattern;
     private Map<String, String> filter;
     private Map<String, String> action;
+    private long hits = 0L;
 
     public String getName() {
         return name;
@@ -56,6 +57,14 @@ public class DRule {
         this.action = action;
     }
 
+    public void increaseHits() {
+        hits++;
+    }
+
+    public long getHits() {
+        return hits;
+    }
+
     @Override
     public String toString() {
         return "DRule{" +
@@ -63,6 +72,7 @@ public class DRule {
                 ", pattern=" + pattern +
                 ", filter=" + filter +
                 ", action=" + action +
+                ", hits=" + hits +
                 '}';
     }
 }

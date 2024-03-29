@@ -222,6 +222,7 @@ public class ReceiverServlet extends HttpServlet {
                     AlarmMananger.raiseAlarm(a);
 
                     DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
+                    rule.increaseHits();
 
                 } else if (rule.getAction().get("type").equalsIgnoreCase("clear")) {
 
@@ -230,6 +231,7 @@ public class ReceiverServlet extends HttpServlet {
                     AlarmMananger.clearAlarm(a);
 
                     DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
+                    rule.increaseHits();
 
                 } else if (rule.getAction().get("type").equalsIgnoreCase("event")) {
 
@@ -238,6 +240,7 @@ public class ReceiverServlet extends HttpServlet {
                     AlarmMananger.sendEvent(a);
 
                     DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
+                    rule.increaseHits();
 
                 } else if (rule.getAction().get("type").equalsIgnoreCase("count")) {
 
@@ -256,6 +259,7 @@ public class ReceiverServlet extends HttpServlet {
                     DMetrics.customCounterMetrics.put(rule.getAction().get("metricName"), counter);
 
                     DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
+                    rule.increaseHits();
 
                 } else {
                     LogFactory.getLogger().info("unsupported action: " + rule.getAction().get("type"));

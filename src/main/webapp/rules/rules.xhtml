@@ -18,7 +18,7 @@
 
 					<f:facet name="title">
 						<p:outputLabel value="#{group.name}" class="boldtext" />
-						<p:outputLabel value="#{group.endpoint}" style="margin-left: 20px; font-size: 12px;" />
+						<p:outputLabel value="#{group.endpoint}" style="margin-left: 20px; font-size: 0.7em;" />
 					</f:facet>
 
 					<h:form id="groupForm">
@@ -36,6 +36,9 @@
 							</p:column>
 							<p:column headerText="Action">
 								<p:outputLabel value="#{rule.action.get('type')}"/>
+							</p:column>
+							<p:column headerText="Hits">
+								<p:outputLabel value="#{rule.hits}"/>
 							</p:column>
 						</p:dataTable>
 
