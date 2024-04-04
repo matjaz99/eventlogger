@@ -61,6 +61,10 @@ public class DRule {
         hits++;
     }
 
+    public void resetHits() {
+        hits = 0;
+    }
+
     public long getHits() {
         return hits;
     }

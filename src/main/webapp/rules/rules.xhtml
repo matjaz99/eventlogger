@@ -10,7 +10,17 @@
 
 			<p:outputLabel value="Event rules" style="font-weight: bold; font-size: 24px;"/>
 
-			<p:accordionPanel multiple="true"
+			<h:form id="resetButtonForm">
+				<p:commandButton type="submit" value="Reset hits"
+								 styleClass="ui-button-outlined"
+								 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
+								 action="#{configBean.resetRulesCounterAction}"
+								 update="resetButtonForm, rulesPanel" />
+				<p:outputLabel value="Last reset: #{configBean.rulesLastResetTimestamp}" style="margin-left: 20px; font-size: 0.7em;" />
+			</h:form>
+
+			<p:accordionPanel id="rulesPanel"
+							  multiple="true"
 							  widgetVar="multiple"
 							  activeIndex="-1"
 							  value="#{configBean.rulesGroups}" var="group">

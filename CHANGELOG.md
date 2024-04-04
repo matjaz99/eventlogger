@@ -4,7 +4,7 @@
 
 * [FEATURE] Sort events in queue and flush data in periodic interval
 * [FEATURE] Download content
-* [ENHANCEMENT] Added hits counter for each rule
+* [ENHANCEMENT] Added hits counter for each rule and reset hits button
 
 ## 0.3.3-SNAPSHOT
 

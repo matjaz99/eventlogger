@@ -90,6 +90,7 @@ public class OnStartListener implements ServletContextListener {
         DProps.EVENTLOGGER_OPENSEARCH_INDEX_NAME = System.getenv().getOrDefault("EVENTLOGGER_OPENSEARCH_INDEX_NAME", "eventlogger").trim();
         DProps.EVENTLOGGER_ALARM_DESTINATION = System.getenv().getOrDefault("EVENTLOGGER_ALARM_DESTINATION", "http://alertmonitor:8080/alertmonitor/alerts").trim();
         DProps.EVENTLOGGER_EVENT_RULES_CONFIG_FILE = System.getenv().getOrDefault("EVENTLOGGER_EVENT_RULES_CONFIG_FILE", "/opt/eventlogger/rules/event_rules.yml").trim();
+        DProps.EVENTLOGGER_EVENT_RULES_LAST_RESET_TIME = Formatter.getFormatedTimestamp(System.currentTimeMillis());
 
         // set development environment
         if (new File("/Users/matjaz").exists()) {

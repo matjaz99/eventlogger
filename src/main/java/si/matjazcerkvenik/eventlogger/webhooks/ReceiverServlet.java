@@ -161,15 +161,11 @@ public class ReceiverServlet extends HttpServlet {
                             continue;
                         }
                     }
-                }
-                if (rule.getFilter() != null) {
                     if (rule.getFilter().containsKey("host")) {
                         if (!rule.getFilter().get("host").equalsIgnoreCase(event.getHost())) {
                             continue;
                         }
                     }
-                }
-                if (rule.getFilter() != null) {
                     if (rule.getFilter().containsKey("tag")) {
                         if (!rule.getFilter().get("tag").equalsIgnoreCase(event.getTag())) {
                             continue;

@@ -15,6 +15,7 @@
  */
 package si.matjazcerkvenik.eventlogger.web;
 
+import si.matjazcerkvenik.eventlogger.model.config.DRule;
 import si.matjazcerkvenik.eventlogger.model.config.DRulesGroup;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.Formatter;
@@ -156,6 +157,19 @@ public class ConfigBean {
 
     public List<DRulesGroup> getRulesGroups() {
         return DProps.yamlConfig.getGroups();
+    }
+
+    public void resetRulesCounterAction() {
+        for (DRulesGroup rg : DProps.yamlConfig.getGroups()) {
+            for (DRule r : rg.getRules()) {
+                r.resetHits();
+            }
+        }
+        DProps.EVENTLOGGER_EVENT_RULES_LAST_RESET_TIME = Formatter.getFormatedTimestamp(System.currentTimeMillis());
+    }
+
+    public String getRulesLastResetTimestamp() {
+        return DProps.EVENTLOGGER_EVENT_RULES_LAST_RESET_TIME;
     }
 
 }
