@@ -15,10 +15,7 @@
  */
 package si.matjazcerkvenik.eventlogger.web;
 
-import si.matjazcerkvenik.eventlogger.model.config.DRule;
-import si.matjazcerkvenik.eventlogger.model.config.DRulesGroup;
 import si.matjazcerkvenik.eventlogger.util.DProps;
-import si.matjazcerkvenik.eventlogger.util.Formatter;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
 import si.matjazcerkvenik.simplelogger.LEVEL;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
@@ -26,9 +23,6 @@ import si.matjazcerkvenik.simplelogger.SimpleLogger;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
-import java.util.List;
-import java.util.Random;
 
 @ManagedBean
 @ApplicationScoped
@@ -42,12 +36,13 @@ public class EvgenBean {
     @PostConstruct
     public void init() {
         if (evgenLog == null) {
-            System.out.println("init evgenLog");
-            evgenLog = new SimpleLogger("./eventGen-" + DProps.HOSTNAME + ".log");
+            evgenLog = new SimpleLogger();
+            evgenLog.setFilename("/opt/eventlogger/log/eventGen-" + DProps.HOSTNAME + ".log");
             evgenLog.setLogLevel(LEVEL.DEBUG);
             evgenLog.setBackup(20);
             evgenLog.setMaxSizeMb(100);
         }
+        LogFactory.getLogger().info("init evgenLog: " + evgenLog.getFilename());
     }
 
 
@@ -60,7 +55,7 @@ public class EvgenBean {
     }
 
     public void applyDumpNewLinesAction() {
-        System.out.println("dumping " + numberOfNewLines + " lines");
+        LogFactory.getLogger().info("dumping " + numberOfNewLines + " lines");
         int i = 0;
         while (i < numberOfNewLines) {
             evgenLog.write(array[(int) (Math.random() * array.length)]);
