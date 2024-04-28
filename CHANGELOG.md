@@ -2,8 +2,10 @@
 
 ## 0.3.4-SNAPSHOT
 
+* [CHANGE] Upgraded simple-logger to 1.7.1
 * [FEATURE] Sort events in queue and flush data in periodic interval
 * [FEATURE] Download content
+* [FEATURE] Evgen generate dummy log file, for testing purposes
 * [ENHANCEMENT] Added hits counter for each rule and reset hits button
 
 ## 0.3.3-SNAPSHOT

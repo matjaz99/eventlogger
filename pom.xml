@@ -79,7 +79,7 @@
         <dependency>
             <groupId>si.matjazcerkvenik.simplelogger</groupId>
             <artifactId>simple-logger</artifactId>
-            <version>1.7.0</version>
+            <version>1.7.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

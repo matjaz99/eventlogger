@@ -29,6 +29,7 @@ import java.util.List;
 @ManagedBean
 //@SessionScoped
 @RequestScoped
+@SuppressWarnings("unused")
 public class ConfigBean {
 
     private String selectedLogLevel = "INFO";

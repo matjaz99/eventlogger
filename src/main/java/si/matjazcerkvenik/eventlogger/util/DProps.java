@@ -44,6 +44,7 @@ public class DProps {
     public static String VERSION = "n/a";
     public static boolean IS_CONTAINERIZED = false;
     public static String LOCAL_IP;
+    public static String HOSTNAME;
     public static String DATE_FORMAT = "yyyy/MM/dd H:mm:ss";
     public static String EVENTLOGGER_EVENT_RULES_CONFIG_FILE = "/opt/eventlogger/event_rules.yml";
     public static String EVENTLOGGER_GUI_DISPLAY_PATTERN = "%D - %h - %i[%p] - %t - %m";

@@ -49,6 +49,7 @@ public class OnStartListener implements ServletContextListener {
 
         try {
             DProps.LOCAL_IP = InetAddress.getLocalHost().getHostAddress();
+            DProps.HOSTNAME = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
             DProps.LOCAL_IP = "UnknownHost";
         }
@@ -101,8 +102,8 @@ public class OnStartListener implements ServletContextListener {
             DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@ubuntu-vm:27017/?authSource=admin";
 //            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@lionvm:27017/?authSource=admin";
 //            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING = "mongodb://admin:mongodbpassword@localhost:27017/?authSource=admin";
-            DProps.EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC = 15;
-            DProps.EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE = 10;
+            DProps.EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC = 5;
+            DProps.EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE = 500;
             DProps.EVENTLOGGER_OPENSEARCH_CONNECTION_STRING = "https://admin:admin@elasticvm:9200";
             DProps.EVENTLOGGER_DATA_RETENTION_DAYS = 500;
             DProps.EVENTLOGGER_DB_POOL_SIZE = 10;

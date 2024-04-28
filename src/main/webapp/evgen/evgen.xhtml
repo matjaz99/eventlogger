@@ -1,0 +1,36 @@
+<ui:composition template="/templates/pageTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div id="contentFrame">
+		<ui:define name="contentFrame">
+
+			<p:outputLabel value="Evgen" style="font-weight: bold; font-size: 24px;"/>
+			<p:outputLabel class="plaintext" value="EVent GENerator will generate and dump dummy data to log file." />
+
+			<h:form id="evgenForm">
+
+				<p:panelGrid columns="2">
+
+					<p:outputLabel value="Number of new lines: " class="boldtext"/>
+					<p:inplace editor="true">
+						<p:inputText value="#{evgenBean.numberOfNewLines}" required="true" label="text"/>
+					</p:inplace>
+					<p:commandButton type="submit" value="Dump"
+									 styleClass="ui-button-outlined"
+									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
+									 action="#{evgenBean.applyDumpNewLinesAction}"
+									 update="evgenForm" />
+
+				</p:panelGrid>
+
+			</h:form>
+
+		</ui:define>
+	</div>
+
+</ui:composition>
+

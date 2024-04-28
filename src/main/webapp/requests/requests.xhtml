@@ -12,12 +12,7 @@
 
 				<ui:repeat var="m" value="#{backendBean.requests}">
 					<div class="card">
-						<p:outputPanel deferred="true" deferredMode="visible" class="p-mt-2">
-<!--							<p:ajax event="load" listener="#{backendBean.getRequests()}"/>-->
-							<f:facet name="loading">
-								<p:skeleton width="200px" height="21px" class="p-mb-4"/>
-								<p:skeleton width="100%" height="42px"/>
-							</f:facet>
+						<p:outputPanel>
 							<h5>#{m.method} #{m.requestUri}</h5>
 							<p>From: #{m.remoteHost}:#{m.remotePort}</p>
 							<p>Time: #{m.formatedTimestamp}</p>

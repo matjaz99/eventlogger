@@ -10,6 +10,7 @@
         <welcome-file>rules.xhtml</welcome-file>
         <welcome-file>config.xhtml</welcome-file>
         <welcome-file>help.xhtml</welcome-file>
+        <welcome-file>evgen.xhtml</welcome-file>
     </welcome-file-list>
 
     <!-- Define the JSF servlet (manages the request processing life cycle for JavaServer Faces) -->
