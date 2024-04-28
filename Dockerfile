@@ -1,7 +1,7 @@
 # Build stage
 FROM maven:3.8.1-openjdk-11 AS build
 
-ARG SIMPLE_LOGGER_VERSION=1.7.0
+ARG SIMPLE_LOGGER_VERSION=1.7.1
 
 RUN wget http://matjazcerkvenik.si/download/simple-logger-${SIMPLE_LOGGER_VERSION}.jar
 RUN mvn install:install-file \
