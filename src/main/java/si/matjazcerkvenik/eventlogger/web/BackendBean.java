@@ -63,13 +63,6 @@ public class BackendBean {
         LogFactory.getLogger().info("BackendBean: PostConstruct filter=" + parameterOne);
     }
 
-    public List<DRequest> getRequests() {
-        IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-        List<DRequest> list = iDataManager.getHttpRequests();
-        DataManagerFactory.getInstance().returnClient(iDataManager);
-        return list;
-    }
-
     /**
      * This method actually prepares the whole output for the GUI.
      * @return whole text, new-line delimited

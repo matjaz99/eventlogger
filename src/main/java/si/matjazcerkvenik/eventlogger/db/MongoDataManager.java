@@ -45,7 +45,6 @@ public class MongoDataManager implements IDataManager {
     private static final SimpleLogger logger = LogFactory.getLogger();
     public static String dbName = "eventlogger";
     public static final String dbCollectionEvents = "events";
-    public static final String dbCollectionRequests = "requests";
     private MongoClient mongoClient;
     private int clientId = 0;
     private String clientName;
@@ -116,63 +115,6 @@ public class MongoDataManager implements IDataManager {
     @Override
     public String getClientName() {
         return clientName;
-    }
-
-    @Override
-    public void addHttpRequest(DRequest dRequest) {
-
-        long before = System.currentTimeMillis();
-
-        try {
-            MongoDatabase db = mongoClient.getDatabase(dbName);
-            MongoCollection<DRequest> collection = db.getCollection(dbCollectionRequests, DRequest.class);
-
-            collection.insertOne(dRequest);
-
-            AlarmMananger.clearAlarm(mongoDownAlarm);
-
-        } catch (Exception e) {
-            AlarmMananger.raiseAlarm(mongoDownAlarm);
-            logger.error(getClientName() + " addHttpRequest: Exception: " + e.getMessage());
-            DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionRequests, "insert").inc();
-        } finally {
-            double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
-            DMetrics.eventlogger_db_duration_seconds.labels(dbName, dbCollectionRequests, "insert").observe(duration);
-        }
-
-    }
-
-    @Override
-    public List<DRequest> getHttpRequests() {
-
-        logger.info(getClientName() + " getHttpRequests");
-
-        long before = System.currentTimeMillis();
-        try {
-            MongoDatabase db = mongoClient.getDatabase(dbName);
-            MongoCollection<DRequest> collection = db.getCollection(dbCollectionRequests, DRequest.class);
-
-            List<DRequest> docsResultList = collection.find(Filters.eq("runtimeId", DProps.RUNTIME_ID))
-                    .sort(Sorts.descending("timestamp", "id"))
-                    .limit(100)
-                    .into(new ArrayList<>());
-
-            logger.info(getClientName() + " docsResultList size=" + docsResultList.size());
-
-            AlarmMananger.clearAlarm(mongoDownAlarm);
-
-            return docsResultList;
-
-        } catch (Exception e) {
-            AlarmMananger.raiseAlarm(mongoDownAlarm);
-            logger.error(getClientName() + " getHttpRequests: Exception: ", e);
-            DMetrics.eventlogger_db_errors_total.labels(dbName, dbCollectionRequests, "query").inc();
-        } finally {
-            double duration = (System.currentTimeMillis() - before) * 1.0 / 1000;
-            DMetrics.eventlogger_db_duration_seconds.labels(dbName, dbCollectionRequests, "query").observe(duration);
-        }
-
-        return null;
     }
 
     @Override
@@ -441,10 +383,6 @@ public class MongoDataManager implements IDataManager {
             Bson filter = Filters.lte("timestamp", diff);
 
             MongoDatabase db = mongoClient.getDatabase(dbName);
-            MongoCollection<Document> collection = db.getCollection(dbCollectionRequests);
-            DeleteResult resultDeleteMany = collection.deleteMany(filter);
-            logger.info( getClientName() + " cleanDB [requests]: size=" + resultDeleteMany.getDeletedCount());
-
             MongoCollection<Document> collection2 = db.getCollection(dbCollectionEvents);
             DeleteResult resultDeleteMany2 = collection2.deleteMany(filter);
             logger.info( getClientName() + " cleanDB [events]: size=" + resultDeleteMany2.getDeletedCount());

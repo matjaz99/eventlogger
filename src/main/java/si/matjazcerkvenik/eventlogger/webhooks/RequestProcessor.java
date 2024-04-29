@@ -31,6 +31,8 @@ public class RequestProcessor {
 
     public static DRequest incomingRequest(HttpServletRequest req, long requestId) throws IOException {
 
+        String body = getReqBody(req);
+
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         sb.append("protocol=").append(req.getProtocol()).append(", ");
@@ -42,15 +44,17 @@ public class RequestProcessor {
         sb.append("scheme=").append(req.getScheme()).append(", ");
         sb.append("characterEncoding=").append(req.getCharacterEncoding()).append(", ");
         sb.append("contentLength=").append(req.getContentLength()).append(", ");
-        sb.append("contentType=").append(req.getContentType());
-        sb.append("}");
+        sb.append("contentType=").append(req.getContentType()).append("}");
 
-        LogFactory.getLogger().info("RequestProcessor: incomingRequest: " + sb.toString());
+        LogFactory.getLogger().info("incomingRequest: " + sb.toString());
 
-        LogFactory.getLogger().debug("RequestProcessor: incomingRequest: parameterMap: " + getReqParamsAsString(req));
-        LogFactory.getLogger().debug("RequestProcessor: incomingRequest: headers: " + getReqHeadersAsString(req));
-        String body = getReqBody(req);
-        LogFactory.getLogger().trace("RequestProcessor: incomingRequest: body: " + body);
+        sb.deleteCharAt(sb.length()-1); // remove the last } and add some more parameters
+        sb.append(", headersMap=[").append(getReqHeadersAsString(req)).append("], ");
+        sb.append("parameterMap=[").append(getReqParamsAsString(req)).append("]\n");
+        sb.append("body=").append(body);
+        sb.append("}\n");
+
+        LogFactory.getIncomingRequestsLog().info(sb.toString());
 
         DRequest m = new DRequest();
         m.setId(requestId);
@@ -90,8 +94,7 @@ public class RequestProcessor {
         Map<String, String> m = new HashMap<String, String>();
         Map<String, String[]> parameterMap = req.getParameterMap();
 
-        for (Iterator<String> it = parameterMap.keySet().iterator(); it.hasNext();) {
-            String s = it.next();
+        for (String s : parameterMap.keySet()) {
             m.put(s, parameterMap.get(s)[0]);
         }
         return m;
@@ -115,8 +118,7 @@ public class RequestProcessor {
     private static String getReqParamsAsString(HttpServletRequest req) {
         Map<String, String[]> parameterMap = req.getParameterMap();
         String params = "";
-        for (Iterator<String> it = parameterMap.keySet().iterator(); it.hasNext();) {
-            String s = it.next();
+        for (String s : parameterMap.keySet()) {
             params += s + "=" + parameterMap.get(s)[0] + ", ";
         }
         return params;
@@ -128,7 +130,7 @@ public class RequestProcessor {
             return req.getPathInfo() + " " + generateParamMap(req);
         }
 
-        String body = "";
+        String body = ""; // FIXME use string builder
         String s = req.getReader().readLine();
         while (s != null) {
             body += s;

@@ -1,5 +1,10 @@
 # EventLogger changelog
 
+## 0.3.5-SNAPSHOT
+
+* [CHANGE] HTTP requests are not stored in DB anymore because some requests were too big and DB refuses 
+to insert the data. Instead, http requests (including body) are now logged in separate log file (eventlogger-http-requests.log).
+
 ## 0.3.4-SNAPSHOT
 
 * [CHANGE] Upgraded simple-logger to 1.7.1

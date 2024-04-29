@@ -31,8 +31,6 @@ public class MemoryDataManager implements IDataManager {
 
     private int clientId = 0;
     private String clientName;
-
-    public static List<DRequest> httpRequests = new LinkedList<>();
     public static List<DEvent> eventMessages = new LinkedList<>();
 
     public MemoryDataManager(int id) {
@@ -44,20 +42,6 @@ public class MemoryDataManager implements IDataManager {
     @Override
     public String getClientName() {
         return clientName;
-    }
-
-    @Override
-    public void addHttpRequest(DRequest dRequest) {
-        logger.info(getClientName() + " addHttpRequest");
-        httpRequests.add(dRequest);
-        if (httpRequests.size() > 100) {
-            httpRequests.remove(0);
-        }
-    }
-
-    @Override
-    public List<DRequest> getHttpRequests() {
-        return httpRequests;
     }
 
     @Override

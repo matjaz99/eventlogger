@@ -36,7 +36,6 @@ public class OpenSearchDataManager implements IDataManager {
     private static SimpleLogger logger = LogFactory.getLogger();
     private int clientId = 0;
     private String clientName;
-    public static List<DRequest> httpRequests = new LinkedList<>();
 
     private OkHttpClient httpClient;
     private MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
@@ -63,20 +62,6 @@ public class OpenSearchDataManager implements IDataManager {
     @Override
     public String getClientName() {
         return clientName;
-    }
-
-    @Override
-    public void addHttpRequest(DRequest dRequest) {
-        logger.info(getClientName() + " addHttpRequest");
-        httpRequests.add(dRequest);
-        if (httpRequests.size() > 100) {
-            httpRequests.remove(0);
-        }
-    }
-
-    @Override
-    public List<DRequest> getHttpRequests() {
-        return httpRequests;
     }
 
     @Override

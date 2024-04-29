@@ -27,10 +27,6 @@ public interface IDataManager {
 
     public String getClientName();
 
-    public void addHttpRequest(DRequest DRequest);
-
-    public List<DRequest> getHttpRequests();
-
     public void addEvents(List<DEvent> eventList);
 
     public List<DEvent> getEvents(DFilter filter);

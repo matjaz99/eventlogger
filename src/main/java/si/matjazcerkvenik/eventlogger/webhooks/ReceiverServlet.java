@@ -71,9 +71,6 @@ public class ReceiverServlet extends HttpServlet {
         DMetrics.eventlogger_http_requests_total.labels(req.getRemoteHost(), req.getMethod(), req.getRequestURI()).inc();
         DMetrics.eventlogger_http_requests_size_total.labels(req.getRemoteHost(), req.getMethod(), req.getRequestURI()).inc(req.getContentLength());
 
-        IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
-        iDataManager.addHttpRequest(dRequest);
-
         List<DEvent> eventList = null;
         IEventParser parser = null;
 
@@ -125,6 +122,8 @@ public class ReceiverServlet extends HttpServlet {
 //                if (e == null) it.remove();
 //            }
         }
+
+        IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
 
         if (DProps.EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC == 0) {
             iDataManager.addEvents(eventList);

@@ -15,11 +15,14 @@
  */
 package si.matjazcerkvenik.eventlogger.util;
 
+import si.matjazcerkvenik.simplelogger.LEVEL;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
 
 public class LogFactory {
 
     private static SimpleLogger logger = null;
+
+    private static SimpleLogger incomingRequestsLog = null;
 
     {
         getLogger(); // force calling getLogger just to initialize devEnv.
@@ -35,5 +38,17 @@ public class LogFactory {
         return logger;
     }
 
+
+    public static SimpleLogger getIncomingRequestsLog() {
+        if (incomingRequestsLog == null) {
+            incomingRequestsLog = new SimpleLogger();
+            incomingRequestsLog.setFilename("./eventlogger-http-requests.log");
+            incomingRequestsLog.setLogLevel(LEVEL.DEBUG);
+            incomingRequestsLog.setBackup(5);
+            incomingRequestsLog.setMaxSizeMb(100);
+            incomingRequestsLog.setVerbose(false);
+        }
+        return incomingRequestsLog;
+    }
 
 }
