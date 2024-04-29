@@ -63,6 +63,7 @@ public class OnStartListener implements ServletContextListener {
         LogFactory.getLogger().info("");
         LogFactory.getLogger().info("VERSION=" + DProps.VERSION);
         LogFactory.getLogger().info("LOCAL_IP=" + DProps.LOCAL_IP);
+        LogFactory.getLogger().info("HOSTNAME=" + DProps.HOSTNAME);
 
         DProps.RUNTIME_ID = UUID.randomUUID().toString();
         LogFactory.getLogger().info("RUNTIME_ID=" + DProps.RUNTIME_ID);

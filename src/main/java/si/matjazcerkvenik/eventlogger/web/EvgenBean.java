@@ -32,12 +32,13 @@ public class EvgenBean {
     private SimpleLogger evgenLog = null;
 
     private int numberOfNewLines = 10;
+    private String evgenLogFile = "/opt/eventlogger/log/eventGen-" + DProps.HOSTNAME + ".log";
 
     @PostConstruct
     public void init() {
         if (evgenLog == null) {
             evgenLog = new SimpleLogger();
-            evgenLog.setFilename("/opt/eventlogger/log/eventGen-" + DProps.HOSTNAME + ".log");
+            evgenLog.setFilename(evgenLogFile);
             evgenLog.setLogLevel(LEVEL.DEBUG);
             evgenLog.setBackup(20);
             evgenLog.setMaxSizeMb(100);
@@ -63,7 +64,13 @@ public class EvgenBean {
         }
     }
 
+    public String getEvgenLogFile() {
+        return evgenLogFile;
+    }
 
+    public void setEvgenLogFile(String evgenLogFile) {
+        this.evgenLogFile = evgenLogFile;
+    }
 
     private String[] array = {
             "run-docker-runtime\\x2drunc-moby-28bec642baa6ff7cfa36ec149443a8c0c1bfbcc3b73971eb5752b324c175353b-runc.GIQl65.mount: Deactivated successfully.",

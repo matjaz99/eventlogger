@@ -15,6 +15,10 @@
 
 				<p:panelGrid columns="2">
 
+					<p:outputLabel value="Log file path: " class="boldtext"/>
+					<p:inplace editor="true">
+						<p:inputText value="#{evgenBean.evgenLogFile}" required="true" label="text"/>
+					</p:inplace>
 					<p:outputLabel value="Number of new lines: " class="boldtext"/>
 					<p:inplace editor="true">
 						<p:inputText value="#{evgenBean.numberOfNewLines}" required="true" label="text"/>
