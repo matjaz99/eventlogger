@@ -124,20 +124,30 @@ public class RequestProcessor {
         return params;
     }
 
+    /**
+     * If this is GET request, return URI parameters map.
+     * If this is POST request than take whatever can be found in the body.
+     * @param req
+     * @return body text
+     * @throws IOException
+     */
     private static String getReqBody(HttpServletRequest req) throws IOException {
 
         if (req.getMethod().equalsIgnoreCase("get")) {
             return req.getPathInfo() + " " + generateParamMap(req);
         }
 
+        StringBuilder sb = new StringBuilder();
         String body = ""; // FIXME use string builder
         String s = req.getReader().readLine();
         while (s != null) {
-            body += s;
+//            body += s;
+            sb.append(s);
             s = req.getReader().readLine();
         }
 
-        return body.trim();
+//        return body.trim();
+        return sb.toString().trim();
 
     }
 

@@ -78,6 +78,16 @@ public class DMetrics {
             .labelNames("database", "table", "action")
             .register();
 
+    public static final Gauge eventlogger_db_buffer_size = Gauge.build()
+            .name("eventlogger_db_buffer_size")
+            .help("Data waiting to be inserted into DB")
+            .register();
+
+    public static final Gauge eventlogger_db_batch_size = Gauge.build()
+            .name("eventlogger_db_batch_size")
+            .help("Batch insert size")
+            .register();
+
     public static final Counter eventlogger_rule_actions_total = Counter.build()
             .name("eventlogger_rule_actions_total")
             .help("Total number of rule actions done.")

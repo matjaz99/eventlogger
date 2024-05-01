@@ -16,7 +16,9 @@
 package si.matjazcerkvenik.eventlogger.webhooks;
 
 import io.prometheus.client.exporter.common.TextFormat;
+import si.matjazcerkvenik.eventlogger.db.EventQueue;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
+import si.matjazcerkvenik.eventlogger.util.DProps;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -52,6 +54,9 @@ public class PrometheusMetricsServlet extends HttpServlet {
         DMetrics.eventlogger_memory_max_bytes.set(instance.maxMemory());
         // used memory = total - free
         DMetrics.eventlogger_available_processors.set(instance.availableProcessors());
+
+        DMetrics.eventlogger_db_buffer_size.set(EventQueue.getInstance().getQueueSize());
+        DMetrics.eventlogger_db_batch_size.set(DProps.EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE);
 
         resp.setStatus(HttpServletResponse.SC_OK);
         resp.setContentType(TextFormat.CONTENT_TYPE_004);

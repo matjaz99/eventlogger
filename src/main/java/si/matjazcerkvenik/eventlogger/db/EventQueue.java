@@ -16,6 +16,7 @@
 package si.matjazcerkvenik.eventlogger.db;
 
 import si.matjazcerkvenik.eventlogger.model.DEvent;
+import si.matjazcerkvenik.eventlogger.util.DProps;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,25 +24,33 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class EventQueue {
 
+    /**
+     * A list containing data waiting to be inserted into DB.
+     */
     private ConcurrentLinkedQueue<DEvent> queue = new ConcurrentLinkedQueue<>();
 
-
-
-    private static EventQueue eventQueue = new EventQueue();
+    /**
+     * Singleton instance of EventQueue
+     */
+    private static EventQueue eventQueueInstance = new EventQueue();
 
     public static EventQueue getInstance() {
-        return eventQueue;
+        return eventQueueInstance;
     }
 
     public void addEvents(List<DEvent> eventList) {
         queue.addAll(eventList);
     }
 
-    public List<DEvent> getAllEvents() {
+    public long getQueueSize() {
+        return queue.stream().count();
+    }
+
+    public List<DEvent> getNextBatch() {
         List<DEvent> list = new ArrayList<>();
-        int size = queue.size();
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < DProps.EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE; i++) {
             list.add(queue.poll());
+            if (queue.isEmpty()) break;
         }
         return list;
     }

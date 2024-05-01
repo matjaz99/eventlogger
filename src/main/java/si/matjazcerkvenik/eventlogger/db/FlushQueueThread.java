@@ -42,26 +42,12 @@ public class FlushQueueThread extends Thread {
                 throw new RuntimeException(e);
             }
 
-            List<DEvent> eventList = EventQueue.getInstance().getAllEvents();
-
-            LogFactory.getLogger().info("FlushQueueThread: queue size=" + eventList.size());
-            if (eventList.isEmpty()) continue;
-
-            // TODO check and limit the size of batch
             IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
 
-            List<DEvent> tempList = new ArrayList<>();
-            int i = 0;
-            for (DEvent e : eventList) {
-                tempList.add(e);
-                i++;
-                if (i == DProps.EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE) {
-                    iDataManager.addEvents(tempList);
-                    i = 0;
-                    tempList.clear();
-                }
+            LogFactory.getLogger().info("FlushQueueThread: queue size=" + EventQueue.getInstance().getQueueSize());
+            while (EventQueue.getInstance().getQueueSize() > 0) {
+                iDataManager.addEvents(EventQueue.getInstance().getNextBatch());
             }
-            if (!tempList.isEmpty()) iDataManager.addEvents(tempList);
 
             DataManagerFactory.getInstance().returnClient(iDataManager);
 
