@@ -83,9 +83,9 @@ public class DMetrics {
             .help("Data waiting to be inserted into DB")
             .register();
 
-    public static final Gauge eventlogger_db_batch_size = Gauge.build()
-            .name("eventlogger_db_batch_size")
-            .help("Batch insert size")
+    public static final Gauge eventlogger_db_bulk_insert_size = Gauge.build()
+            .name("eventlogger_db_bulk_insert_size")
+            .help("Bulk insert size")
             .register();
 
     public static final Counter eventlogger_rule_actions_total = Counter.build()

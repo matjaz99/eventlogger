@@ -16,12 +16,8 @@
 package si.matjazcerkvenik.eventlogger.db;
 
 
-import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FlushQueueThread extends Thread {
 
@@ -52,8 +48,6 @@ public class FlushQueueThread extends Thread {
             DataManagerFactory.getInstance().returnClient(iDataManager);
 
         }
-
-
 
     }
 

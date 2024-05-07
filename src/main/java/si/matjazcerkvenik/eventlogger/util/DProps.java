@@ -66,7 +66,7 @@ public class DProps {
      * If flush interval > 0, then put events in queue and send on each interval.
      */
     public static int EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC = 0;
-    public static int EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE = 100;
+    public static int EVENTLOGGER_MONGODB_BULK_INSERT_MAX_SIZE = 100;
 
     // opensearch config
     public static String EVENTLOGGER_OPENSEARCH_CONNECTION_STRING = "https://admin:admin@hostname:9200";

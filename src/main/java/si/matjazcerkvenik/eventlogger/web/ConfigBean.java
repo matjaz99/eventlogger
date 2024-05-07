@@ -23,7 +23,6 @@ import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import javax.faces.bean.SessionScoped;
 import java.util.List;
 
 @ManagedBean
@@ -60,16 +59,16 @@ public class ConfigBean {
         }
     }
 
-    public Integer getBatchInsertSize() {
-        return DProps.EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE;
+    public Integer getBulkInsertSize() {
+        return DProps.EVENTLOGGER_MONGODB_BULK_INSERT_MAX_SIZE;
     }
 
-    public void setBatchInsertSize(Integer i) {
+    public void setBulkInsertSize(Integer i) {
         try {
-            DProps.EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE = i;
-            LogFactory.getLogger().info("ConfigBean: set EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE: " + DProps.EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE);
+            DProps.EVENTLOGGER_MONGODB_BULK_INSERT_MAX_SIZE = i;
+            LogFactory.getLogger().info("ConfigBean: set EVENTLOGGER_MONGODB_BULK_INSERT_MAX_SIZE: " + DProps.EVENTLOGGER_MONGODB_BULK_INSERT_MAX_SIZE);
         } catch (NumberFormatException e) {
-            LogFactory.getLogger().error("ConfigBean: set EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE failed: " + e.getMessage());
+            LogFactory.getLogger().error("ConfigBean: set EVENTLOGGER_MONGODB_BULK_INSERT_MAX_SIZE failed: " + e.getMessage());
         }
     }
 

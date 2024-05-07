@@ -4,11 +4,12 @@
 
 * [CHANGE] HTTP requests are not stored in DB anymore because some requests were too big and DB refuses 
 to insert the data. Instead, http requests (including body) are now logged in separate log file (eventlogger-http-requests.log).
+* [FEATURE] Added metrics `eventlogger_db_buffer_size` and `eventlogger_db_bulk_insert_size`
 
 ## 0.3.4-SNAPSHOT
 
 * [CHANGE] Upgraded simple-logger to 1.7.1
-* [FEATURE] Sort events in queue and flush data in periodic interval
+* [FEATURE] Sort events in queue and flush data in periodic interval. Configuration parameter: `EVENTLOGGER_MONGODB_BULK_INSERT_MAX_SIZE`
 * [FEATURE] Download content
 * [FEATURE] Evgen generate dummy log file, for testing purposes
 * [ENHANCEMENT] Added hits counter for each rule and reset hits button

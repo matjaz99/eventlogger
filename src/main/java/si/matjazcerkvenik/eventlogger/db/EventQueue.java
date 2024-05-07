@@ -48,7 +48,7 @@ public class EventQueue {
 
     public List<DEvent> getNextBatch() {
         List<DEvent> list = new ArrayList<>();
-        for (int i = 0; i < DProps.EVENTLOGGER_MONGODB_BATCH_INSERT_MAX_SIZE; i++) {
+        for (int i = 0; i < DProps.EVENTLOGGER_MONGODB_BULK_INSERT_MAX_SIZE; i++) {
             list.add(queue.poll());
             if (queue.isEmpty()) break;
         }
