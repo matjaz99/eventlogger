@@ -114,6 +114,13 @@
             <artifactId>snakeyaml</artifactId>
             <version>1.33</version>
         </dependency>
+        <!-- processing markdown -->
+        <!-- https://github.com/commonmark/commonmark-java -->
+        <dependency>
+            <groupId>org.commonmark</groupId>
+            <artifactId>commonmark</artifactId>
+            <version>0.21.0</version>
+        </dependency>
     </dependencies>
 
     <build>

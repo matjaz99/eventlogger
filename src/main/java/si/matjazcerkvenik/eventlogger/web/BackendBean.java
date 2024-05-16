@@ -235,6 +235,17 @@ public class BackendBean {
     }
 
 
+
+
+
+
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
+    /*                                                   */
+    /*                  download file                    */
+    /*                                                   */
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
     private StreamedContent downloadFile;
 
     public StreamedContent getDownloadFile() {
@@ -690,4 +701,5 @@ public class BackendBean {
 
         eventsByIdentHbarModel.setOptions(options);
     }
+
 }
