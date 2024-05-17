@@ -16,6 +16,16 @@ hr {
     font-size: 10px;
 }
 
+pre code {
+    background: #EAEAEA;
+    border: 1px solid #CECECE;
+    padding: 0.5rem;
+}
+
+code {
+    background: #EAEAEA;
+}
+
 /* card */
 .card {
     background: #FAFAFA;

@@ -1,0 +1,19 @@
+<ui:composition template="/templates/pageTemplate.xhtml"
+				xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:p="http://primefaces.org/ui">
+
+	<div id="contentFrame">
+		<ui:define name="contentFrame">
+
+			<p:panel style="background-color: #CCCCCC;">
+				<p:outputLabel value="#{appBean.help}" escape="false"/>
+			</p:panel>
+
+		</ui:define>
+	</div>
+
+</ui:composition>
+

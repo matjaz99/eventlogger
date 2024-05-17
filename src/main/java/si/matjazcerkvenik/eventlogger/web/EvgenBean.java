@@ -96,7 +96,10 @@ public class EvgenBean {
             "ERROR PrometheusHttpClient[elasticvm]: req[903] << UnknownHostException: elasticvm: Name does not resolve",
             "INFO  PrometheusHttpClient[promvm]: req[894] >> GET https://promvm/prometheus/api/v1/alerts",
             "ubuntu-vm dockerd[1176]: time=\"2024-04-28T22:03:38.274879219+02:00\" level=error msg=\"[resolver] failed to query DNS server: 8.8.8.8:53, query: ;pushgateway.\\tIN\\t AAAA\" error=\"read udp 172.18.0.10:58191->8.8.8.8:53: i/o timeout\"",
-            "Selected source 46.54.225.12 (2.cloudlinux.pool.ntp.org)"
+            "Selected source 46.54.225.12 (2.cloudlinux.pool.ntp.org)",
+            "Special event to test raising alarm in eventlogger: This does not work. Number 10",
+            "Special event to test alarm clear in eventlogger: This is working now. Number 11",
+            "Special event to test sending event in eventlogger. This is just an event. Number 12"
     };
 
 }

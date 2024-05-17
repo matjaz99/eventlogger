@@ -149,8 +149,6 @@ groups:
         pattern:
           expr: "does not work"
           type: regex
-        filter:
-          ident: my-process
         action:
           type: alarm
           severity: major
@@ -158,10 +156,14 @@ groups:
         pattern:
           expr: "is working now"
           type: regex
-        filter:
-          ident: my-process
         action:
           type: clear
+      - name: Event test
+        pattern:
+          expr: "is just an event"
+          type: regex
+        action:
+          type: event
 
   - name: kuma events
     endpoint: /eventlogger/webhook/http
