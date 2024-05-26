@@ -29,10 +29,7 @@ import si.matjazcerkvenik.eventlogger.model.DRequest;
 import si.matjazcerkvenik.eventlogger.model.config.DRule;
 import si.matjazcerkvenik.eventlogger.model.config.DRulesGroup;
 import si.matjazcerkvenik.eventlogger.parsers.*;
-import si.matjazcerkvenik.eventlogger.util.AlarmMananger;
-import si.matjazcerkvenik.eventlogger.util.DMetrics;
-import si.matjazcerkvenik.eventlogger.util.DProps;
-import si.matjazcerkvenik.eventlogger.util.LogFactory;
+import si.matjazcerkvenik.eventlogger.util.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -63,7 +60,7 @@ public class ReceiverServlet extends HttpServlet {
 
         DRequest dRequest = RequestProcessor.incomingRequest(req, DProps.increaseAndGetRequestsReceivedCount());
 
-        if (dRequest.getBody() == null || dRequest.getBody().length() == 0) {
+        if (Formatter.isNullOrEmpty(dRequest.getBody())) {
             DMetrics.eventlogger_requests_ignored_total.labels(dRequest.getRemoteHost(), dRequest.getRequestUri(), "no content").inc();
             return;
         }

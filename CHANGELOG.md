@@ -1,30 +1,18 @@
 # EventLogger changelog
 
-## 0.3.5-SNAPSHOT
-
-* [CHANGE] HTTP requests are not stored in DB anymore because some requests were too big and DB refuses 
-to insert the data. Instead, http requests (including body) are now logged in separate log file (eventlogger-http-requests.log).
-* [FEATURE] Added metrics `eventlogger_db_buffer_size` and `eventlogger_db_bulk_insert_size`
-
-## 0.3.4-SNAPSHOT
+## 0.3.0 / 2024-05-26
 
 * [CHANGE] Upgraded simple-logger to 1.7.1
-* [FEATURE] Sort events in queue and flush data in periodic interval. Configuration parameter: `EVENTLOGGER_MONGODB_BULK_INSERT_MAX_SIZE`
-* [FEATURE] Download content
-* [FEATURE] Evgen generate dummy log file, for testing purposes
-* [ENHANCEMENT] Added hits counter for each rule and reset hits button
-
-## 0.3.3-SNAPSHOT
-
-* [FEATURE] Display pattern
-
-## 0.3.1-SNAPSHOT
-
-* [FEATURE] Querying OpenSearch
-
-## 0.3.0-SNAPSHOT
-
+* [CHANGE] HTTP requests are not stored in DB anymore because some requests were too big and DB refuses
+  to insert the data. Instead, http requests (including body) are now logged in separate log file (eventlogger-http-requests.log).
 * [FEATURE] OpenSearch client, send bulk
+* [BETA-FEATURE] Querying OpenSearch
+* [FEATURE] Display pattern. Configuration parameter `EVENTLOGGER_GUI_DISPLAY_PATTERN`
+* [FEATURE] Sort events in queue and flush data in periodic interval. Configuration parameter: `EVENTLOGGER_MONGODB_BULK_INSERT_MAX_SIZE`
+* [FEATURE] Added metrics `eventlogger_db_buffer_size` and `eventlogger_db_bulk_insert_size`
+* [FEATURE] Download content
+* [FEATURE] EvGen to generate dummy log file, for testing purposes
+* [ENHANCEMENT] Added hits counter for each rule and reset hits button
 
 ## 0.2.6 / 2023-11-03
 
