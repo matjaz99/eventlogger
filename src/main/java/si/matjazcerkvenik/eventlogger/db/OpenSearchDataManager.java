@@ -42,10 +42,9 @@ public class OpenSearchDataManager implements IDataManager {
     private ClientConfig clientConfig;
     private static long requestCount = 0;
 
-    private static DAlarm opensearchDownAlarm = new DAlarm("eventlogger", "OpenSearch down",
-            DAlarmSeverity.CRITICAL,
-            DProps.EVENTLOGGER_OPENSEARCH_CONNECTION_STRING,
-            "Cannot connect to OpenSearch");
+    private static DAlarm opensearchDownAlarm = new DAlarm("localhost", "localhost",
+            "OpenSearch down", DAlarmSeverity.CRITICAL, "opensearch", "opensearch",
+            "Cannot connect to OpenSearch on " + DProps.EVENTLOGGER_OPENSEARCH_CONNECTION_STRING);
 
     public OpenSearchDataManager(int id) {
         this.clientId = clientId;

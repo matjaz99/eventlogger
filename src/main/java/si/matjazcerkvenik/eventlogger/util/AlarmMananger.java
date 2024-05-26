@@ -17,57 +17,111 @@ package si.matjazcerkvenik.eventlogger.util;
 
 import com.google.gson.Gson;
 import okhttp3.*;
+import si.matjazcerkvenik.eventlogger.db.ClientConfig;
+import si.matjazcerkvenik.eventlogger.db.HttpClientFactory;
 import si.matjazcerkvenik.eventlogger.model.DAlarm;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class AlarmMananger {
+public class AlarmMananger implements Runnable {
 
     private static SimpleLogger logger = LogFactory.getLogger();
 
+    private static AlarmMananger instance;
+
+    private OkHttpClient httpClient;
+
+    // only for eventlogger internal alarms
     private static Map<String, DAlarm> activeAlarmsList = new HashMap<>();
+
+    private static ConcurrentLinkedQueue<DAlarm> alarmsBufferList = new ConcurrentLinkedQueue<>();
+
+    private Thread t;
+    private boolean running = true;
+
+    public static AlarmMananger getInstance() {
+        if (instance == null) instance = new AlarmMananger();
+        return instance;
+    }
+
+    @Override
+    public void run() {
+
+        while (running) {
+
+            try {
+                Thread.sleep(1000);
+
+                if (alarmsBufferList.isEmpty()) continue;
+
+                List<DAlarm> list = new ArrayList<>();
+                while (!alarmsBufferList.isEmpty()) {
+                    list.add(alarmsBufferList.poll());
+                }
+
+                String body = toJsonArrayString(list);
+                push(body);
+
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+    }
+
+    public void start() {
+        t = new Thread(this);
+        t.start();
+    }
+
+    public void stop() {
+        running = false;
+    }
 
 
     public static synchronized void raiseAlarm(DAlarm alarm) {
         if (alarm.getTimestamp() == 0) alarm.setTimestamp(System.currentTimeMillis());
-        if (alarm.getNotificationType().equalsIgnoreCase("alarm")) {
-            if (activeAlarmsList.containsKey(alarm.getAlarmId())) return;
-            activeAlarmsList.put(alarm.getAlarmId(), alarm);
-        }
-        String body = toJsonString(alarm);
-        push(body, (alarm.getSeverity() == 5 ? "CLEAR" : "ALARM"));
+        alarm.setNotificationType("alarm");
+        if (activeAlarmsList.containsKey(alarm.getAlarmId())) return;
+        activeAlarmsList.put(alarm.getAlarmId(), alarm);
+        alarmsBufferList.add(alarm);
     }
 
     public static synchronized void clearAlarm(DAlarm alarm) {
         DAlarm a = activeAlarmsList.remove(alarm.getAlarmId());
         if (a != null) {
             a.setSeverity(5);
-            alarm.setTimestamp(System.currentTimeMillis());
-            String body = toJsonString(alarm);
-            push(body, (alarm.getSeverity() == 5 ? "CLEAR" : "ALARM"));
+            a.setTimestamp(System.currentTimeMillis());
+            a.setNotificationType("clear");
+            alarmsBufferList.add(a);
         }
+
     }
 
     public static void sendEvent(DAlarm alarm) {
         alarm.setTimestamp(System.currentTimeMillis());
-        alarm.setNotificationType("event");
-        String body = toJsonString(alarm);
-        push(body, "EVENT");
+        alarmsBufferList.add(alarm);
     }
 
     /**
      * Execute http post to send the event to destination.
      * @param body json formatted alarm
-     * @param eventType could be ALARM, CLEAR or EVENT
      */
-    private static void push(String body, String eventType) {
+    private void push(String body) {
 
         if (DProps.EVENTLOGGER_ALARM_DESTINATION == null) return;
 
-        logger.info("AlarmMananger: push(): sending " + eventType + ": " + body);
+        logger.info("AlarmMananger: push(): sending event: " + body);
 
-        OkHttpClient httpClient = new OkHttpClient();
+        if (httpClient == null) {
+            ClientConfig clientConfig = new ClientConfig(DProps.EVENTLOGGER_ALARM_DESTINATION);
+            clientConfig.setConnectionTimeout(3);
+            clientConfig.setReadTimeout(10);
+            httpClient = HttpClientFactory.instantiateHttpClient(clientConfig);
+        }
+
         MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
 
         try {
@@ -89,13 +143,20 @@ public class AlarmMananger {
 
     }
 
-    public static String toJsonString(DAlarm alarm) {
+    private String toJsonString(DAlarm alarm) {
         Gson gson = new Gson();
         String s = gson.toJson(alarm);
         return s;
     }
 
-    public static String toJsonStringAllAlarms() {
+    private String toJsonArrayString(List<DAlarm> list) {
+        Gson gson = new Gson();
+        String s = gson.toJson(list);
+        return s;
+    }
+
+
+    public String toJsonStringAllActiveAlarms() {
         Gson gson = new Gson();
         String s = gson.toJson(activeAlarmsList.values());
         return s;

@@ -21,44 +21,38 @@ import si.matjazcerkvenik.eventlogger.util.MD5Checksum;
 public class DAlarm {
 
     private String alarmId;
-    private String alarmSource;
     private long timestamp = 0;
     private String dateTime;
     private String alarmName = "Alarm incident";
     private int severity = 0;
     private String severityString = "Indeterminate";
-    private String notificationType = "alarm";
-    private String sourceInfo = "";
-    private String additionalInfo = "";
+    private String notificationType = "event";
+    private String customInfo = "";
+    /** IP of the server who sent the request (could be proxy or relay agent) */
+    private String remoteHost;
+    /** IP of server who originally generated the event */
+    private String sourceHost;
+    private String ident;
+    private String tag;
+    /** Original text message */
+    private String message;
 
     public DAlarm() {}
 
-    public DAlarm(String alarmSource, String alarmName, int severity, String sourceInfo, String additionalInfo) {
-        this.alarmSource = alarmSource;
+    public DAlarm(String remoteHost, String sourceHost, String alarmName, int severity, String ident, String tag, String message) {
+        this.remoteHost = remoteHost;
+        this.sourceHost = sourceHost;
         this.alarmName = alarmName;
         setSeverity(severity);
-        this.sourceInfo = sourceInfo;
-        this.additionalInfo = additionalInfo;
-    }
-
-    public DAlarm(String alarmSource, String alarmName, int severity, String sourceInfo, String additionalInfo, boolean isEvent) {
-        this.alarmSource = alarmSource;
-        this.alarmName = alarmName;
-        setSeverity(severity);
-        this.sourceInfo = sourceInfo;
-        this.additionalInfo = additionalInfo;
-        if (isEvent) this.notificationType = "event";
+        this.ident = ident;
+        this.tag = tag;
+        this.message = message;
     }
 
 
     public String getAlarmId() {
-        alarmId = MD5Checksum.getMd5Checksum(alarmSource + alarmName + sourceInfo);
+        alarmId = MD5Checksum.getMd5Checksum(sourceHost + alarmName + ident + tag + message);
         return alarmId;
-    }
-
-    public String getAlarmSource() {
-        alarmSource = "alarm source eventlogger";
-        return alarmSource;
     }
 
     public long getTimestamp() {
@@ -118,20 +112,12 @@ public class DAlarm {
         return severityString;
     }
 
-    public String getSourceInfo() {
-        return sourceInfo;
+    public String getCustomInfo() {
+        return customInfo;
     }
 
-    public void setSourceInfo(String sourceInfo) {
-        this.sourceInfo = sourceInfo;
-    }
-
-    public String getAdditionalInfo() {
-        return additionalInfo;
-    }
-
-    public void setAdditionalInfo(String additionalInfo) {
-        this.additionalInfo = additionalInfo;
+    public void setCustomInfo(String customInfo) {
+        this.customInfo = customInfo;
     }
 
     public String getNotificationType() {
@@ -142,17 +128,60 @@ public class DAlarm {
         this.notificationType = notificationType;
     }
 
+    public String getRemoteHost() {
+        return remoteHost;
+    }
+
+    public void setRemoteHost(String remoteHost) {
+        this.remoteHost = remoteHost;
+    }
+
+    public String getSourceHost() {
+        return sourceHost;
+    }
+
+    public void setSourceHost(String sourceHost) {
+        this.sourceHost = sourceHost;
+    }
+
+    public String getIdent() {
+        return ident;
+    }
+
+    public void setIdent(String ident) {
+        this.ident = ident;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     @Override
     public String toString() {
-        return "Alarm{" +
+        return "DAlarm{" +
                 "alarmId='" + getAlarmId() + '\'' +
                 ", timestamp=" + timestamp +
                 ", alarmName='" + alarmName + '\'' +
                 ", severity=" + severity +
                 ", severityString='" + severityString + '\'' +
                 ", notificationType='" + notificationType + '\'' +
-                ", sourceInfo='" + sourceInfo + '\'' +
-                ", additionalInfo='" + additionalInfo + '\'' +
+                ", remoteHost='" + remoteHost + '\'' +
+                ", sourceHost='" + sourceHost + '\'' +
+                ", ident='" + ident + '\'' +
+                ", tag='" + tag + '\'' +
+                ", customInfo='" + customInfo + '\'' +
                 '}';
     }
 

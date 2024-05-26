@@ -41,15 +41,27 @@ public class ClientConfig {
             if (a2[1].contains(":")) {
                 String[] a4 = a2[1].split(":");
                 hostname = a4[0];
-                port = Integer.parseInt(a4[1]);
+                if (a4[1].contains("/")) {
+                    String[] a5 = a4[1].split("/");
+                    port = Integer.parseInt(a5[0]);
+                } else {
+                    port = Integer.parseInt(a4[1]);
+                }
             }
         } else {
             if (a1[1].contains(":")) {
                 String[] a4 = a1[1].split(":");
                 hostname = a4[0];
-                port = Integer.parseInt(a4[1]);
+                if (a4[1].contains("/")) {
+                    String[] a5 = a4[1].split("/");
+                    port = Integer.parseInt(a5[0]);
+                } else {
+                    port = Integer.parseInt(a4[1]);
+                }
             } else {
                 hostname = a1[1];
+                if (schema.equalsIgnoreCase("http")) port = 80;
+                if (schema.equalsIgnoreCase("https")) port = 443;
             }
         }
     }

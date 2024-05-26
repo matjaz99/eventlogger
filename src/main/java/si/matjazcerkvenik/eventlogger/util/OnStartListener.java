@@ -129,11 +129,14 @@ public class OnStartListener implements ServletContextListener {
 
         TaskManager.getInstance().startFlushQueueTimer();
 
+        AlarmMananger.getInstance().start();
+
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
         TaskManager.getInstance().stopDbMaintenanceTimer();
         TaskManager.getInstance().stopFlushQueueTimer();
+        AlarmMananger.getInstance().stop();
     }
 }

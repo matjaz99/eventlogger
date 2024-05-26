@@ -18,7 +18,7 @@ public class AlarmsServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        String json = AlarmMananger.toJsonStringAllAlarms();
+        String json = AlarmMananger.getInstance().toJsonStringAllActiveAlarms();
         resp.getWriter().println(json);
 
     }

@@ -212,26 +212,29 @@ public class ReceiverServlet extends HttpServlet {
                 if (rule.getAction().get("type").equalsIgnoreCase("alarm")) {
 
                     int severity = DAlarmSeverity.getSeverity(rule.getAction().get("severity"));
-                    DAlarm a = new DAlarm(event.getHost(), rule.getName(),
-                            severity, event.getIdent(), "addInfo");
-                    AlarmMananger.raiseAlarm(a);
+                    DAlarm a = new DAlarm(event.getRemoteAddress(), event.getHost(), rule.getName(),
+                            severity, event.getIdent(), event.getTag(), event.getMessage());
+                    a.setNotificationType(rule.getAction().get("type"));
+                    AlarmMananger.sendEvent(a);
 
                     DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
                     rule.increaseHits();
 
                 } else if (rule.getAction().get("type").equalsIgnoreCase("clear")) {
 
-                    DAlarm a = new DAlarm(event.getHost(), rule.getName(),
-                            DAlarmSeverity.CLEAR, event.getIdent(), "addInfo");
-                    AlarmMananger.clearAlarm(a);
+                    DAlarm a = new DAlarm(event.getRemoteAddress(), event.getHost(), rule.getName(),
+                            DAlarmSeverity.CLEAR, event.getIdent(), event.getTag(), event.getMessage());
+                    a.setNotificationType(rule.getAction().get("type"));
+                    AlarmMananger.sendEvent(a);
 
                     DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
                     rule.increaseHits();
 
                 } else if (rule.getAction().get("type").equalsIgnoreCase("event")) {
 
-                    DAlarm a = new DAlarm(event.getHost(), rule.getName(),
-                            DAlarmSeverity.INFORMATIONAL, event.getIdent(), "addInfo");
+                    DAlarm a = new DAlarm(event.getRemoteAddress(), event.getHost(), rule.getName(),
+                            DAlarmSeverity.INFORMATIONAL, event.getIdent(), event.getTag(), event.getMessage());
+                    a.setNotificationType(rule.getAction().get("type"));
                     AlarmMananger.sendEvent(a);
 
                     DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();

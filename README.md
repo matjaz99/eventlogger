@@ -5,9 +5,9 @@
 [![GitHub release](https://img.shields.io/github/release/matjaz99/eventlogger.svg)](https://GitHub.com/matjaz99/eventlogger/releases/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/matjaz99/eventlogger.svg)](https://hub.docker.com/r/matjaz99/eventlogger)
 
-Eventlogger is a processor of HTTP requests. It listens for HTTP requests (aka. **events**) on 
-a webhook, processes the message body, stores them in database and at the end offers an overview of received 
-events in a web GUI.
+Eventlogger is a central log storage, event processor (mainly logs) with browsing, searching and filtering capabilities. 
+Eventlogger listens for HTTP requests (containg **events**) on a webhook, processes the message body, 
+stores data in database and at the end offers an overview of received events in a web GUI.
 
 [Screenshots](/docs/screenshots/Screenshots.md)
 
@@ -18,8 +18,6 @@ as I was initially mostly interested into syslog events (logs).
 
 Eventlogger focuses on human-readable messages which might have some context and meaning of what is 
 happening in our network/server infrastructure, collect those messages and make use of them.
-
-### Eventlogger was born
 
 Each event should provide at least information about:
 - where it comes from (source IP address, aka. `host`)

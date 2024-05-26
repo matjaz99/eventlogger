@@ -51,10 +51,9 @@ public class MongoDataManager implements IDataManager {
     /** A flag indicating that index was already created (at startup of eventlogger). */
     private static boolean dbIndexCreated = false;
 
-    private static DAlarm mongoDownAlarm = new DAlarm("eventlogger", "MongoDB down",
-            DAlarmSeverity.CRITICAL,
-            DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING,
-            "Cannot connect to MongoDB");
+    private static DAlarm mongoDownAlarm = new DAlarm("localhost", "localhost",
+            "MongoDB down", DAlarmSeverity.CRITICAL, "mongodb", "mongodb",
+            "Cannot connect to MongoDB on " + DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING);
 
     public MongoDataManager(int id) {
 
@@ -93,6 +92,8 @@ public class MongoDataManager implements IDataManager {
                     logger.info(getClientName() + " creating collection: " + dbCollectionEvents);
                     database.createCollection(dbCollectionEvents);
                 }
+                // TODO CHECK if index exists
+                // TODO VERIFY if objects are not in DB anymore, are they also deleted from index?
                 // create indexes
                 logger.info(getClientName() + " creating index: timestamp");
                 coll.createIndex(Indexes.ascending("timestamp"));
@@ -102,7 +103,6 @@ public class MongoDataManager implements IDataManager {
                 coll.createIndex(Indexes.ascending("ident"));
                 dbIndexCreated = true;
                 logger.info(getClientName() + " database initialized");
-                logger.info(getClientName() + " client ready");
                 AlarmMananger.clearAlarm(mongoDownAlarm);
             } catch (Exception e) {
                 AlarmMananger.raiseAlarm(mongoDownAlarm);
