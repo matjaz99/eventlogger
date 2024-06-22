@@ -31,9 +31,11 @@ public class LogFactory {
     public static SimpleLogger getLogger() {
         if (logger == null) {
             logger = new SimpleLogger();
+            System.out.println(">>> logger file 1: " + logger.getFilename());
             if (logger.getFilename().contains("simple-logger.log")) {
                 logger.setFilename("./eventlogger.log");
             }
+            System.out.println(">>> logger file 2: " + logger.getFilename());
         }
         return logger;
     }
@@ -42,11 +44,13 @@ public class LogFactory {
     public static SimpleLogger getIncomingRequestsLog() {
         if (incomingRequestsLog == null) {
             incomingRequestsLog = new SimpleLogger();
-            incomingRequestsLog.setFilename("./eventlogger-http-requests.log");
+            String f = logger.getFilename().replace("eventlogger.log", "eventlogger-http-requests.log");
+            incomingRequestsLog.setFilename(f);
             incomingRequestsLog.setLogLevel(LEVEL.DEBUG);
             incomingRequestsLog.setBackup(5);
             incomingRequestsLog.setMaxSizeMb(100);
             incomingRequestsLog.setVerbose(false);
+            System.out.println(">>> logger req file 1: " + incomingRequestsLog.getFilename());
         }
         return incomingRequestsLog;
     }
