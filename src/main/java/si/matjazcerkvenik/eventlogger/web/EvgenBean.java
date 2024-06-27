@@ -32,7 +32,7 @@ public class EvgenBean {
     private SimpleLogger evgenLog = null;
 
     private int numberOfNewLines = 10;
-    private String evgenLogFile = "/opt/eventlogger/log/eventGen-" + DProps.HOSTNAME + ".log";
+    private String evgenLogFile = "/opt/eventlogger/log/evgen-" + DProps.HOSTNAME + ".log";
 
     @PostConstruct
     public void init() {

@@ -45,6 +45,13 @@ public class ReceiverServlet extends HttpServlet {
 
     private static final long serialVersionUID = 428459132243871691L;
 
+    private GrokCompiler grokCompiler = GrokCompiler.newInstance();
+
+    @Override
+    public void init() throws ServletException {
+        grokCompiler.registerDefaultPatterns();
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
@@ -184,9 +191,6 @@ public class ReceiverServlet extends HttpServlet {
                     }
 
                 } else if (rule.getPattern().get("type").equalsIgnoreCase("grok")) {
-
-                    GrokCompiler grokCompiler = GrokCompiler.newInstance();
-                    grokCompiler.registerDefaultPatterns();
 
                     final Grok grok = grokCompiler.compile(rule.getPattern().get("expr"));
                     Match gm = grok.match(event.getMessage());
