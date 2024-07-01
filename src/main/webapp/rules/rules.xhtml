@@ -33,24 +33,28 @@
 
 					<h:form id="groupForm">
 
-						<p:dataTable value="#{group.rules}" var="rule"
-									 cellpadding="0" cellspacing="0">
-							<p:column headerText="Rule name">
-								<p:outputLabel value="#{rule.name}"/>
-							</p:column>
-							<p:column headerText="Filter">
+						<ui:repeat var="rule" value="#{group.rules}">
+							<div class="card">
+								<p:outputLabel value="Rule name: " class="boldtext" style="font-size: 1.1rem;" />
+								<p:outputLabel value="#{rule.name}" style="font-size: 1.1rem;"/>
+								<br/>
+								<p:outputLabel value="Filter: " class="boldtext" />
 								<p:outputLabel value="Host=#{rule.filter.get('host')}, Ident=#{rule.filter.get('ident')}"/>
-							</p:column>
-							<p:column headerText="Pattern">
+								<br/>
+								<p:outputLabel value="Pattern: " class="boldtext" />
 								<p:outputLabel value="#{rule.pattern.get('type')}"/>
-							</p:column>
-							<p:column headerText="Action">
+								<br/>
+								<p:outputLabel value="Expression: " class="boldtext" />
+								<p:outputLabel value="#{rule.pattern.get('expr')}"/>
+								<br/>
+								<p:outputLabel value="Action: " class="boldtext" />
 								<p:outputLabel value="#{rule.action.get('type')}"/>
-							</p:column>
-							<p:column headerText="Hits">
+								<br/>
+								<p:outputLabel value="Hits: " class="boldtext" />
 								<p:outputLabel value="#{rule.hits}"/>
-							</p:column>
-						</p:dataTable>
+								<br/>
+							</div>
+						</ui:repeat>
 
 					</h:form>
 

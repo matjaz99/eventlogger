@@ -108,7 +108,7 @@ public class OnStartListener implements ServletContextListener {
             DProps.EVENTLOGGER_OPENSEARCH_CONNECTION_STRING = "https://admin:admin@elasticvm:9200";
             DProps.EVENTLOGGER_DATA_RETENTION_DAYS = 500;
             DProps.EVENTLOGGER_DB_POOL_SIZE = 10;
-            DProps.EVENTLOGGER_ALARM_DESTINATION = "http://192.168.0.25:7070/alertmonitor/webhook/eventlogger";
+            DProps.EVENTLOGGER_ALARM_DESTINATION = "http://192.168.1.100:7070/alertmonitor/webhook/eventlogger";
             DProps.EVENTLOGGER_EVENT_RULES_CONFIG_FILE = "rules/event_rules.yml";
         }
 

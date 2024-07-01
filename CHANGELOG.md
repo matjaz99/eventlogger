@@ -2,6 +2,8 @@
 
 ## 0.3.1-SNAPSHOT
 
+* [ENHANCEMENT] Rules view GUI improvements
+
 ## 0.3.0 / 2024-05-26
 
 * [CHANGE] Upgraded simple-logger to 1.7.1
