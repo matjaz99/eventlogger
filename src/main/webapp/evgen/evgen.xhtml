@@ -28,6 +28,22 @@
 									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
 									 action="#{evgenBean.applyDumpNewLinesAction}"
 									 update="evgenForm" />
+					<p:outputLabel value=""/>
+					<p:commandButton type="submit" value="Alarm"
+									 styleClass="ui-button-outlined"
+									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
+									 action="#{evgenBean.applyLogAlarmAction}"
+									 update="evgenForm" />
+					<p:commandButton type="submit" value="Clear"
+									 styleClass="ui-button-outlined"
+									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
+									 action="#{evgenBean.applyLogClearAction}"
+									 update="evgenForm" />
+					<p:commandButton type="submit" value="Event"
+									 styleClass="ui-button-outlined"
+									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
+									 action="#{evgenBean.applyLogEventAction}"
+									 update="evgenForm" />
 
 				</p:panelGrid>
 

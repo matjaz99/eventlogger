@@ -5,8 +5,8 @@
 [![GitHub release](https://img.shields.io/github/release/matjaz99/eventlogger.svg)](https://GitHub.com/matjaz99/eventlogger/releases/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/matjaz99/eventlogger.svg)](https://hub.docker.com/r/matjaz99/eventlogger)
 
-Eventlogger is a central log storage, event processor (mainly logs) with browsing, searching and filtering capabilities. 
-Eventlogger listens for HTTP requests (containg **events**) on a webhook, processes the message body, 
+Eventlogger is event processor, central log storage with browsing, searching and filtering capabilities. 
+Eventlogger listens for HTTP requests (**events**) on a webhook, processes the message body, analyzes events,
 stores data in database and at the end offers an overview of received events in a web GUI.
 
 [Screenshots](/docs/screenshots/Screenshots.md)
@@ -63,7 +63,7 @@ $ docker run -d -p 8080:8080
 --name eventlogger
 --env EVENTLOGGER_EVENT_RULES_CONFIG_FILE=/opt/eventlogger/rules/event_rules.yml 
 -v ./rules/event_rules.yml:/opt/eventlogger/rules/event_rules.yml 
-matjaz99/eventlogger:0.2.4
+matjaz99/eventlogger
 ```
 
 To run Eventlogger with persistence capability, configure MongoDB connection string via environment variables - see below.
@@ -89,6 +89,12 @@ Eventlogger currently supports two storage types: `memory` or `mongodb`.
 Memory storage type stores all data internally in memory. It is limited to the last 1000 events.
 Memory storage type does not require any configuration.
 
+
+| EnvVar                                    | Description                                      |
+|-------------------------------------------|--------------------------------------------------|
+| `EVENTLOGGER_STORAGE_TYPE`                | set to `memory` to enable persistence in memory. |
+
+
 ### MongoDB
 
 MongoDB is configured with environment variables:
@@ -101,6 +107,18 @@ MongoDB is configured with environment variables:
 | `EVENTLOGGER_MONGODB_READ_TIMEOUT_SEC`    | read timeout of MongoDB client (default is 30 seconds).                                                              |
 | `EVENTLOGGER_DB_POOL_SIZE`                | number of MongoDB clients (default 3).                                                                               |
 | `EVENTLOGGER_DATA_RETENTION_DAYS`         | how many days before data is deleted from database (default 30 days)                                                 |
+
+### OpenSearch
+
+Configuration for storing events into OpenSearch:
+
+| EnvVar                                       | Description                                                                                                          |
+|----------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| `EVENTLOGGER_STORAGE_TYPE`                   | set to `opensearch` to enable persistence in OpenSearch.                                                             |
+| `EVENTLOGGER_OPENSEARCH_CONNECTION_STRING`   | connection string to connect to MongoDB (default `mongodb://admin:mongodbpassword@mongovm:27017/?authSource=admin`). |
+| `EVENTLOGGER_OPENSEARCH_CONNECT_TIMEOUT_SEC` | connect timeout of MongoDB client (default is 5 seconds).                                                            |
+| `EVENTLOGGER_OPENSEARCH_READ_TIMEOUT_SEC`    | read timeout of MongoDB client (default is 30 seconds).                                                              |
+| `EVENTLOGGER_OPENSEARCH_INDEX_NAME`          | how many days before data is deleted from database (default 30 days)                                                 |
 
 
 ## Configuring data sources

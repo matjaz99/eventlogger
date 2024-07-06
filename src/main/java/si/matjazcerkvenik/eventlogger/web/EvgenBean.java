@@ -32,13 +32,14 @@ public class EvgenBean {
     private SimpleLogger evgenLog = null;
 
     private int numberOfNewLines = 10;
-    private String evgenLogFile = "/opt/eventlogger/log/evgen-" + DProps.HOSTNAME + ".log";
+    private String evgenLogFile = "evgen-" + DProps.HOSTNAME + ".log";
 
     @PostConstruct
     public void init() {
         if (evgenLog == null) {
             evgenLog = new SimpleLogger();
-            evgenLog.setFilename(evgenLogFile);
+            String f = LogFactory.getLogger().getFilename().replace("eventlogger.log", evgenLogFile);
+            evgenLog.setFilename(f);
             evgenLog.setLogLevel(LEVEL.DEBUG);
             evgenLog.setBackup(20);
             evgenLog.setMaxSizeMb(100);
@@ -62,6 +63,18 @@ public class EvgenBean {
             evgenLog.write(array[(int) (Math.random() * array.length)]);
             i++;
         }
+    }
+
+    public void applyLogAlarmAction() {
+        evgenLog.info("Special event to test raising alarm in eventlogger: FOOBAR does not work. Number 10");
+    }
+
+    public void applyLogClearAction() {
+        evgenLog.info("Special event to test alarm clear in eventlogger: FOOBAR is working now. Number 11");
+    }
+
+    public void applyLogEventAction() {
+        evgenLog.info("Special event to test sending event in eventlogger. This is just event. Number 12");
     }
 
     public String getEvgenLogFile() {
@@ -96,10 +109,7 @@ public class EvgenBean {
             "ERROR PrometheusHttpClient[elasticvm]: req[903] << UnknownHostException: elasticvm: Name does not resolve",
             "INFO  PrometheusHttpClient[promvm]: req[894] >> GET https://promvm/prometheus/api/v1/alerts",
             "ubuntu-vm dockerd[1176]: time=\"2024-04-28T22:03:38.274879219+02:00\" level=error msg=\"[resolver] failed to query DNS server: 8.8.8.8:53, query: ;pushgateway.\\tIN\\t AAAA\" error=\"read udp 172.18.0.10:58191->8.8.8.8:53: i/o timeout\"",
-            "Selected source 46.54.225.12 (2.cloudlinux.pool.ntp.org)",
-            "Special event to test raising alarm in eventlogger: This does not work. Number 10",
-            "Special event to test alarm clear in eventlogger: This is working now. Number 11",
-            "Special event to test sending event in eventlogger. This is just an event. Number 12"
+            "Selected source 46.54.225.12 (2.cloudlinux.pool.ntp.org)"
     };
 
 }
