@@ -29,21 +29,12 @@ import javax.faces.bean.ManagedBean;
 @SuppressWarnings("unused")
 public class EvgenBean {
 
-    private SimpleLogger evgenLog = null;
-
+    private SimpleLogger evgenLog;
     private int numberOfNewLines = 10;
-    private String evgenLogFile = "evgen-" + DProps.HOSTNAME + ".log";
 
     @PostConstruct
     public void init() {
-        if (evgenLog == null) {
-            evgenLog = new SimpleLogger();
-            String f = LogFactory.getLogger().getFilename().replace("eventlogger.log", evgenLogFile);
-            evgenLog.setFilename(f);
-            evgenLog.setLogLevel(LEVEL.DEBUG);
-            evgenLog.setBackup(20);
-            evgenLog.setMaxSizeMb(100);
-        }
+        evgenLog = LogFactory.getEvgenLog();
         LogFactory.getLogger().info("init evgenLog: " + evgenLog.getFilename());
     }
 
@@ -78,11 +69,11 @@ public class EvgenBean {
     }
 
     public String getEvgenLogFile() {
-        return evgenLogFile;
+        return evgenLog.getFilename();
     }
 
     public void setEvgenLogFile(String evgenLogFile) {
-        this.evgenLogFile = evgenLogFile;
+        this.evgenLog.setFilename(evgenLogFile);
     }
 
     private String[] array = {
