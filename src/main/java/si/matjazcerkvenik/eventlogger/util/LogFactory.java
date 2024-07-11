@@ -28,21 +28,16 @@ public class LogFactory {
 
     private static SimpleLogger evgenLog = null;
 
-    {
-        getLogger(); // force calling getLogger just to initialize devEnv.
-    }
+//    {
+//        getLogger(); // force calling getLogger just to initialize devEnv.
+//    }
 
     public static SimpleLogger getLogger() {
         if (logger == null) {
             logger = new SimpleLogger();
-            if (new File("/Users/matjaz").exists()) {
+            if (DProps.DEV_ENV) {
                 logger.setFilename("./eventlogger.log");
             }
-//            System.out.println(">>> logger file 1: " + logger.getFilename());
-//            if (logger.getFilename().contains("simple-logger.log")) {
-//                logger.setFilename("./eventlogger.log");
-//            }
-//            System.out.println(">>> logger file 2: " + logger.getFilename());
         }
         return logger;
     }
@@ -51,7 +46,7 @@ public class LogFactory {
     public static SimpleLogger getIncomingRequestsLog() {
         if (incomingRequestsLog == null) {
             incomingRequestsLog = new SimpleLogger();
-            if (new File("/Users/matjaz").exists()) {
+            if (DProps.DEV_ENV) {
                 logger.setFilename("./eventlogger-http-requests.log");
             } else {
                 String f = logger.getFilename().replace("eventlogger.log", "eventlogger-http-requests.log");
@@ -69,10 +64,10 @@ public class LogFactory {
     public static SimpleLogger getEvgenLog() {
         if (evgenLog == null) {
             evgenLog = new SimpleLogger();
-            if (new File("/Users/matjaz").exists()) {
-                logger.setFilename("evgen-" + DProps.HOSTNAME + ".log");
+            if (DProps.DEV_ENV) {
+                logger.setFilename("./evgen-" + DProps.HOSTNAME + ".log");
             } else {
-                String f = LogFactory.getLogger().getFilename().replace("eventlogger.log", "evgen-" + DProps.HOSTNAME + ".log");
+                String f = logger.getFilename().replace("eventlogger.log", "evgen-" + DProps.HOSTNAME + ".log");
                 evgenLog.setFilename(f);
             }
             evgenLog.setLogLevel(LEVEL.DEBUG);

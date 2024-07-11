@@ -34,7 +34,13 @@ public class OnStartListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
 
+        if (new File("/Users/matjaz").exists()) {
+            DProps.DEV_ENV = true;
+        }
+
         DProps.START_UP_TIMESTAMP = System.currentTimeMillis();
+
+        DProps.RUNTIME_ID = UUID.randomUUID().toString();
 
         // read version file
         InputStream inputStream = servletContextEvent.getServletContext().getResourceAsStream("/WEB-INF/version.txt");
@@ -51,7 +57,7 @@ public class OnStartListener implements ServletContextListener {
             DProps.LOCAL_IP = InetAddress.getLocalHost().getHostAddress();
             DProps.HOSTNAME = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
-            DProps.LOCAL_IP = "UnknownHost";
+            DProps.LOCAL_IP = "unknown";
         }
 
         LogFactory.getLogger().info("\n");
@@ -62,10 +68,9 @@ public class OnStartListener implements ServletContextListener {
         LogFactory.getLogger().info("************************************************");
         LogFactory.getLogger().info("");
         LogFactory.getLogger().info("VERSION=" + DProps.VERSION);
+        LogFactory.getLogger().info("DEV_ENV=" + DProps.DEV_ENV);
         LogFactory.getLogger().info("LOCAL_IP=" + DProps.LOCAL_IP);
         LogFactory.getLogger().info("HOSTNAME=" + DProps.HOSTNAME);
-
-        DProps.RUNTIME_ID = UUID.randomUUID().toString();
         LogFactory.getLogger().info("RUNTIME_ID=" + DProps.RUNTIME_ID);
 
         // read all environment variables
@@ -74,6 +79,7 @@ public class OnStartListener implements ServletContextListener {
         for (Map.Entry <String, String> entry: map.entrySet()) {
             LogFactory.getLogger().info(entry.getKey() + "=" + entry.getValue());
         }
+        LogFactory.getLogger().info("*********************************");
 
         // read application specific environment variables
         DProps.EVENTLOGGER_STORAGE_TYPE = System.getenv().getOrDefault("EVENTLOGGER_STORAGE_TYPE", "memory").trim();
@@ -95,7 +101,7 @@ public class OnStartListener implements ServletContextListener {
         DProps.EVENTLOGGER_EVENT_RULES_LAST_RESET_TIME = Formatter.getFormatedTimestamp(System.currentTimeMillis());
 
         // set development environment
-        if (new File("/Users/matjaz").exists()) {
+        if (DProps.DEV_ENV) {
             LogFactory.getLogger().warn("#######   RUNNING IN DEV MODE   #######");
 //            DProps.EVENTLOGGER_STORAGE_TYPE = "memory";
             DProps.EVENTLOGGER_STORAGE_TYPE = "mongodb";

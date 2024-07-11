@@ -39,6 +39,8 @@ public class DProps {
 
     public static YamlConfig yamlConfig;
 
+    // global settings
+    public static boolean DEV_ENV = false;
     public static String RUNTIME_ID = "0000-0000-0000-0000";
     public static long START_UP_TIMESTAMP = 0;
     public static String VERSION = "n/a";
