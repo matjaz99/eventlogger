@@ -173,7 +173,7 @@ groups:
           severity: critical
       - name: Foobar crashed
         pattern:
-          expr: "Foobar is up and running"
+          expr: "Foobar recovered from crash"
           type: regex
         filter:
           tag: app.log.evgen

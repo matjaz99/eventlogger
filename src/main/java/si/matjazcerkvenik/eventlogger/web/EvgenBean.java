@@ -63,15 +63,15 @@ public class EvgenBean {
     }
 
     public void applyLogAlarmAction2() {
-        evgenLog.info("Special event to test raising alarm in eventlogger: Foobar does not work. Number " + dummyCount++);
+        evgenLog.info("Special event to test raising alarm in eventlogger: Foobar has crashed. Number " + dummyCount++);
     }
 
     public void applyLogClearAction1() {
-        evgenLog.info("Special event to test alarm clear in eventlogger: Foobar has crashed. Number " + dummyCount++);
+        evgenLog.info("Special event to test alarm clear in eventlogger: Foobar is working now. Number " + dummyCount++);
     }
 
     public void applyLogClearAction2() {
-        evgenLog.info("Special event to test alarm clear in eventlogger: Foobar is up and running. Number " + dummyCount++);
+        evgenLog.info("Special event to test alarm clear in eventlogger: Foobar recovered from crash. Number " + dummyCount++);
     }
 
     public void applyLogEventAction() {

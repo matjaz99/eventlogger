@@ -51,7 +51,7 @@ public class DAlarm {
 
 
     public String getAlarmId() {
-        alarmId = MD5Checksum.getMd5Checksum(sourceHost + alarmName + ident + tag + message);
+        alarmId = MD5Checksum.getMd5Checksum(sourceHost + alarmName + ident + tag);
         return alarmId;
     }
 
