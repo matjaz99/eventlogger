@@ -56,6 +56,7 @@ public class LogFactory {
             incomingRequestsLog.setBackup(5);
             incomingRequestsLog.setMaxSizeMb(100);
             incomingRequestsLog.setVerbose(false);
+            incomingRequestsLog.setFilePermissions("rw-r--r--");
             System.out.println(">>> logger req file 1: " + incomingRequestsLog.getFilename());
         }
         return incomingRequestsLog;
@@ -73,6 +74,7 @@ public class LogFactory {
             evgenLog.setLogLevel(LEVEL.DEBUG);
             evgenLog.setBackup(20);
             evgenLog.setMaxSizeMb(100);
+            evgenLog.setFilePermissions("rw-r--r--");
         }
         return evgenLog;
     }
