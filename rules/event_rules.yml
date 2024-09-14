@@ -145,23 +145,46 @@ groups:
   - name: Test alarm events
     endpoint: /eventlogger/webhook/http
     rules:
-      - name: Alarm test
+      - name: Foobar inactive
         pattern:
-          expr: "does not work"
+          expr: "Foobar does not work"
           type: regex
+        filter:
+          tag: app.log.evgen
         action:
           type: alarm
           severity: major
-      - name: Alarm test
+      - name: Foobar inactive
         pattern:
-          expr: "is working now"
+          expr: "Foobar is working now"
           type: regex
+        filter:
+          tag: app.log.evgen
+        action:
+          type: clear
+      - name: Foobar crashed
+        pattern:
+          expr: "Foobar has crashed"
+          type: regex
+        filter:
+          tag: app.log.evgen
+        action:
+          type: alarm
+          severity: critical
+      - name: Foobar crashed
+        pattern:
+          expr: "Foobar is up and running"
+          type: regex
+        filter:
+          tag: app.log.evgen
         action:
           type: clear
       - name: Event test
         pattern:
-          expr: "is just an event"
+          expr: "This is a foobar event"
           type: regex
+        filter:
+          tag: app.log.evgen
         action:
           type: event
 

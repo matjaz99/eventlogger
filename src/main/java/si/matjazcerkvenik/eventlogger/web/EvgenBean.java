@@ -32,6 +32,8 @@ public class EvgenBean {
     private SimpleLogger evgenLog;
     private int numberOfNewLines = 10;
 
+    private int dummyCount;
+
     @PostConstruct
     public void init() {
         evgenLog = LogFactory.getEvgenLog();
@@ -56,16 +58,24 @@ public class EvgenBean {
         }
     }
 
-    public void applyLogAlarmAction() {
-        evgenLog.info("Special event to test raising alarm in eventlogger: FOOBAR does not work. Number 10");
+    public void applyLogAlarmAction1() {
+        evgenLog.info("Special event to test raising alarm in eventlogger: Foobar does not work. Number " + dummyCount++);
     }
 
-    public void applyLogClearAction() {
-        evgenLog.info("Special event to test alarm clear in eventlogger: FOOBAR is working now. Number 11");
+    public void applyLogAlarmAction2() {
+        evgenLog.info("Special event to test raising alarm in eventlogger: Foobar does not work. Number " + dummyCount++);
+    }
+
+    public void applyLogClearAction1() {
+        evgenLog.info("Special event to test alarm clear in eventlogger: Foobar has crashed. Number " + dummyCount++);
+    }
+
+    public void applyLogClearAction2() {
+        evgenLog.info("Special event to test alarm clear in eventlogger: Foobar is up and running. Number " + dummyCount++);
     }
 
     public void applyLogEventAction() {
-        evgenLog.info("Special event to test sending event in eventlogger. This is just event. Number 12");
+        evgenLog.info("Special event to test sending event in eventlogger. This is a foobar event. Number " + dummyCount++);
     }
 
     public String getEvgenLogFile() {

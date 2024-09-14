@@ -39,7 +39,7 @@
 								<p:outputLabel value="#{rule.name}" style="font-size: 1.1rem;"/>
 								<br/>
 								<p:outputLabel value="Filter: " class="boldtext" />
-								<p:outputLabel value="Host=#{rule.filter.get('host')}, Ident=#{rule.filter.get('ident')}"/>
+								<p:outputLabel value="host=#{rule.filter.get('host')}, ident=#{rule.filter.get('ident')}, tag=#{rule.filter.get('tag')}"/>
 								<br/>
 								<p:outputLabel value="Pattern: " class="boldtext" />
 								<p:outputLabel value="#{rule.pattern.get('type')}"/>

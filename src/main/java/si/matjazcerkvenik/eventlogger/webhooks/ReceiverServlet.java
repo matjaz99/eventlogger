@@ -216,7 +216,7 @@ public class ReceiverServlet extends HttpServlet {
                     DAlarm a = new DAlarm(event.getRemoteAddress(), event.getHost(), rule.getName(),
                             severity, event.getIdent(), event.getTag(), event.getMessage());
                     a.setNotificationType(rule.getAction().get("type"));
-                    AlarmMananger.sendEvent(a);
+                    AlarmMananger.raiseAlarm(a);
 
                     DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
                     rule.increaseHits();
@@ -226,7 +226,7 @@ public class ReceiverServlet extends HttpServlet {
                     DAlarm a = new DAlarm(event.getRemoteAddress(), event.getHost(), rule.getName(),
                             DAlarmSeverity.CLEAR, event.getIdent(), event.getTag(), event.getMessage());
                     a.setNotificationType(rule.getAction().get("type"));
-                    AlarmMananger.sendEvent(a);
+                    AlarmMananger.clearAlarm(a);
 
                     DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
                     rule.increaseHits();
