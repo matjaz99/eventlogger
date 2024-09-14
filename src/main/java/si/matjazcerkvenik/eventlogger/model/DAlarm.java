@@ -20,7 +20,6 @@ import si.matjazcerkvenik.eventlogger.util.MD5Checksum;
 
 public class DAlarm {
 
-    private String alarmId;
     private long timestamp = 0;
     private String dateTime;
     private String alarmName = "Alarm incident";
@@ -51,8 +50,7 @@ public class DAlarm {
 
 
     public String getAlarmId() {
-        alarmId = MD5Checksum.getMd5Checksum(sourceHost + alarmName + ident + tag);
-        return alarmId;
+        return MD5Checksum.getMd5Checksum(sourceHost + alarmName + ident + tag);
     }
 
     public long getTimestamp() {

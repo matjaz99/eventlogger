@@ -57,7 +57,6 @@ public class LogFactory {
             incomingRequestsLog.setMaxSizeMb(100);
             incomingRequestsLog.setVerbose(false);
             incomingRequestsLog.setFilePermissions("rw-r--r--");
-            System.out.println(">>> logger req file 1: " + incomingRequestsLog.getFilename());
         }
         return incomingRequestsLog;
     }
