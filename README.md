@@ -225,6 +225,71 @@ Eventlogger webhook must be configured in Alertmonitor to be able to receive ala
 Read more about Alertmonitor project on Github: [here](https://hub.docker.com/r/matjaz99/alertmonitor).
 
 
+#### Examples
+
+Alarm:
+
+```json
+[
+  {
+    "timestamp":1726351404576,
+    "dateTime":"2024/09/15 0:03:24",
+    "eventName":"Alarm test",
+    "severity":2,
+    "severityString":"Major",
+    "notificationType":"alarm",
+    "addInfo":"",
+    "remoteHost":"192.168.1.145",
+    "sourceHost":"192.168.1.145",
+    "ident":"app.log.evgen",
+    "tag":"app.log.evgen",
+    "message":"{date\u003d1.726351403876018E9, message\u003d2024.09.15 12:03:23:875 - INFO  Special event to test raising alarm in eventlogger: FOOBAR does not work. Number 10}"
+  }
+]
+```
+
+Clear:
+
+```json
+[
+  {
+    "timestamp":1726352536575,
+    "dateTime":"2024/09/15 0:22:16",
+    "eventName":"Alarm test",
+    "severity":5,
+    "severityString":"Clear",
+    "notificationType":"clear",
+    "addInfo":"",
+    "remoteHost":"192.168.1.145",
+    "sourceHost":"192.168.1.145",
+    "ident":"app.log.evgen",
+    "tag":"app.log.evgen",
+    "message":"{date\u003d1.726352534903567E9, message\u003d2024.09.15 12:22:14:902 - INFO  Special event to test alarm clear in eventlogger: FOOBAR is working now. Number 11}"
+  }
+]
+```
+
+Event:
+
+```json
+[
+  {
+    "timestamp":1726429416915,
+    "dateTime":"2024/09/15 21:43:36",
+    "eventName":"Event test",
+    "severity":6,
+    "severityString":"Informational",
+    "notificationType":"event",
+    "addInfo":"",
+    "remoteHost":"192.168.1.145",
+    "sourceHost":"192.168.1.145",
+    "ident":"app.log.evgen",
+    "tag":"app.log.evgen",
+    "message":"{date\u003d1.726429415571798E9, message\u003d2024.09.15 09:43:35:571 - INFO  Special event to test sending event in eventlogger. This is a foobar event. Number 3}"
+  }
+]
+```
+
 ## Metrics
 
 Eventlogger contains in-built exporter for exposing metric in Prometheus format.
