@@ -25,6 +25,12 @@ import java.util.concurrent.TimeUnit;
 
 public class HttpClientFactory {
 
+    /**
+     * Create new instance of http client. ClientConfig provides schema (http or https),
+     * timeouts, username and password for authentication.
+     * @param config
+     * @return http client
+     */
     public static OkHttpClient instantiateHttpClient(ClientConfig config) {
 
         if (config.getSchema().equalsIgnoreCase("http")) {

@@ -3,6 +3,7 @@
 ## 0.3.1-SNAPSHOT
 
 * [ENHANCEMENT] Rules view GUI improvements
+* [ENHANCEMENT] Some fixes in raising and clearing alarms
 
 ## 0.3.0 / 2024-05-26
 

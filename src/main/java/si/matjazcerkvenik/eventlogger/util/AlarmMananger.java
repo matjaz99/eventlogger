@@ -33,7 +33,6 @@ public class AlarmMananger implements Runnable {
 
     private OkHttpClient httpClient;
 
-    // only for eventlogger internal alarms
     private static Map<String, DAlarm> activeAlarmsList = new HashMap<>();
 
     private static ConcurrentLinkedQueue<DAlarm> alarmsBufferList = new ConcurrentLinkedQueue<>();
@@ -96,6 +95,8 @@ public class AlarmMananger implements Runnable {
             a.setTimestamp(System.currentTimeMillis());
             a.setNotificationType("clear");
             alarmsBufferList.add(a);
+        } else {
+            logger.info("AlarmMananger: clearAlarm(): no alarm to clear");
         }
 
     }
@@ -138,7 +139,7 @@ public class AlarmMananger implements Runnable {
             response.close();
 
         } catch (Exception e) {
-            logger.error("AlarmMananger: push(): Could not send alarm. " + e.getMessage());
+            logger.error("AlarmMananger: push(): Could not send event. " + e.getMessage());
         }
 
     }

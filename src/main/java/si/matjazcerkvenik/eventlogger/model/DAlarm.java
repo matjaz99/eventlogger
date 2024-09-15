@@ -22,11 +22,11 @@ public class DAlarm {
 
     private long timestamp = 0;
     private String dateTime;
-    private String alarmName = "Alarm incident";
+    private String eventName = "Alarm incident";
     private int severity = 0;
     private String severityString = "Indeterminate";
     private String notificationType = "event";
-    private String customInfo = "";
+    private String addInfo = "";
     /** IP of the server who sent the request (could be proxy or relay agent) */
     private String remoteHost;
     /** IP of server who originally generated the event */
@@ -38,10 +38,12 @@ public class DAlarm {
 
     public DAlarm() {}
 
-    public DAlarm(String remoteHost, String sourceHost, String alarmName, int severity, String ident, String tag, String message) {
+    public DAlarm(String remoteHost, String sourceHost, String eventName, int severity, String ident,
+                  String tag, String addInfo, String message) {
         this.remoteHost = remoteHost;
         this.sourceHost = sourceHost;
-        this.alarmName = alarmName;
+        this.eventName = eventName;
+        this.addInfo = addInfo;
         setSeverity(severity);
         this.ident = ident;
         this.tag = tag;
@@ -50,7 +52,7 @@ public class DAlarm {
 
 
     public String getAlarmId() {
-        return MD5Checksum.getMd5Checksum(sourceHost + alarmName + ident + tag);
+        return MD5Checksum.getMd5Checksum(sourceHost + eventName + ident + tag);
     }
 
     public long getTimestamp() {
@@ -68,12 +70,12 @@ public class DAlarm {
 
 
 
-    public String getAlarmName() {
-        return alarmName;
+    public String getEventName() {
+        return eventName;
     }
 
-    public void setAlarmName(String alarmName) {
-        this.alarmName = alarmName;
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
     }
 
     public int getSeverity() {
@@ -110,12 +112,12 @@ public class DAlarm {
         return severityString;
     }
 
-    public String getCustomInfo() {
-        return customInfo;
+    public String getAddInfo() {
+        return addInfo;
     }
 
-    public void setCustomInfo(String customInfo) {
-        this.customInfo = customInfo;
+    public void setAddInfo(String addInfo) {
+        this.addInfo = addInfo;
     }
 
     public String getNotificationType() {
@@ -171,7 +173,7 @@ public class DAlarm {
         return "DAlarm{" +
                 "alarmId='" + getAlarmId() + '\'' +
                 ", timestamp=" + timestamp +
-                ", alarmName='" + alarmName + '\'' +
+                ", eventName='" + eventName + '\'' +
                 ", severity=" + severity +
                 ", severityString='" + severityString + '\'' +
                 ", notificationType='" + notificationType + '\'' +
@@ -179,7 +181,7 @@ public class DAlarm {
                 ", sourceHost='" + sourceHost + '\'' +
                 ", ident='" + ident + '\'' +
                 ", tag='" + tag + '\'' +
-                ", customInfo='" + customInfo + '\'' +
+                ", customInfo='" + addInfo + '\'' +
                 '}';
     }
 

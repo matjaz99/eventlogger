@@ -154,6 +154,7 @@ groups:
         action:
           type: alarm
           severity: major
+          addInfo: Check electric fuse
       - name: Foobar inactive
         pattern:
           expr: "Foobar is working now"

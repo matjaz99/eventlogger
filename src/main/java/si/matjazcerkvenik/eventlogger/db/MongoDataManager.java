@@ -52,7 +52,7 @@ public class MongoDataManager implements IDataManager {
     private static boolean dbIndexCreated = false;
 
     private static DAlarm mongoDownAlarm = new DAlarm("localhost", "localhost",
-            "MongoDB down", DAlarmSeverity.CRITICAL, "mongodb", "mongodb",
+            "MongoDB down", DAlarmSeverity.CRITICAL, "mongodb", "mongodb", null,
             "Cannot connect to MongoDB on " + DProps.EVENTLOGGER_MONGODB_CONNECTION_STRING);
 
     public MongoDataManager(int id) {

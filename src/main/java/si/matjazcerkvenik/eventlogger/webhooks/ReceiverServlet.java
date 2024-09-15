@@ -214,7 +214,8 @@ public class ReceiverServlet extends HttpServlet {
 
                     int severity = DAlarmSeverity.getSeverity(rule.getAction().get("severity"));
                     DAlarm a = new DAlarm(event.getRemoteAddress(), event.getHost(), rule.getName(),
-                            severity, event.getIdent(), event.getTag(), event.getMessage());
+                            severity, event.getIdent(), event.getTag(),
+                            rule.getAction().get("addInfo"), event.getMessage());
                     a.setNotificationType(rule.getAction().get("type"));
                     AlarmMananger.raiseAlarm(a);
 
@@ -224,7 +225,7 @@ public class ReceiverServlet extends HttpServlet {
                 } else if (rule.getAction().get("type").equalsIgnoreCase("clear")) {
 
                     DAlarm a = new DAlarm(event.getRemoteAddress(), event.getHost(), rule.getName(),
-                            DAlarmSeverity.CLEAR, event.getIdent(), event.getTag(), event.getMessage());
+                            DAlarmSeverity.CLEAR, event.getIdent(), event.getTag(), null, event.getMessage());
                     a.setNotificationType(rule.getAction().get("type"));
                     AlarmMananger.clearAlarm(a);
 
@@ -234,7 +235,8 @@ public class ReceiverServlet extends HttpServlet {
                 } else if (rule.getAction().get("type").equalsIgnoreCase("event")) {
 
                     DAlarm a = new DAlarm(event.getRemoteAddress(), event.getHost(), rule.getName(),
-                            DAlarmSeverity.INFORMATIONAL, event.getIdent(), event.getTag(), event.getMessage());
+                            DAlarmSeverity.INFORMATIONAL, event.getIdent(), event.getTag(),
+                            rule.getAction().get("addInfo"), event.getMessage());
                     a.setNotificationType(rule.getAction().get("type"));
                     AlarmMananger.sendEvent(a);
 
