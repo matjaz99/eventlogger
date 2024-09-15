@@ -95,8 +95,6 @@ public class AlarmMananger implements Runnable {
             a.setTimestamp(System.currentTimeMillis());
             a.setNotificationType("clear");
             alarmsBufferList.add(a);
-        } else {
-            logger.info("AlarmMananger: clearAlarm(): no alarm to clear");
         }
 
     }

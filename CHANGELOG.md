@@ -3,7 +3,7 @@
 ## 0.3.1-SNAPSHOT
 
 * [ENHANCEMENT] Rules view GUI improvements
-* [ENHANCEMENT] Some fixes in raising and clearing alarms
+* [ENHANCEMENT] Some fixes in raising and clearing alarms, added `addInfo` param in yaml rule
 
 ## 0.3.0 / 2024-05-26
 
