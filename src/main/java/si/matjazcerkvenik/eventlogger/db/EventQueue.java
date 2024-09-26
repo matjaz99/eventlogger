@@ -38,6 +38,10 @@ public class EventQueue {
         return eventQueueInstance;
     }
 
+    /**
+     * Add events to queue, waiting to be eventually stored in DB.
+     * @param eventList
+     */
     public void addEvents(List<DEvent> eventList) {
         queue.addAll(eventList);
     }

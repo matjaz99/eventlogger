@@ -114,27 +114,30 @@ public class ReceiverServlet extends HttpServlet {
         }
 
 
-        if (eventList == null) {
+        if (eventList == null || eventList.isEmpty()) {
             LogFactory.getLogger().warn("ReceiverServlet: doPost: eventList is empty: " + dRequest.toString());
-        } else {
-            for (DEvent e : eventList) {
-                evaluateRules(e);
-            }
+            return;
+        }
+
+        for (DEvent e : eventList) {
+            evaluateRules(e);
+        }
 //            for (Iterator<DEvent> it = eventList.iterator(); it.hasNext();) {
 //                DEvent e = it.next();
 //                e = evaluateRules(e);
 //                if (e == null) it.remove();
 //            }
-        }
 
-        IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
 
         if (DProps.EVENTLOGGER_MONGODB_FLUSH_INTERVAL_SEC == 0) {
+            // send immediately to db
+            IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
             iDataManager.addEvents(eventList);
+            DataManagerFactory.getInstance().returnClient(iDataManager);
         } else {
+            // put to queue
             EventQueue.getInstance().addEvents(eventList);
         }
-        DataManagerFactory.getInstance().returnClient(iDataManager);
 
     }
     

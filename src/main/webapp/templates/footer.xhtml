@@ -8,15 +8,15 @@
 	<h:panelGrid columns="1" cellpadding="0" cellspacing="0" width="100%">
 
 		<p:notificationBar position="bottom" autoDisplay="true" effect="slide" styleClass="top" widgetVar="bar">
-			<h:outputText value="Version: #{configBean.version}" />
-			<h:outputText value=" | " style="margin: 0 5px; font-weight: bold;" />
-			<h:outputText value="IP Address: #{configBean.localIp}" />
-			<h:outputText value=" | " style="margin: 0 5px; font-weight: bold;" />
-			<h:outputText value="Containerized: #{configBean.containerized}" />
-			<h:outputText value=" | " style="margin: 0 5px; font-weight: bold;" />
-			<h:outputLabel value="Up time: #{configBean.upTime}" />
-			<h:outputText value=" | " style="margin: 0 5px; font-weight: bold;" />
-			<h:outputLabel value="Events processed: #{configBean.eventsCount}" />
+			<p:outputLabel value="Version: #{configBean.version}" styleClass="smalltext" />
+			<p:outputLabel value=" | " style="margin: 0 5px; font-weight: bold;" styleClass="smalltext" />
+			<p:outputLabel value="IP Address: #{configBean.localIp}" styleClass="smalltext" />
+			<p:outputLabel value=" | " style="margin: 0 5px; font-weight: bold;" styleClass="smalltext" />
+			<p:outputLabel value="Containerized: #{configBean.containerized}" styleClass="smalltext" />
+			<p:outputLabel value=" | " style="margin: 0 5px; font-weight: bold;" styleClass="smalltext" />
+			<p:outputLabel value="Up time: #{configBean.upTime}" styleClass="smalltext" />
+			<p:outputLabel value=" | " style="margin: 0 5px; font-weight: bold;" styleClass="smalltext" />
+			<p:outputLabel value="Events processed: #{configBean.eventsCount}" styleClass="smalltext" />
 		</p:notificationBar>
 
 	</h:panelGrid>

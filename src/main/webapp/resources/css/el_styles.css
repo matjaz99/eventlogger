@@ -16,6 +16,10 @@ hr {
     font-size: 10px;
 }
 
+.smalltext {
+    font-size: 0.6rem;
+}
+
 pre code {
     background: #EAEAEA;
     border: 1px solid #CECECE;
@@ -62,7 +66,7 @@ body .ui-selectcheckboxmenu .ui-selectcheckboxmenu-multiple-container .ui-select
 	border-left: none;
 	background: #FFFFFF;
 	color: #222222;
-	font-size: 11px;
+	/*font-size: 11px;*/
 }
 body .ui-panelgrid .ui-panelgrid-cell {
     padding: 0.5rem;

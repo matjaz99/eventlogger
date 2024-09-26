@@ -35,6 +35,7 @@ public class AlarmMananger implements Runnable {
 
     private static Map<String, DAlarm> activeAlarmsList = new HashMap<>();
 
+    /** This buffer is used to prevent blocking processing of events (because of timeouts when sending alarms) */
     private static ConcurrentLinkedQueue<DAlarm> alarmsBufferList = new ConcurrentLinkedQueue<>();
 
     private Thread t;
@@ -80,6 +81,12 @@ public class AlarmMananger implements Runnable {
     }
 
 
+    /**
+     * Send alarm to alarm destination. Actually alarm will be added to buffer queue, and it will be sent
+     * in a separate thread. If alarm was already sent, it is added to active alarm list,
+     * and it will not be sent again.
+     * @param alarm
+     */
     public static synchronized void raiseAlarm(DAlarm alarm) {
         if (alarm.getTimestamp() == 0) alarm.setTimestamp(System.currentTimeMillis());
         alarm.setNotificationType("alarm");
@@ -88,6 +95,11 @@ public class AlarmMananger implements Runnable {
         alarmsBufferList.add(alarm);
     }
 
+    /**
+     * Clear active alarm. First check if alarm is present in active alarm list. If yes, then use the same
+     * alarm, change the severity to clear and sent it (via buffer). Otherwise, nothing will happen.
+     * @param alarm
+     */
     public static synchronized void clearAlarm(DAlarm alarm) {
         DAlarm a = activeAlarmsList.remove(alarm.getAlarmId());
         if (a != null) {
@@ -99,6 +111,11 @@ public class AlarmMananger implements Runnable {
 
     }
 
+    /**
+     * Event is sent to alarm destination. Events are not stored in active alarm list, and they are sent
+     * on every occurrence.
+     * @param alarm
+     */
     public static void sendEvent(DAlarm alarm) {
         alarm.setTimestamp(System.currentTimeMillis());
         alarmsBufferList.add(alarm);
@@ -142,19 +159,33 @@ public class AlarmMananger implements Runnable {
 
     }
 
+    /**
+     * Convert single alarm to JSON string.
+     * @param alarm
+     * @return json string
+     */
     private String toJsonString(DAlarm alarm) {
         Gson gson = new Gson();
         String s = gson.toJson(alarm);
         return s;
     }
 
+    /**
+     * Convert a list of alarms to JSON string.
+     * @param list
+     * @return json string
+     */
     private String toJsonArrayString(List<DAlarm> list) {
         Gson gson = new Gson();
         String s = gson.toJson(list);
         return s;
     }
 
-
+    /**
+     * Return complete list of active alarms as JSON string.
+     * This method is called from API call (/alarms).
+     * @return json string
+     */
     public String toJsonStringAllActiveAlarms() {
         Gson gson = new Gson();
         String s = gson.toJson(activeAlarmsList.values());
