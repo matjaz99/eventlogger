@@ -29,26 +29,41 @@
 									 action="#{evgenBean.applyDumpNewLinesAction}"
 									 update="evgenForm" />
 					<p:outputLabel value=""/>
+				</p:panelGrid>
+				<br/>
+				<p:panelGrid columns="2">
 					<p:commandButton type="submit" value="Alarm 1"
 									 styleClass="ui-button-outlined"
 									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
 									 action="#{evgenBean.applyLogAlarmAction1}"
 									 update="evgenForm" />
+					<p:inplace editor="true">
+						<p:inputText value="#{evgenBean.alarmText1}" required="true" label="text"/>
+					</p:inplace>
 					<p:commandButton type="submit" value="Clear 1"
 									 styleClass="ui-button-outlined"
 									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
 									 action="#{evgenBean.applyLogClearAction1}"
 									 update="evgenForm" />
+					<p:inplace editor="true">
+						<p:inputText value="#{evgenBean.clearText1}" required="true" label="text"/>
+					</p:inplace>
 					<p:commandButton type="submit" value="Alarm 2"
 									 styleClass="ui-button-outlined"
 									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
 									 action="#{evgenBean.applyLogAlarmAction2}"
 									 update="evgenForm" />
+					<p:inplace editor="true">
+						<p:inputText value="#{evgenBean.alarmText2}" required="true" label="text"/>
+					</p:inplace>
 					<p:commandButton type="submit" value="Clear 2"
 									 styleClass="ui-button-outlined"
 									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"
 									 action="#{evgenBean.applyLogClearAction2}"
 									 update="evgenForm" />
+					<p:inplace editor="true">
+						<p:inputText value="#{evgenBean.clearText1}" required="true" label="text"/>
+					</p:inplace>
 					<p:commandButton type="submit" value="Event"
 									 styleClass="ui-button-outlined"
 									 style="width: 6rem; margin-left: 1rem; margin-right: 1rem;"

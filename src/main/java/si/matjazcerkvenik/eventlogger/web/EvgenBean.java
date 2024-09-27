@@ -15,9 +15,7 @@
  */
 package si.matjazcerkvenik.eventlogger.web;
 
-import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;
-import si.matjazcerkvenik.simplelogger.LEVEL;
 import si.matjazcerkvenik.simplelogger.SimpleLogger;
 
 import javax.annotation.PostConstruct;
@@ -34,6 +32,12 @@ public class EvgenBean {
 
     private int dummyCount;
 
+    private String alarmText1 = "Special event to test raising alarm in eventlogger: Foobar does not work.";
+    private String clearText1 = "Special event to test alarm clear in eventlogger: Foobar is working now.";
+    private String alarmText2 = "Special event to test raising alarm in eventlogger: Foobar has crashed.";
+    private String clearText2 = "Special event to test alarm clear in eventlogger: Foobar recovered from crash.";
+    private String eventText = "Special event to test sending event in eventlogger. This is a foobar event.";
+
     @PostConstruct
     public void init() {
         evgenLog = LogFactory.getEvgenLog();
@@ -49,6 +53,46 @@ public class EvgenBean {
         this.numberOfNewLines = numberOfNewLines;
     }
 
+    public String getAlarmText1() {
+        return alarmText1;
+    }
+
+    public void setAlarmText1(String alarmText1) {
+        this.alarmText1 = alarmText1;
+    }
+
+    public String getClearText1() {
+        return clearText1;
+    }
+
+    public void setClearText1(String clearText1) {
+        this.clearText1 = clearText1;
+    }
+
+    public String getAlarmText2() {
+        return alarmText2;
+    }
+
+    public void setAlarmText2(String alarmText2) {
+        this.alarmText2 = alarmText2;
+    }
+
+    public String getClearText2() {
+        return clearText2;
+    }
+
+    public void setClearText2(String clearText2) {
+        this.clearText2 = clearText2;
+    }
+
+    public String getEventText() {
+        return eventText;
+    }
+
+    public void setEventText(String eventText) {
+        this.eventText = eventText;
+    }
+
     public void applyDumpNewLinesAction() {
         LogFactory.getLogger().info("dumping " + numberOfNewLines + " lines");
         int i = 0;
@@ -59,23 +103,28 @@ public class EvgenBean {
     }
 
     public void applyLogAlarmAction1() {
-        evgenLog.info("Special event to test raising alarm in eventlogger: Foobar does not work. Number " + dummyCount++);
+        if (alarmText1 == null || alarmText1.length() == 0) alarmText1 = "Special event to test raising alarm in eventlogger: Foobar does not work.";
+        evgenLog.info(alarmText1 + " Number: " + dummyCount++);
     }
 
     public void applyLogAlarmAction2() {
-        evgenLog.info("Special event to test raising alarm in eventlogger: Foobar has crashed. Number " + dummyCount++);
+        if (alarmText1 == null || alarmText1.length() == 0) alarmText1 = "Special event to test raising alarm in eventlogger: Foobar has crashed.";
+        evgenLog.info(alarmText2 + " Number: " + dummyCount++);
     }
 
     public void applyLogClearAction1() {
-        evgenLog.info("Special event to test alarm clear in eventlogger: Foobar is working now. Number " + dummyCount++);
+        if (clearText1 == null || clearText1.length() == 0) clearText1 = "Special event to test alarm clear in eventlogger: Foobar is working now.";
+        evgenLog.info(clearText1 + " Number: " + dummyCount++);
     }
 
     public void applyLogClearAction2() {
-        evgenLog.info("Special event to test alarm clear in eventlogger: Foobar recovered from crash. Number " + dummyCount++);
+        if (clearText2 == null || clearText2.length() == 0) clearText2 = "Special event to test alarm clear in eventlogger: Foobar recovered from crash.";
+        evgenLog.info(clearText2 + " Number: " + dummyCount++);
     }
 
     public void applyLogEventAction() {
-        evgenLog.info("Special event to test sending event in eventlogger. This is a foobar event. Number " + dummyCount++);
+        if (eventText == null || eventText.length() == 0) eventText = "Special event to test sending event in eventlogger. This is a foobar event.";
+        evgenLog.info(eventText + " Number: " + dummyCount++);
     }
 
     public String getEvgenLogFile() {
