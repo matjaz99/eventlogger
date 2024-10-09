@@ -2,8 +2,11 @@
 
 ## 0.3.1-SNAPSHOT
 
+* [CHANGE] Upgraded simple-logger to 1.7.2
 * [ENHANCEMENT] Rules view GUI improvements
-* [ENHANCEMENT] Some fixes in raising and clearing alarms, added `addInfo` param in yaml rule
+* [ENHANCEMENT] Some fixes in raising and clearing alarms
+* [ENHANCEMENT] added `addInfo` param to alarm action in yaml rule
+* [ENHANCEMENT] separated processing of events from the servlet
 
 ## 0.3.0 / 2024-05-26
 

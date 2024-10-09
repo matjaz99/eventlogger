@@ -17,6 +17,7 @@ package si.matjazcerkvenik.eventlogger.util;
 
 import si.matjazcerkvenik.eventlogger.db.DbMaintenanceTask;
 import si.matjazcerkvenik.eventlogger.db.FlushQueueThread;
+import si.matjazcerkvenik.eventlogger.db.RequestsProcessorThread;
 
 import java.util.Timer;
 
@@ -88,6 +89,19 @@ public class TaskManager {
 //        }
         flushQueueThread.interrupt();
         flushQueueThread = null;
+    }
+
+
+    private RequestsProcessorThread requestsProcessorThread;
+
+    public void startRequestsProcessorThread() {
+        requestsProcessorThread = new RequestsProcessorThread("RequestsProcessorThread");
+        requestsProcessorThread.start();
+    }
+
+    public void stopRequestsProcessorThread() {
+        requestsProcessorThread.interrupt();
+        requestsProcessorThread = null;
     }
 
 

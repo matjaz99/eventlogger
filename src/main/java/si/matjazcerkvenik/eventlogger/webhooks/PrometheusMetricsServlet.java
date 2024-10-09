@@ -57,6 +57,7 @@ public class PrometheusMetricsServlet extends HttpServlet {
 
         DMetrics.eventlogger_db_buffer_size.set(EventQueue.getInstance().getQueueSize());
         DMetrics.eventlogger_db_bulk_insert_size.set(DProps.EVENTLOGGER_MONGODB_BULK_INSERT_MAX_SIZE);
+        DMetrics.eventlogger_requests_queue_size.set(EventQueue.getInstance().getIncReqQueueSize());
 
         resp.setStatus(HttpServletResponse.SC_OK);
         resp.setContentType(TextFormat.CONTENT_TYPE_004);

@@ -133,6 +133,7 @@ public class OnStartListener implements ServletContextListener {
         // load yaml config file
         DProps.yamlConfig = ConfigReader.loadProvidersYamlConfig(DProps.EVENTLOGGER_EVENT_RULES_CONFIG_FILE);
 
+        TaskManager.getInstance().startRequestsProcessorThread();
         TaskManager.getInstance().startFlushQueueTimer();
 
         AlarmMananger.getInstance().start();

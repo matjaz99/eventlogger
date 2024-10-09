@@ -65,6 +65,11 @@ public class DMetrics {
             .labelNames("remotehost", "webhook", "reason")
             .register();
 
+    public static final Gauge eventlogger_requests_queue_size = Gauge.build()
+            .name("eventlogger_requests_queue_size")
+            .help("Requests waiting to be processed")
+            .register();
+
     public static final Histogram eventlogger_db_duration_seconds = Histogram.build()
             .buckets(0.05, 0.1, 0.2, 0.3, 0.5, 1.0, 2.0, 3.0, 5.0)
             .name("eventlogger_db_duration_seconds")
