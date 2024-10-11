@@ -38,8 +38,6 @@ public class FlushQueueThread extends Thread {
                 throw new RuntimeException(e);
             }
 
-            EventQueue.getInstance().processRequestsQueue();
-
             IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
 
             LogFactory.getLogger().info("FlushQueueThread: queue size=" + EventQueue.getInstance().getQueueSize());

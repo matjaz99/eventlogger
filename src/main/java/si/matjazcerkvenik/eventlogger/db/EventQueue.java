@@ -133,6 +133,8 @@ public class EventQueue {
                 return;
             }
 
+            LogFactory.getLogger().info("got " + eventList.size() + " events to be evaluated against rules");
+
             for (DEvent e : eventList) {
                 evaluateRules(e);
             }
@@ -171,6 +173,11 @@ public class EventQueue {
     private void evaluateRules(DEvent event) {
 
         if (DProps.yamlConfig == null) return;
+
+        if (event.getMessage().length() > 1000) {
+            LogFactory.getLogger().warn("evaluateRules: event message too long; skipping evaluation");
+            return;
+        }
 
         long before = System.nanoTime();
 

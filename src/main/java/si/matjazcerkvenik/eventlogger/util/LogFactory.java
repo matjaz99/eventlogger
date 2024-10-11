@@ -53,7 +53,7 @@ public class LogFactory {
                 incomingRequestsLog.setFilename(f);
             }
             incomingRequestsLog.setLogLevel(LEVEL.DEBUG);
-            incomingRequestsLog.setBackup(5);
+            incomingRequestsLog.setBackup(10);
             incomingRequestsLog.setMaxSizeMb(100);
             incomingRequestsLog.setVerbose(false);
             incomingRequestsLog.setFilePermissions("rw-r--r--");
