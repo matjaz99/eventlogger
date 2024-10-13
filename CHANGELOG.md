@@ -7,6 +7,9 @@
 * [ENHANCEMENT] Some fixes in raising and clearing alarms
 * [ENHANCEMENT] added `addInfo` param to alarm action in yaml rule
 * [ENHANCEMENT] separated processing of events from the servlet
+* [ENHANCEMENT] skip evaluation if event message is longer than 1000 chars
+* [FEATURE] Paralel processing of incoming requests
+* [FEATURE] Configurable number of workers whe processing incoming requests `EVENTLOGGER_REQUEST_PROCESSING_WORKERS`
 
 ## 0.3.0 / 2024-05-26
 

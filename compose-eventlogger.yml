@@ -20,6 +20,7 @@ services:
       - EVENTLOGGER_GUI_DISPLAY_PATTERN="%D - %h - %i[%p] - %t - %m"
       - EVENTLOGGER_DATA_RETENTION_DAYS=30
       - EVENTLOGGER_DB_POOL_SIZE=3
+      - EVENTLOGGER_REQUEST_PROCESSING_WORKERS=4
       # choose storage type: mongodb, opensearch or memory
       - EVENTLOGGER_STORAGE_TYPE=mongodb
       - EVENTLOGGER_MONGODB_CONNECTION_STRING=mongodb://admin:mongodbpassword@192.168.0.170:27017/?authSource=admin

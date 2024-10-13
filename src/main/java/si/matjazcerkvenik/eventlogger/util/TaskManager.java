@@ -19,6 +19,8 @@ import si.matjazcerkvenik.eventlogger.db.DbMaintenanceTask;
 import si.matjazcerkvenik.eventlogger.db.FlushQueueThread;
 import si.matjazcerkvenik.eventlogger.db.RequestsProcessorThread;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 
 public class TaskManager {
@@ -92,16 +94,25 @@ public class TaskManager {
     }
 
 
-    private RequestsProcessorThread requestsProcessorThread;
+    private List<RequestsProcessorThread> requestsProcessorThreadList = new ArrayList<>();
 
     public void startRequestsProcessorThread() {
-        requestsProcessorThread = new RequestsProcessorThread("RequestsProcessorThread");
-        requestsProcessorThread.start();
+        Runtime instance = Runtime.getRuntime();
+        int cpu = instance.availableProcessors();
+        if (cpu == 0) cpu = 4;
+        for (int i = 0; i < cpu; i++) {
+            RequestsProcessorThread t = new RequestsProcessorThread("RequestsProcessorThread[" + i + "]");
+            t.start();
+            requestsProcessorThreadList.add(t);
+        }
     }
 
     public void stopRequestsProcessorThread() {
-        requestsProcessorThread.interrupt();
-        requestsProcessorThread = null;
+        for (RequestsProcessorThread t :
+                requestsProcessorThreadList) {
+            t.interrupt();
+            requestsProcessorThreadList.remove(t);
+        }
     }
 
 

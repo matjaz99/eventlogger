@@ -51,6 +51,7 @@ public class DProps {
     public static String EVENTLOGGER_EVENT_RULES_CONFIG_FILE = "/opt/eventlogger/event_rules.yml";
     public static String EVENTLOGGER_GUI_DISPLAY_PATTERN = "%D - %h - %i[%p] - %t - %m";
     public static String EVENTLOGGER_EVENT_RULES_LAST_RESET_TIME = "-";
+    public static int EVENTLOGGER_REQUEST_PROCESSING_WORKERS = 4;
 
 
     // memory or mongodb
