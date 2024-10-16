@@ -7,40 +7,61 @@
 
 Eventlogger is event processor, central log storage with browsing, searching and filtering capabilities. 
 Eventlogger listens for HTTP requests (**events**) on a webhook, processes the message body, analyzes events,
-stores data in database and at the end offers an overview of received events in a web GUI.
+stores data in database and at the end offers an overview of events in a web GUI.
+
+Eventlogger is mainly focused on log events. Every line in log file is treated as an event.
+To collect logs, Eventlogger relies on fluentd to do the dirty job of tailing log files and forwarding events to Eventlogger's HTTP endpoint using `out_http` plugin.
+See examples of fluentd configuration below.
+
+Nevertheless, Eventlogger can receive any HTTP request with meaningful body message.
+
+Eventlogger offers a web GUI to display, search and filter events. Selected events can be downloaded as log file.
+
+Eventlogger supports customized rules, which evaluate the data in events and trigger actions.
 
 [Screenshots](/docs/screenshots/Screenshots.md)
 
-### What is event?
+### What is event
 
-Event could be any message transmitted over the network. So, basically it's just a String. Perfect, 
-as I was initially mostly interested into syslog events (logs).
-
-Eventlogger focuses on human-readable messages which might have some context and meaning of what is 
-happening in our network/server infrastructure, collect those messages and make use of them.
+The body message of the incoming request is typically in JSON format and may contain one or more events.
 
 Each event should provide at least information about:
 - where it comes from (source IP address, aka. `host`)
-- who sent the event (some process with a name, aka. `ident`)
+- who sent the event (name of process, aka. `ident`)
 - what happened (the message of the event, aka. `message` or shorter `msg`)
 
-Eventlogger offers a web GUI where events can be displayed, searched and filtered.
 
-Eventlogger supports customized rules, which can extract data from events and trigger actions
+### Event flow
 
-Eventlogger started as a syslog viewer, backed-up by a database. Fluentd is used to collect Syslog events and 
-forward them to Eventlogger using fluent's `out_http` plugin.
+There are three main stages in the event processing:
 
-At the end, eventlogger is a proxy between an event sender and database.
-See examples of fluentd configuration that is supported by eventlogger - (TODO).
+**1. Receive request**
+A proper parser is selected based on the webhook URI of the incoming request. See webhook options below.
+
+**2. Process request and extract events**
+Parse the request, extract individual events from the JSON and evaluate them against the rules.
+
+**3. Store events to DB**
+Extracted events are stored to MongoDB.
+
 
 ## Webhooks
 
-Webhooks are http endpoints where events from different sources are received. Each webhook endpoint implements 
-specific parser for processing of data. Data is then normalized in uniform format and stored in the
-database.
+Webhooks (URI endpoints) determine which parser will be used to extract events. Available webhooks:
+
+| Webhook                               | Description                           |
+|---------------------------------------|---------------------------------------|
+| `/eventlogger/webhook/fluentd-tail`   | Logfiles collected by fluent.         |
+| `/eventlogger/webhook/fluentd-syslog` | Syslog events captured by fluent.     |
+| `/eventlogger/webhook/http`           | Generic webhook for any HTTP request. |
 
 
+### JSON variations
+
+Eventlogger supports the following variations in the JSON structure:
+- plain JSON object, containing single event, eg: `{}`
+- array of objects, containing multiple events, eg: `[{},{},{}]`
+- ndjson format, containing multiple events, eg: `{}\n{}\n{}`
 
 ### Event
 
@@ -80,6 +101,28 @@ need to follow the last N events from various sources centralized in one place, 
 Eventlogger supports MongoDB as a long-term storage. The `mongodb` storage type must be configured
 to enable storing data in MongoDB.
 
+## Global settings
+
+Location of event rules file:  
+EVENTLOGGER_EVENT_RULES_CONFIG_FILE=/opt/eventlogger/rules/event_rules.yml
+
+Default display pattern for events:  
+EVENTLOGGER_GUI_DISPLAY_PATTERN="%D - %h - %i[%p] - %t - %m"
+
+How many days before data is deleted from database (default 30 days):  
+EVENTLOGGER_DATA_RETENTION_DAYS=30
+
+Number of parallel processes for evaluating rules:  
+EVENTLOGGER_REQUEST_PROCESSING_WORKERS=4
+
+HTTP endpoint for sending alarms:  
+EVENTLOGGER_ALARM_DESTINATION=http://hostname:8080/alertmonitor/webhook/eventlogger
+
+## Log settings
+
+Eventlogger logs are controlled with SIMPLELOGGER_* environment variables.
+See simple-logger help: https://github.com/matjaz99/simple-logger
+
 ## Storage types
 
 Eventlogger currently supports two storage types: `memory` or `mongodb`.
@@ -90,9 +133,10 @@ Memory storage type stores all data internally in memory. It is limited to the l
 Memory storage type does not require any configuration.
 
 
-| EnvVar                                    | Description                                      |
-|-------------------------------------------|--------------------------------------------------|
-| `EVENTLOGGER_STORAGE_TYPE`                | set to `memory` to enable persistence in memory. |
+| EnvVar                     | Description                                      |
+|----------------------------|--------------------------------------------------|
+| `EVENTLOGGER_STORAGE_TYPE` | set to `memory` to enable persistence in memory. |
+| `EVENTLOGGER_DB_POOL_SIZE` | Number of concurrent DB connections.             |
 
 
 ### MongoDB
@@ -310,3 +354,8 @@ Supported metrics:
 - `eventlogger_available_processors` (gauge)
 
 Additional metrics can be defined through actions in the event rules.
+
+
+
+
+

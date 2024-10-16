@@ -212,11 +212,11 @@ groups:
 # actions:
 # alarm - send alarm and keep state until cleared
 # clear - clear alarm
-# event - just send without expecting a clear event
-# count - count occurrences and expose as Prometheus metric (counter)
+# event - just send event on every occurrence (without expecting a clear event)
+# count - count occurrences and expose them as Prometheus metric (counter)
 # extract - extract value and expose the value as Prometheus metric (gauge) - TODO?
 # log - write event to separate log - TODO?
-# tag - add custom tags - TODO?
+# label - add custom labels - TODO?
 # ignore - ignore event - TODO?
 # kafka - send to kafka topic - TODO?
 

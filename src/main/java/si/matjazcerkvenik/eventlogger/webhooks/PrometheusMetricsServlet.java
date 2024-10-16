@@ -76,7 +76,7 @@ public class PrometheusMetricsServlet extends HttpServlet {
         if (includedParam == null) {
             return Collections.emptySet();
         } else {
-            return new HashSet<String>(Arrays.asList(includedParam));
+            return new HashSet<>(Arrays.asList(includedParam));
         }
     }
 

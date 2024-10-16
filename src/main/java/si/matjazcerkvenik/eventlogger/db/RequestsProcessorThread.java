@@ -1,3 +1,18 @@
+/*
+   Copyright 2021 Matjaž Cerkvenik
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
 package si.matjazcerkvenik.eventlogger.db;
 
 import io.krakens.grok.api.Grok;
@@ -50,6 +65,14 @@ public class RequestsProcessorThread extends Thread {
 
     }
 
+    /**
+     * Process incoming request:
+     * 1. Find suitable parser (according to URI)
+     * 2. Parse the message (request body)
+     * 3. Evaluate rules against events and execute actions
+     * @param dRequest
+     * @return a list of events extracted from request
+     */
     public List<DEvent> processRequest(DRequest dRequest) {
 
         List<DEvent> eventList = null;
@@ -198,7 +221,7 @@ public class RequestsProcessorThread extends Thread {
 //                    }
 
                 } else {
-
+                    // no other option so far
                 }
 
 

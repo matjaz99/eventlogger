@@ -40,10 +40,13 @@ import java.util.regex.Pattern;
 
 public class EventQueue {
 
+    /**
+     * A list containing requests waiting to be processed.
+     */
     private ConcurrentLinkedQueue<DRequest> incReqQueue = new ConcurrentLinkedQueue<>();
 
     /**
-     * A list containing data waiting to be inserted into DB.
+     * A list containing events waiting to be inserted into DB.
      */
     private ConcurrentLinkedQueue<DEvent> queue = new ConcurrentLinkedQueue<>();
 
@@ -56,12 +59,17 @@ public class EventQueue {
         return eventQueueInstance;
     }
 
+    /**
+     * Add incoming request to the queue. It is waiting to be processed in separate process (see Processor Thread)
+     * @param dRequest
+     */
     public void addIncomingRequest(DRequest dRequest) {
         incReqQueue.add(dRequest);
     }
 
     /**
-     * Add events to queue, waiting to be eventually stored in DB.
+     * Add processed events to queue, waiting to be eventually stored in DB. A separate thread will insert events
+     * into the DB.
      * @param eventList
      */
     public void addEvents(List<DEvent> eventList) {
@@ -76,6 +84,11 @@ public class EventQueue {
         return incReqQueue.size();
     }
 
+    /**
+     * Return next batch of events from the queue to be inserted into DB.
+     * The size of batch is limited to configured max bulk size.
+     * @return batch (list) of events
+     */
     public List<DEvent> getNextBatch() {
         List<DEvent> list = new ArrayList<>();
         for (int i = 0; i < DProps.EVENTLOGGER_MONGODB_BULK_INSERT_MAX_SIZE; i++) {
@@ -85,6 +98,10 @@ public class EventQueue {
         return list;
     }
 
+    /**
+     * Get next request from the queue.
+     * @return request
+     */
     public DRequest getNextRequest() {
         if (incReqQueue.isEmpty()) return null;
         return incReqQueue.poll();
