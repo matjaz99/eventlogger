@@ -42,7 +42,7 @@ A proper parser is selected based on the webhook URI of the incoming request. Se
 Parse the request, extract individual events from the JSON and evaluate them against the rules.
 
 **3. Store events to DB**
-Extracted events are stored to MongoDB.
+Events are stored to MongoDB.
 
 
 ## Webhooks
@@ -352,6 +352,7 @@ Supported metrics:
 - `eventlogger_memory_free_bytes` (gauge)
 - `eventlogger_memory_max_bytes` (gauge)
 - `eventlogger_available_processors` (gauge)
+- `eventlogger_request_processing_workers` (gauge)
 
 Additional metrics can be defined through actions in the event rules.
 

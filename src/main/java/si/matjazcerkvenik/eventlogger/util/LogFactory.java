@@ -36,7 +36,7 @@ public class LogFactory {
         if (logger == null) {
             logger = new SimpleLogger();
             if (DProps.DEV_ENV) {
-                logger.setFilename("./eventlogger.log");
+                logger.setFilename("./log/eventlogger.log");
             }
         }
         return logger;
@@ -47,7 +47,7 @@ public class LogFactory {
         if (incomingRequestsLog == null) {
             incomingRequestsLog = new SimpleLogger();
             if (DProps.DEV_ENV) {
-                logger.setFilename("./eventlogger-http-requests.log");
+                logger.setFilename("./log/eventlogger-http-requests.log");
             } else {
                 String f = logger.getFilename().replace("eventlogger.log", "eventlogger-http-requests.log");
                 incomingRequestsLog.setFilename(f);
@@ -65,7 +65,7 @@ public class LogFactory {
         if (evgenLog == null) {
             evgenLog = new SimpleLogger();
             if (DProps.DEV_ENV) {
-                logger.setFilename("./evgen-" + DProps.HOSTNAME + ".log");
+                logger.setFilename("./log/evgen-" + DProps.HOSTNAME + ".log");
             } else {
                 String f = logger.getFilename().replace("eventlogger.log", "evgen-" + DProps.HOSTNAME + ".log");
                 evgenLog.setFilename(f);

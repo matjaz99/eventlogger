@@ -119,7 +119,7 @@ public class RequestsProcessorThread extends Thread {
             return null;
         }
 
-        LogFactory.getLogger().info(this.getName() + ": got " + eventList.size() + " events to be evaluated against rules");
+        LogFactory.getLogger().debug(this.getName() + ": got " + eventList.size() + " events to be evaluated against rules");
 
         for (DEvent e : eventList) {
             evaluateRules(e);

@@ -35,7 +35,6 @@ import si.matjazcerkvenik.eventlogger.db.DataManagerFactory;
 import si.matjazcerkvenik.eventlogger.db.IDataManager;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DFilter;
-import si.matjazcerkvenik.eventlogger.model.DRequest;
 import si.matjazcerkvenik.eventlogger.util.DProps;
 import si.matjazcerkvenik.eventlogger.util.Formatter;
 import si.matjazcerkvenik.eventlogger.util.LogFactory;

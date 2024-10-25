@@ -10,6 +10,7 @@
 * [ENHANCEMENT] skip evaluation if event message is longer than 1000 chars
 * [FEATURE] Paralel processing of incoming requests
 * [FEATURE] Configurable number of workers whe processing incoming requests `EVENTLOGGER_REQUEST_PROCESSING_WORKERS`
+* [FEATURE] Added metric `eventlogger_request_processing_workers`
 
 ## 0.3.0 / 2024-05-26
 

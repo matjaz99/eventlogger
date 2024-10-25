@@ -97,10 +97,7 @@ public class TaskManager {
     private List<RequestsProcessorThread> requestsProcessorThreadList = new ArrayList<>();
 
     public void startRequestsProcessorThread() {
-        Runtime instance = Runtime.getRuntime();
-        int cpu = instance.availableProcessors();
-        if (cpu == 0) cpu = 4;
-        for (int i = 0; i < cpu; i++) {
+        for (int i = 0; i < DProps.EVENTLOGGER_REQUEST_PROCESSING_WORKERS; i++) {
             RequestsProcessorThread t = new RequestsProcessorThread("RequestsProcessorThread[" + i + "]");
             t.start();
             requestsProcessorThreadList.add(t);
