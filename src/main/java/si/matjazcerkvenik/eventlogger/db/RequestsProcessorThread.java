@@ -173,6 +173,8 @@ public class RequestsProcessorThread extends Thread {
 
             for (DRule rule : group.getRules()) {
 
+                if (!rule.isEnabled()) continue;
+
                 // check filter
                 if (rule.getFilter() != null) {
                     if (rule.getFilter().containsKey("ident")) {

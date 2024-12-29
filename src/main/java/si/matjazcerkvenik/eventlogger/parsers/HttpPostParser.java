@@ -108,7 +108,7 @@ public class HttpPostParser implements IEventParser {
                 Gson gson2 = new Gson();
                 String json = gson2.toJson(obj[i]);
                 Map map = gson2.fromJson(json, Map.class);
-//                System.out.println(">>> " + map.size());
+
                 if (map.containsKey("hostname")) {
                     e.setEventSource(map.get("hostname").toString());
                     e.setHost(map.get("hostname").toString());
@@ -119,7 +119,6 @@ public class HttpPostParser implements IEventParser {
                     e.setEventSource(dRequest.getRemoteHost());
                     e.setHost(dRequest.getRemoteHost());
                 }
-//                e.setHost(dRequest.getRemoteHost());
 
                 e.setMessage(obj[i].toString());
 
@@ -149,8 +148,12 @@ public class HttpPostParser implements IEventParser {
                 if (!Formatter.isNullOrEmpty(dRequest.getParameterMap().get("ident"))) {
                     e.setIdent(dRequest.getParameterMap().get("ident"));
                 } else {
-                    // use tag, if ident is not found
-                    e.setIdent(e.getTag());
+                    if (map.containsKey("ident")) {
+                        e.setIdent(map.get("ident").toString());
+                    } else {
+                        // use tag, if ident is not found
+                        e.setIdent(e.getTag());
+                    }
                 }
 
                 e.setId(DProps.increaseAndGetEventsReceivedCount());

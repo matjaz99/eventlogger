@@ -11,6 +11,7 @@
 * [FEATURE] Paralel processing of incoming requests
 * [FEATURE] Configurable number of workers whe processing incoming requests `EVENTLOGGER_REQUEST_PROCESSING_WORKERS`
 * [FEATURE] Added metric `eventlogger_request_processing_workers`
+* [FEATURE] Enable or disable event rule
 
 ## 0.3.0 / 2024-05-26
 

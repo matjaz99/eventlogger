@@ -53,6 +53,13 @@
 								<p:outputLabel value="Hits: " class="boldtext" />
 								<p:outputLabel value="#{rule.hits}"/>
 								<br/>
+								<p:selectBooleanButton onLabel="Enabled" offLabel="Disabled"
+													   value="#{rule.enabled}"
+													   onIcon="pi pi-check" offIcon="pi pi-times"
+													   style="width: 6rem;" >
+									<p:ajax />
+								</p:selectBooleanButton>
+								<br/>
 							</div>
 						</ui:repeat>
 

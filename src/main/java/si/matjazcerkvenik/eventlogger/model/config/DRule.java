@@ -20,6 +20,7 @@ import java.util.Map;
 public class DRule {
 
     private String name;
+    private boolean enabled = true;
     private Map<String, String> pattern;
     private Map<String, String> filter;
     private Map<String, String> action;
@@ -31,6 +32,14 @@ public class DRule {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Map<String, String> getPattern() {
@@ -73,10 +82,10 @@ public class DRule {
     public String toString() {
         return "DRule{" +
                 "name='" + name + '\'' +
+                ", enabled=" + enabled +
                 ", pattern=" + pattern +
                 ", filter=" + filter +
                 ", action=" + action +
-                ", hits=" + hits +
                 '}';
     }
 }

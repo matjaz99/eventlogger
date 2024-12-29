@@ -5,6 +5,7 @@ groups:
     endpoint: /eventlogger/webhook/fluentd-syslog
     rules:
       - name: Counting errors
+        enabled: false
         pattern:
           expr: "(?i)error"
           type: regex
