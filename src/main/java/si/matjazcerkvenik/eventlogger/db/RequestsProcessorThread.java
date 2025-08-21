@@ -26,10 +26,7 @@ import si.matjazcerkvenik.eventlogger.model.DRequest;
 import si.matjazcerkvenik.eventlogger.model.config.DRule;
 import si.matjazcerkvenik.eventlogger.model.config.DRulesGroup;
 import si.matjazcerkvenik.eventlogger.parsers.*;
-import si.matjazcerkvenik.eventlogger.util.AlarmMananger;
-import si.matjazcerkvenik.eventlogger.util.DMetrics;
-import si.matjazcerkvenik.eventlogger.util.DProps;
-import si.matjazcerkvenik.eventlogger.util.LogFactory;
+import si.matjazcerkvenik.eventlogger.util.*;
 
 import java.util.List;
 import java.util.Map;
@@ -256,7 +253,11 @@ public class RequestsProcessorThread extends Thread {
                             DAlarmSeverity.INFORMATIONAL, event.getIdent(), event.getTag(),
                             rule.getAction().get("addInfo"), event.getMessage());
                     a.setNotificationType(rule.getAction().get("type"));
-                    AlarmMananger.sendEvent(a);
+                    if (!Formatter.isNullOrEmpty(group.getAlarmDestination())) {
+                        Forwarder.push(a, group.getAlarmDestination());
+                    } else {
+                        Forwarder.push(a, DProps.EVENTLOGGER_ALARM_DESTINATION);
+                    }
 
                     DMetrics.eventlogger_rule_actions_total.labels(rule.getAction().get("type")).inc();
                     rule.increaseHits();

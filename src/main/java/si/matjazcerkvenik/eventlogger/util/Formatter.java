@@ -15,6 +15,8 @@
  */
 package si.matjazcerkvenik.eventlogger.util;
 
+import com.google.gson.Gson;
+import si.matjazcerkvenik.eventlogger.model.DAlarm;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 
 import java.text.SimpleDateFormat;
@@ -69,6 +71,28 @@ public class Formatter {
         }
 
         return resp;
+    }
+
+    /**
+     * Convert single alarm to JSON string.
+     * @param dAlarm
+     * @return json string
+     */
+    public static String toJsonString(DAlarm dAlarm) {
+        Gson gson = new Gson();
+        String s = gson.toJson(dAlarm);
+        return s;
+    }
+
+    /**
+     * Convert a list of alarms to JSON string.
+     * @param list
+     * @return json string
+     */
+    public static String toJsonString(List<DAlarm> list) {
+        Gson gson = new Gson();
+        String s = gson.toJson(list);
+        return s;
     }
 
     public static String toNdJsonString(List<DEvent> eventList) {

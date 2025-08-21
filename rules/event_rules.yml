@@ -145,6 +145,7 @@ groups:
 
   - name: Test alarm events
     endpoint: /eventlogger/webhook/http
+    alarmDestination: "http://ntfy.sh/eventlogger_test_notification"
     rules:
       - name: Foobar inactive
         pattern:

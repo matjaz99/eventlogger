@@ -23,6 +23,8 @@ public class DRulesGroup {
 
     private String endpoint;
 
+    private String alarmDestination;
+
     private List<DRule> rules;
 
     public String getName() {
@@ -41,6 +43,14 @@ public class DRulesGroup {
         this.endpoint = endpoint;
     }
 
+    public String getAlarmDestination() {
+        return alarmDestination;
+    }
+
+    public void setAlarmDestination(String alarmDestination) {
+        this.alarmDestination = alarmDestination;
+    }
+
     public List<DRule> getRules() {
         return rules;
     }
@@ -54,6 +64,7 @@ public class DRulesGroup {
         return "DRulesGroup{" +
                 "name='" + name + '\'' +
                 ", endpoint='" + endpoint + '\'' +
+                ", alarmDestination='" + alarmDestination + '\'' +
                 ", rules=" + rules +
                 '}';
     }

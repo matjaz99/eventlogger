@@ -55,7 +55,7 @@ public class PrometheusMetricsServlet extends HttpServlet {
         // used memory = total - free
         DMetrics.eventlogger_available_processors.set(instance.availableProcessors());
 
-        DMetrics.eventlogger_db_buffer_size.set(EventQueue.getInstance().getQueueSize());
+        DMetrics.eventlogger_db_buffer_size.set(EventQueue.getInstance().getDbQueueSize());
         DMetrics.eventlogger_db_bulk_insert_size.set(DProps.EVENTLOGGER_MONGODB_BULK_INSERT_MAX_SIZE);
         DMetrics.eventlogger_requests_queue_size.set(EventQueue.getInstance().getIncReqQueueSize());
         DMetrics.eventlogger_request_processing_workers.set(DProps.EVENTLOGGER_REQUEST_PROCESSING_WORKERS);

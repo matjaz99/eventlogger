@@ -61,7 +61,7 @@ public class AlarmMananger implements Runnable {
                     list.add(alarmsBufferList.poll());
                 }
 
-                String body = toJsonArrayString(list);
+                String body = Formatter.toJsonString(list);
                 push(body);
 
             } catch (InterruptedException e) {
@@ -157,28 +157,6 @@ public class AlarmMananger implements Runnable {
             logger.error("AlarmMananger: push(): Could not send event. " + e.getMessage());
         }
 
-    }
-
-    /**
-     * Convert single alarm to JSON string.
-     * @param alarm
-     * @return json string
-     */
-    private String toJsonString(DAlarm alarm) {
-        Gson gson = new Gson();
-        String s = gson.toJson(alarm);
-        return s;
-    }
-
-    /**
-     * Convert a list of alarms to JSON string.
-     * @param list
-     * @return json string
-     */
-    private String toJsonArrayString(List<DAlarm> list) {
-        Gson gson = new Gson();
-        String s = gson.toJson(list);
-        return s;
     }
 
     /**

@@ -110,6 +110,10 @@ public class ConfigBean {
         return DProps.LOCAL_IP;
     }
 
+    public String getNumberOfWorkers() {
+        return String.valueOf(DProps.EVENTLOGGER_REQUEST_PROCESSING_WORKERS);
+    }
+
     public String getStorageType() {
         return DProps.EVENTLOGGER_STORAGE_TYPE;
     }

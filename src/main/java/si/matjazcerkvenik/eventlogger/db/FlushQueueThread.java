@@ -40,8 +40,8 @@ public class FlushQueueThread extends Thread {
 
             IDataManager iDataManager = DataManagerFactory.getInstance().getClient();
 
-            LogFactory.getLogger().info("FlushQueueThread: queue size=" + EventQueue.getInstance().getQueueSize());
-            while (EventQueue.getInstance().getQueueSize() > 0) {
+            LogFactory.getLogger().info("FlushQueueThread: queue size=" + EventQueue.getInstance().getDbQueueSize());
+            while (EventQueue.getInstance().getDbQueueSize() > 0) {
                 iDataManager.addEvents(EventQueue.getInstance().getNextBatch());
             }
 

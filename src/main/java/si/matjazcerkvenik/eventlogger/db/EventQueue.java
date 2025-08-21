@@ -15,28 +15,13 @@
  */
 package si.matjazcerkvenik.eventlogger.db;
 
-import io.krakens.grok.api.Grok;
-import io.krakens.grok.api.GrokCompiler;
-import io.krakens.grok.api.Match;
-import io.prometheus.client.Counter;
-import si.matjazcerkvenik.eventlogger.model.DAlarm;
-import si.matjazcerkvenik.eventlogger.model.DAlarmSeverity;
 import si.matjazcerkvenik.eventlogger.model.DEvent;
 import si.matjazcerkvenik.eventlogger.model.DRequest;
-import si.matjazcerkvenik.eventlogger.model.config.DRule;
-import si.matjazcerkvenik.eventlogger.model.config.DRulesGroup;
-import si.matjazcerkvenik.eventlogger.parsers.*;
-import si.matjazcerkvenik.eventlogger.util.AlarmMananger;
-import si.matjazcerkvenik.eventlogger.util.DMetrics;
 import si.matjazcerkvenik.eventlogger.util.DProps;
-import si.matjazcerkvenik.eventlogger.util.LogFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class EventQueue {
 
@@ -48,7 +33,7 @@ public class EventQueue {
     /**
      * A list containing events waiting to be inserted into DB.
      */
-    private ConcurrentLinkedQueue<DEvent> queue = new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<DEvent> dbQueue = new ConcurrentLinkedQueue<>();
 
     /**
      * Singleton instance of EventQueue
@@ -73,11 +58,11 @@ public class EventQueue {
      * @param eventList
      */
     public void addEvents(List<DEvent> eventList) {
-        queue.addAll(eventList);
+        dbQueue.addAll(eventList);
     }
 
-    public long getQueueSize() {
-        return queue.stream().count();
+    public long getDbQueueSize() {
+        return dbQueue.stream().count();
     }
 
     public int getIncReqQueueSize() {
@@ -92,8 +77,8 @@ public class EventQueue {
     public List<DEvent> getNextBatch() {
         List<DEvent> list = new ArrayList<>();
         for (int i = 0; i < DProps.EVENTLOGGER_MONGODB_BULK_INSERT_MAX_SIZE; i++) {
-            list.add(queue.poll());
-            if (queue.isEmpty()) break;
+            list.add(dbQueue.poll());
+            if (dbQueue.isEmpty()) break;
         }
         return list;
     }

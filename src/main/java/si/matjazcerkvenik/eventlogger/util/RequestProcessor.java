@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  */
-package si.matjazcerkvenik.eventlogger.webhooks;
+package si.matjazcerkvenik.eventlogger.util;
 
 import si.matjazcerkvenik.eventlogger.model.DRequest;
 import si.matjazcerkvenik.eventlogger.util.DMetrics;
@@ -29,50 +29,57 @@ import java.util.Map;
 
 public class RequestProcessor {
 
-    public static DRequest incomingRequest(HttpServletRequest req, long requestId) throws IOException {
+    /**
+     * Convert incoming HTTP request to DRequest.
+     * @param request
+     * @param requestId - counter
+     * @return dRequest object
+     * @throws IOException
+     */
+    public static DRequest incomingRequest(HttpServletRequest request, long requestId) throws IOException {
 
-        String body = getReqBody(req);
+        String body = getReqBody(request);
 
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        sb.append("protocol=").append(req.getProtocol()).append(", ");
-        sb.append("remoteAddr=").append(req.getRemoteAddr()).append(", ");
-        sb.append("remoteHost=").append(req.getRemoteHost()).append(", ");
-        sb.append("remotePort=").append(req.getRemotePort()).append(", ");
-        sb.append("method=").append(req.getMethod()).append(", ");
-        sb.append("requestURI=").append(req.getRequestURI()).append(", ");
-        sb.append("scheme=").append(req.getScheme()).append(", ");
-        sb.append("characterEncoding=").append(req.getCharacterEncoding()).append(", ");
-        sb.append("contentLength=").append(req.getContentLength()).append(", ");
-        sb.append("contentType=").append(req.getContentType()).append("}");
+        sb.append("protocol=").append(request.getProtocol()).append(", ");
+        sb.append("remoteAddr=").append(request.getRemoteAddr()).append(", ");
+        sb.append("remoteHost=").append(request.getRemoteHost()).append(", ");
+        sb.append("remotePort=").append(request.getRemotePort()).append(", ");
+        sb.append("method=").append(request.getMethod()).append(", ");
+        sb.append("requestURI=").append(request.getRequestURI()).append(", ");
+        sb.append("scheme=").append(request.getScheme()).append(", ");
+        sb.append("characterEncoding=").append(request.getCharacterEncoding()).append(", ");
+        sb.append("contentLength=").append(request.getContentLength()).append(", ");
+        sb.append("contentType=").append(request.getContentType()).append("}");
 
         LogFactory.getLogger().info("incomingRequest: " + sb.toString());
 
         sb.deleteCharAt(sb.length()-1); // remove the last } and add some more parameters
-        sb.append(", headersMap=[").append(getReqHeadersAsString(req)).append("], ");
-        sb.append("parameterMap=[").append(getReqParamsAsString(req)).append("]\n");
+        sb.append(", headersMap=[").append(getReqHeadersAsString(request)).append("], ");
+        sb.append("parameterMap=[").append(getReqParamsAsString(request)).append("]\n");
         sb.append("body=").append(body);
         sb.append("}\n");
 
         LogFactory.getIncomingRequestsLog().info(sb.toString());
 
-        DRequest m = new DRequest();
-        m.setId(requestId);
-        m.setRuntimeId(DProps.RUNTIME_ID);
-        m.setTimestamp(System.currentTimeMillis());
-        m.setContentLength(req.getContentLength());
-        if (m.getContentLength() < 0) m.setContentLength(0);
-        m.setContentType(req.getContentType());
-        m.setMethod(req.getMethod());
-        m.setProtocol(req.getProtocol());
-        m.setRemoteHost(req.getRemoteHost());
-        m.setRemotePort(req.getRemotePort());
-        m.setRequestUri(req.getRequestURI());
-        m.setBody(body);
-        m.setHeaderMap(generateHeaderMap(req));
-        m.setParameterMap(generateParamMap(req));
+        DRequest dRequest = new DRequest();
+        dRequest.setId(requestId);
+        dRequest.setRuntimeId(DProps.RUNTIME_ID);
+        dRequest.setTimestamp(System.currentTimeMillis());
+        dRequest.setContentLength(request.getContentLength());
+        if (dRequest.getContentLength() < 0) dRequest.setContentLength(0);
+        dRequest.setContentType(request.getContentType());
+        dRequest.setMethod(request.getMethod());
+        dRequest.setProtocol(request.getProtocol());
+        dRequest.setRemoteHost(request.getRemoteHost());
+        dRequest.setRemotePort(request.getRemotePort());
+        dRequest.setRequestUri(request.getRequestURI());
+        dRequest.setBody(body);
+        dRequest.setHeaderMap(generateHeaderMap(request));
+        dRequest.setParameterMap(generateParamMap(request));
 
-        return m;
+        return dRequest;
     }
 
 
@@ -138,17 +145,13 @@ public class RequestProcessor {
         }
 
         StringBuilder sb = new StringBuilder();
-        String body = ""; // FIXME use string builder
         String s = req.getReader().readLine();
         while (s != null) {
-//            body += s;
             sb.append(s);
             s = req.getReader().readLine();
         }
 
-//        return body.trim();
         return sb.toString().trim();
-
     }
 
 }
